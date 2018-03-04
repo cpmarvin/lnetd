@@ -11,7 +11,7 @@ var interface_name = $.ajax({type: "GET", url: url, async: false, dataType:'json
 console.log(url)
 //var interface_name = "TEST" 
 
-var rawDataURL = "http://46.237.131.248:8801/api/graph_ifindex?"+"ip="+interface+"&"+"host="+source
+var rawDataURL = "http://X.X.X.X:8801/api/graph_ifindex?"+"ip="+interface+"&"+"host="+source
 console.log(rawDataURL)
 //// map the fields 
 var xField = 'time';
