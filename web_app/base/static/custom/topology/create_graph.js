@@ -6,7 +6,7 @@ function graph(source,interface,capacity) {
  // $('tooltip js-plotly-plot').append('<div id="graph"></div>');
 Plotly.purge(graph2)
 /// create ploty graph 
-var url = "http://46.237.131.248:8801/api/ifName?"+"ip="+interface+"&"+"host="+source
+var url = "http://X.X.X.X:8801/api/ifName?"+"ip="+interface+"&"+"host="+source
 var interface_name = $.ajax({type: "GET", url: url, async: false, dataType:'json'}).responseText;
 console.log(url)
 //var interface_name = "TEST" 
