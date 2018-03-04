@@ -1,0 +1,34 @@
+---
+isisTable:
+ rpc: get-isis-database-information
+ args:
+   extensive: True
+   level: "2"
+ item: isis-database
+ view: isisView
+ key: level
+
+isisView:
+ fields:
+  level: level
+  levelTable: _levelTable
+
+_levelTable:
+ item: isis-database-entry
+ key: lsp-id
+ view: _database_entryView
+
+_database_entryView:
+ fields:
+  lsp_id: lsp-id
+  tlvTable: _tlvTable
+
+_tlvTable:
+ item: isis-header
+ key: lsp-id
+ view: _remoteView
+
+_remoteView:
+ fields:
+  address: router-id
+
