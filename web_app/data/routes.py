@@ -15,7 +15,7 @@ blueprint = Blueprint(
 
 @blueprint.route('/isp_pops')
 @login_required
-def liquid_pops():
+def isp_pops():
     routers = Routers.query.all()
     country =  Counter(k.country for k in routers)    
     sample_data =dict(country)
