@@ -17,7 +17,7 @@ python app.py
 To use your own information you need to run all the isis_get.py from inputs directory.
 
 ```
-cd /opt/lnetd/isis_links
+cd /opt/lnetd/inputs/isis_links
 python isis_get.py
 ```
 
