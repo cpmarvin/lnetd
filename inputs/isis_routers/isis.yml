@@ -24,11 +24,11 @@ _database_entryView:
   tlvTable: _tlvTable
 
 _tlvTable:
- item: isis-header
- key: lsp-id
+ item: isis-tlv
+ key: ipaddress-tlv
  view: _remoteView
 
 _remoteView:
  fields:
-  address: router-id
+  address: ipaddress-tlv/address
 
