@@ -399,7 +399,14 @@ function updateData() {
 							else 	 { console.log("click but not if") } })
 
 
-			     
+			     //add image for the nodes 
+				
+	                       node.append("image")
+                                    .attr("xlink:href", "/static/images/router.png")
+                                    .attr("x", "-12px")
+                                    .attr("y", "-12px")
+                                    .attr("width", "24px")
+                                    .attr("height", "24px");
 	
 				node.append("text")
 					.attr("x", 12)
