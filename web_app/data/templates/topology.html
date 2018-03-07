@@ -406,7 +406,12 @@ function updateData() {
                                     .attr("x", "-12px")
                                     .attr("y", "-12px")
                                     .attr("width", "24px")
-                                    .attr("height", "24px");
+                                    .attr("height", "24px")
+	                            .on("mouseover", fade(.1))
+	                            .on("mouseout", fade(1))
+				    .on("click",function (d) { if ($('#spf_check').is(':checked') )
+				       				  { return onClick1(d);console.log("clicked") }
+							      else 	 { console.log("click but not if") } });
 	
 				node.append("text")
 					.attr("x", 12)
@@ -488,7 +493,7 @@ function check_link(id) {
 
 				function fade(opacity) {
 					return function(d) {
-					node.style("stroke-opacity", function(o) {
+					node.style("opacity", function(o) {
 						thisOpacity = isConnected(d, o) ? 1 : opacity;
 						this.setAttribute('fill-opacity', thisOpacity);
 						return thisOpacity;
