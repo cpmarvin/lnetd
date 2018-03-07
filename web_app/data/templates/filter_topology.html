@@ -460,8 +460,13 @@ function updateData() {
 										 { return onClick1(d);console.log("clicked") } 
 									else { console.log("click but not if");div.transition().duration(500).style("opacity", 0) } })
 
-
-			     
+				//add image for nodes
+			     	 node.append("image")
+                                    .attr("xlink:href", "/static/images/router.png")
+                                    .attr("x", "-12px")
+                                    .attr("y", "-12px")
+                                    .attr("width", "24px")
+                                    .attr("height", "24px");
 	
 				node.append("text")
 					.attr("x", 12)
