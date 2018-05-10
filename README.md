@@ -1,5 +1,6 @@
 # lnetd
 
+more info at : http://cpmarvin.blogspot.co.uk/ 
    
 - clone lnetd (or download as a zip archive from github)
 ```
