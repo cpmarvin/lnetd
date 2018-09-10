@@ -47,20 +47,20 @@ df.loc[:, 'l_ip_r_ip'] = pd.Series([tuple(sorted(each)) for each in list(zip(df.
 df['l_ip_r_ip'] = df['l_ip_r_ip'].astype(str)
 df2 = df.fillna(0)
 df4 = df2 
-
+"""
 #uncomment this if influxdb and telegraf info available
 df4['l_int'] = df4.apply(lambda row: get_ifIndex_IP(row['source'],row['l_ip']),axis=1)
 df4['util'] = df4.apply(lambda row: get_uti_ifIndex(row['source'],row['l_int'],0),axis=1)
 df4['capacity'] = df4.apply(lambda row: get_capacity_ifIndex(row['source'],row['l_int']),axis=1)
-#df4['errors'] = df4.apply(lambda row: get_errors_ifIndex(row['source'],row['l_int'],0),axis=1)
-df4['errors'] = random.randint(0,200)
+df4['errors'] = df4.apply(lambda row: get_errors_ifIndex(row['source'],row['l_int'],0),axis=1)
 """
+
 #comment below once influxdb and telegraf is up and running 
 df4['l_int'] = 34
 df4['util'] = random.randint(0,2000)
 df4['capacity'] = 1000
 df4['errors'] = random.randint(0,2000)
-"""
+
 df4 = df4.fillna(0)
 #write to sql db , replace if exists 
 disk_engine = create_engine('sqlite:////opt/lnetd/web_app/database.db')

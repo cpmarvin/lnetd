@@ -23,7 +23,7 @@ df4 = df_links
 
 def wrapper(df):
     df['latency'] = df.apply(lambda row: get_ping_results(row['source'],row['r_ip']),axis=1)
-    print df
+    #print df
     return df
 
 n_processes = 10
