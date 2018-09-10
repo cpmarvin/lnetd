@@ -2,15 +2,14 @@ import networkx as nx
 import pandas as pd
 
 
-def calculateSfp(arr,source,target):
+def calculateSpf(arr,source,target):
         df = pd.DataFrame(eval(arr))
         d3js_links =[]
 	#df = pd.DataFrame(arr)
 	df['metric'] = pd.to_numeric(df['metric'], errors='coerce')
 	df['id'] = pd.to_numeric(df['id'], errors='coerce')
 
-	g = nx.from_pandas_edgelist(df, 'source', 'target', ['id', 'metric'],create_using =nx.MultiDiGraph())
-
+	g = nx.from_pandas_edgelist(df, 'source', 'target', ['id', 'metric','l_ip','r_ip'],create_using =nx.MultiDiGraph())
 	paths = list(nx.all_shortest_paths(g, source, target, weight='metric'))
 	num_ecmp_paths = len(paths)
 	#print "number of paths: %s" %num_ecmp_paths

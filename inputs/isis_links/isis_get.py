@@ -3,14 +3,14 @@ from jnpr import junos
 from jnpr.junos.exception import ConnectAuthError, ConnectRefusedError, ConnectTimeoutError
 from isis import isisTable
 import pandas as pd
+import random
 from snmp_get import * 
+from sqlalchemy import create_engine
 
-devices = {'juniper.lab': '10.9.9.9'}
+devices = {'juniper.lab': '10.3.3.3'}
 for name in devices:
 
-  print '---------------------------------------------------------------------------'
-  print devices[name]
-  print '---------------------------------------------------------------------------'
+  print 'connecting to : %s ' %devices[name]
 
   try:
     dev = junos.Device(host=devices[name], user='lab', password='lab123',port='830', gather_facts=False)
@@ -29,7 +29,7 @@ for name in devices:
     continue
   isis_db =[]
   i = 0
-  print isis_table
+  #print isis_table
   for isis in isis_table:
        for entry in isis.levelTable:
         for entry1 in entry.remoteTable:
@@ -48,22 +48,22 @@ df['l_ip_r_ip'] = df['l_ip_r_ip'].astype(str)
 df2 = df.fillna(0)
 df4 = df2 
 
-'''
-uncomment this if influxdb and telegraf info available
+#uncomment this if influxdb and telegraf info available
 df4['l_int'] = df4.apply(lambda row: get_ifIndex_IP(row['source'],row['l_ip']),axis=1)
 df4['util'] = df4.apply(lambda row: get_uti_ifIndex(row['source'],row['l_int'],0),axis=1)
 df4['capacity'] = df4.apply(lambda row: get_capacity_ifIndex(row['source'],row['l_int']),axis=1)
-'''
-
+#df4['errors'] = df4.apply(lambda row: get_errors_ifIndex(row['source'],row['l_int'],0),axis=1)
+df4['errors'] = random.randint(0,200)
+"""
 #comment below once influxdb and telegraf is up and running 
 df4['l_int'] = 34
-df4['util'] = 50
-df4['capacity'] = 100
-
+df4['util'] = random.randint(0,2000)
+df4['capacity'] = 1000
+df4['errors'] = random.randint(0,2000)
+"""
 df4 = df4.fillna(0)
-#write to sql db
-from sqlalchemy import create_engine
+#write to sql db , replace if exists 
 disk_engine = create_engine('sqlite:////opt/lnetd/web_app/database.db')
 df4.to_sql('Links', disk_engine, if_exists='replace')
-print "------Done----"
-print df4
+
+print "resulting pandas : \n%s" %df4

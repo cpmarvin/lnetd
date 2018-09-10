@@ -1,117 +1,146 @@
 {% extends "base_site.html" %}
 
-{% block title %} ISP Topology filter {% endblock title %}
+{% block title %} ISIS Model What If {% endblock title %}
 
 {% block stylesheets %}
   {{ super() }}
+  <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.12.1/bootstrap-table.min.css" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendors/datatables.net-bs/css/dataTables.bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css') }}" rel="stylesheet">
 {% endblock stylesheets %}
 
 {% block content %}
-<div class="right_col" role="main">
-	<div class="">
-		<div class="page-title">
-    <div class="title_right">
-    	<div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right ">
-    	</div>
+  <div class="right_col" role="main">
+    <div class="">
+      <div class="page-title">
+        <div class="title_left">
+          <h3>ISP Telecom <small>all links from ISIS database used in the model</small></h3>
+        </div>
+
+        <div class="title_right">
+          <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+          </div>
+        </div>
+      </div>
+
+      <div class="clearfix"></div>
+
+      <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <div class="x_panel">
+            <div class="x_title">
+              <h2>Links <small>Users</small></h2>
+              <ul class="nav navbar-right panel_toolbox">
+                <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                </li>
+              </ul>
+              <div class="clearfix"></div>
+            </div>
+
+<form class="form-inline" onsubmit="createresult();return false;">
+  <div class="form-group input-group">
+  </div>
+  <div class="form-group mx-sm-3 input-group">
+    <span class="input-group-btn">
+        <button class="btn btn-primary btn-success" type="submit" name="run_model">Run Model</button>
+   </span>
+  </div>
+</form>
+
+
+<div class="clearfix"></div>
+           <div class="x_content">
+              <table id="table" data-toggle="false"
+                                data-search= "true"
+                                data-show-columes="true"
+                                data-pagination="false"
+                        class="table table-striped table-bordered">
+              </table>
+            </div>
+          </div>
+        </div>
+
+
+ <div class="x_content">
+              <div id="topology" style="width:100%; height:1120px;">
+                <!-- SPF checkbox !-->
+                <div class="checkbox" id="spf_div">
+                <label><input type="checkbox" id="spf_check" value="">Activate SPF</label>
+                </div>
+                <div id="sfp_div1"></div>
+                <!-- SPF checkbox End !-->
+             </div>
+            </div>
+          </div>
+        </div>
+
+
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-</div>
-</div>
-
-<div class="clearfix"></div>
-
-<div class="row">
-
-	<!-- Start forms -->
-	<form class="form-inline" method="POST">
-		<div class="form-group input-group">
-			<label for="source_filter" class="sr-only">Source</label>
-			<input type="text" class="form-control" name= "source_filter" id="source_filter" placeholder="eg gb-p|fr-p ">
-		</div>
-		<div class="form-group mx-sm-3 input-group">
-			<label for="target_filter" class="sr-only">Target</label>
-			<input type="text" class="form-control" id="target_filter" placeholder="eg gb-p|fr-p">
-			<span class="input-group-btn">
-				<button class="btn btn-primary btn-success" type="submit" name="filter_topology">Go!</button>
-			</span>
-		</div>
-	</form>
-
-	<!-- Modal -->
-	<div class="modal fade" id="modal-top" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog modal-dialog-centered modal-lg " role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="exampleModalLabel">Plotly based Graphs</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body" id="modal-body">
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- End Modal -->
-
-
-
-	<div class="clearfix"></div>
-	<!-- /bar charts group -->
-
-	<!-- bar chart -->
-	<div class="col-md-14">
-		<div class="x_panel">
-			<div class="x_title">
-				<h2>ISP Telecom  <small>ISIS topology</small></h2>
-				<ul class="nav navbar-right panel_toolbox">
-					<li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-					</li>
-				</li>
-			</ul>
-			<div class="clearfix"></div>
-		</div>
-		<div class="x_content">
-			<div id="topology" style="width:100%; height:1120px;">
-				<!-- SPF checkbox !-->
-				<div class="checkbox" id="spf_div">
-					<label><input type="checkbox" id="spf_check" value="">Activate SPF</label>
-				</div>
-				<div id="sfp_div1"></div>
-				<!-- SPF checkbox End !-->
-			</div>
-		</div>
-	</div>
-</div>
-<!-- /bar charts -->
-<div class="clearfix"></div>
-</div>
-</div>
-
+  </div>
 {% endblock content %}
 
 {% block javascripts %}
   {{ super() }}
-<script src="{{ url_for('static', filename='vendors/d3.js/d3.min.js') }}"></script> 
-<script src="{{ url_for('static', filename='custom/topology/create_legend.js') }}"></script> 
-<script src="{{ url_for('static', filename='vendors/plotly/plotly-latest.min.js') }}"></script>
-<script src="{{ url_for('static', filename='custom/topology/create_graph.js') }}"></script>
-<script src="{{ url_for('static', filename='custom/topology/getSPF.js') }}"></script>
-<script src="{{ url_for('static', filename='custom/topology/position.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/d3.js/d3.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='custom/topology/create_legend.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/plotly/plotly-latest.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='custom/topology/create_graph.js') }}"></script>
+  <script src="{{ url_for('static', filename='custom/topology/getSPF.js') }}"></script>
+  <script src="{{ url_for('static', filename='custom/topology/jsontables.js') }}"></script>
+  <script src="{{ url_for('static', filename='custom/topology/position.js') }}"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.12.1/bootstrap-table.min.js"></script>
+  <!-- Datatables -->
+  <script src="{{ url_for('static', filename='vendors/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-buttons/js/dataTables.buttons.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-buttons/js/buttons.flash.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-buttons/js/buttons.html5.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-buttons/js/buttons.print.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-keytable/js/dataTables.keyTable.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-responsive/js/dataTables.responsive.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-scroller/js/dataTables.scroller.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/jszip/dist/jszip.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/pdfmake/build/pdfmake.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/pdfmake/build/vfs_fonts.js') }}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.12.1/extensions/editable/bootstrap-table-editable.min.js"></script>
+
 <script>
-	var grapheDatas = JSON.parse('{{ values | tojson | safe}}');
-	var grapheDatas1 = grapheDatas
-	var source = '{{source_filter}}'
-    var target = '{{target_filter}}'
-	$(document).ready(function() {
-		updateData()
-		create_legend() 
-	})
+   $(window).load(function() {
+   	var data = {{values|tojson}};
+    var columns = {{columns|tojson}};
+   $(function() {
+     $('#table').bootstrapTable ({
+        data: data,
+        columns: columns,
+                });
+           });
+        });
+
+   function createresult() {
+
+   	jQuery('#sfp_div1').html('');
+   	d3.select("#main_svg").remove();
+   	create_legend()
+   	updateData() }
 
 	function updateData() {
+                var jsonTable = new JSONTable($("#table"))
+                var grapheDatas1 = jsonTable.toJSON()
 
+		var source = '.' 
+		var target = source	
 		var re_source = new RegExp (source);
 		var re_target = new RegExp (target);
 

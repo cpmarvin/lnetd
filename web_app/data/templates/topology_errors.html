@@ -1,6 +1,6 @@
 {% extends "base_site.html" %}
 
-{% block title %} ISP Topology filter {% endblock title %}
+{% block title %} ISIS Topology {% endblock title %}
 
 {% block stylesheets %}
   {{ super() }}
@@ -10,10 +10,11 @@
 <div class="right_col" role="main">
 	<div class="">
 		<div class="page-title">
-    <div class="title_right">
-    	<div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right ">
-    	</div>
-    </div>
+
+<div class="title_right">
+	<div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right ">
+	</div>
+</div>
 </div>
 </div>
 
@@ -21,22 +22,8 @@
 
 <div class="row">
 
-	<!-- Start forms -->
-	<form class="form-inline" method="POST">
-		<div class="form-group input-group">
-			<label for="source_filter" class="sr-only">Source</label>
-			<input type="text" class="form-control" name= "source_filter" id="source_filter" placeholder="eg gb-p|fr-p ">
-		</div>
-		<div class="form-group mx-sm-3 input-group">
-			<label for="target_filter" class="sr-only">Target</label>
-			<input type="text" class="form-control" id="target_filter" placeholder="eg gb-p|fr-p">
-			<span class="input-group-btn">
-				<button class="btn btn-primary btn-success" type="submit" name="filter_topology">Go!</button>
-			</span>
-		</div>
-	</form>
 
-	<!-- Modal -->
+	<!-- Modal used for graphs-->
 	<div class="modal fade" id="modal-top" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered modal-lg " role="document">
 			<div class="modal-content">
@@ -56,16 +43,13 @@
 	</div>
 	<!-- End Modal -->
 
-
-
 	<div class="clearfix"></div>
-	<!-- /bar charts group -->
 
 	<!-- bar chart -->
 	<div class="col-md-14">
 		<div class="x_panel">
 			<div class="x_title">
-				<h2>ISP Telecom  <small>ISIS topology</small></h2>
+				<h2>ISP Telecom <small>ISIS topology</small></h2>
 				<ul class="nav navbar-right panel_toolbox">
 					<li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
 					</li>
@@ -95,7 +79,7 @@
 {% block javascripts %}
   {{ super() }}
 <script src="{{ url_for('static', filename='vendors/d3.js/d3.min.js') }}"></script> 
-<script src="{{ url_for('static', filename='custom/topology/create_legend.js') }}"></script> 
+<script src="{{ url_for('static', filename='custom/topology/create_legend_errors.js') }}"></script> 
 <script src="{{ url_for('static', filename='vendors/plotly/plotly-latest.min.js') }}"></script>
 <script src="{{ url_for('static', filename='custom/topology/create_graph.js') }}"></script>
 <script src="{{ url_for('static', filename='custom/topology/getSPF.js') }}"></script>
@@ -103,8 +87,6 @@
 <script>
 	var grapheDatas = JSON.parse('{{ values | tojson | safe}}');
 	var grapheDatas1 = grapheDatas
-	var source = '{{source_filter}}'
-    var target = '{{target_filter}}'
 	$(document).ready(function() {
 		updateData()
 		create_legend() 
@@ -112,6 +94,8 @@
 
 	function updateData() {
 
+		var source = '.' 
+		var target = source	
 		var re_source = new RegExp (source);
 		var re_target = new RegExp (target);
 
@@ -197,23 +181,18 @@
 		// BEGIN UTIL Function
 		function get_util(d,start) {
 			var legend = [
-							{'id':'black','low':0,'high':0},
-							{'id':'blue','low':0,'high':1},
-							{'id':'green','low':1,'high':30},
-							{'id':'yellow','low':30,'high':50},
-							{'id':'orange','low':50,'high':70},
-							{'id':'red','low':70,'high':100},
-							{'id':'pink','low':100,'high':1050}
+						 {'id':'green','low':0,'high':0},
+						 {'id':'blue','low':0,'high':30},
+						 {'id':'orange','low':30,'high':2000},
+						 {'id':'red','low':2000,'high':3000000000050}
 						]
-			util = d.util
+			util = d.errors
 
 			if (util == -1 ) {
 				util = -1
 			}
 			else {
-				var cur_util = util
-				var capacity = d.capacity*1000000
-				util = (cur_util*100)/(capacity)
+				util = Math.ceil(util)
 				legend.forEach(function (d) { 
 					if (util >= d.low && util <= d.high) 
 					{ 
@@ -337,7 +316,7 @@
 						.attr("dy",0)
 						.attr("startOffset","50%")
 						.attr("xlink:href",function(d,i) { return "#linkId_" + i;})
-						.text(function(d) { return "cost:"  + d.metric + "/IP:"+ d.l_ip });
+						.text(function(d) { return "errors:"  +parseFloat(d.errors) });
 						//end path 
 
 		//node add

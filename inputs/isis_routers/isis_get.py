@@ -3,13 +3,12 @@ from jnpr import junos
 from jnpr.junos.exception import ConnectAuthError, ConnectRefusedError, ConnectTimeoutError
 from isis import isisTable
 import pandas as pd
+from sqlalchemy import create_engine
 
-devices = {'juniper.lab': '10.9.9.9'}
+devices = {'juniper.lab': '10.3.3.3'}
 for name in devices:
 
-  print '---------------------------------------------------------------------------'
-  print devices[name]
-  print '---------------------------------------------------------------------------'
+  print 'connecting to : %s ' %devices[name]
 
   try:
     dev = junos.Device(host=devices[name], user='lab', password='lab123',port='830', gather_facts=False)
@@ -37,14 +36,14 @@ for name in devices:
 #create panda dataframe
 labels = ['name', 'ip']
 df = pd.DataFrame.from_records(isis_db, columns=labels)
+#drop ip if is 0.0.0.0 
 df=df[df['ip'].str.contains("0.0.0.0") == False]
+#create country from hostname 
 df.loc[:, 'country'] = df['name'].str[0:2]
 df2 = df.fillna(0)
 
 #write to sql db
-from sqlalchemy import create_engine
 disk_engine = create_engine('sqlite:////opt/lnetd/web_app/database.db')
 df2.to_sql('Routers', disk_engine, if_exists='replace')
 
-print "----Done--"
-print df2
+print "resulting pandas : \n%s" %df2

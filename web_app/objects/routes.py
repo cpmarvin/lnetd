@@ -13,10 +13,6 @@ blueprint = Blueprint(
 from database import db
 from .models import Routers,Prefixes,Links
 
-@blueprint.route('/<template>')
-@login_required
-def route_template(template):
-    return render_template(template + '.html')
 
 @blueprint.route('/isis_prefixes')
 @login_required
