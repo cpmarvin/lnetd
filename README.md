@@ -6,6 +6,7 @@ more info at : http://cpmarvin.blogspot.co.uk/
 ```
 cd /opt/
 git clone https://github.com/cpmarvin/lnetd.git
+pip install -r requirements.txt
 ```
     
 - run **/opt/lnetd/web_app**.
@@ -34,5 +35,6 @@ df4['capacity'] = df4.apply(lambda row: get_capacity_ifIndex(row['source'],row['
 df4['l_int'] = 34
 df4['util'] = 50
 df4['capacity'] = 100
-
 ```
+
+

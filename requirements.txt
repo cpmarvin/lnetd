@@ -1,0 +1,9 @@
+flask
+flask_migrate
+flask_login
+flask_wtf
+pandas
+flask_cors
+influxdb
+networkx
+junos-eznc
