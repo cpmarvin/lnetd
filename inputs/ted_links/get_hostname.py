@@ -5,5 +5,5 @@ def get_hostname(ip):
     try:
         name = socket.gethostbyaddr(ip)[0]
     except Exception as e:
-        name = -1
+        name = ip
     return name
