@@ -8,7 +8,7 @@
 
 {% block content %}
 <div class="right_col" role="main">
-	<div class="">
+	<div class="row">
 		<div class="page-title">
     <div class="title_right">
     	<div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right ">
@@ -20,8 +20,6 @@
 <div class="clearfix"></div>
 
 <div class="row">
-
-	<!-- Start forms -->
 	<form class="form-inline" method="POST">
 		<div class="form-group input-group">
 			<label for="source_filter" class="sr-only">Source</label>
@@ -61,30 +59,30 @@
 	<div class="clearfix"></div>
 	<!-- /bar charts group -->
 
-	<!-- bar chart -->
-	<div class="col-md-14">
-		<div class="x_panel">
-			<div class="x_title">
-				<h2>ISP Telecom  <small>ISIS topology</small></h2>
-				<ul class="nav navbar-right panel_toolbox">
-					<li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-					</li>
-				</li>
-			</ul>
-			<div class="clearfix"></div>
-		</div>
-		<div class="x_content">
-			<div id="topology" style="width:100%; height:1120px;">
-				<!-- SPF checkbox !-->
-				<div class="checkbox" id="spf_div">
-					<label><input type="checkbox" id="spf_check" value="">Activate SPF</label>
+				<div class="row">
+					<div class="col-md-12 col-sm-12 col-xs-12">
+						<div class="x_panel">
+							<div class="x_title">
+								<h3>Topology</h3>
+								<div class="x_content">
+									<!-- Div for d3js topology -->
+									<div id="topology" style="width:100%; height:1120px;">
+										<!-- Div for legend -->
+										<div class="x_content" id="legend_div"></div>
+										<!-- SPF div and checkbox !-->
+										<div class="checkbox" id="spf_div">
+											<label>
+												<input type="checkbox" id="spf_check" value="">Activate SPF
+											</label>
+										</div>
+										<!-- Div for SPF results -->
+										<div class="spf_results x_content" id="sfp_div1"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
-				<div id="sfp_div1"></div>
-				<!-- SPF checkbox End !-->
-			</div>
-		</div>
-	</div>
-</div>
 <!-- /bar charts -->
 <div class="clearfix"></div>
 </div>

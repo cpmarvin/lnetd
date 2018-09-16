@@ -12,7 +12,8 @@ function create_legend() {
 	var legendRectSize = 20;
 	var legendSpacing = 5;
 	var legend = d3.select("body").select("#main_svg").selectAll('.legend')
-	var svg = d3.select("#sfp_div1")
+        var svg = d3.select("#legend_div")
+	//var svg = d3.select("#sfp_div1")
 				.append("svg")
 				.attr("id","legend_svg")
 				.attr("width", 1000)

@@ -57,16 +57,30 @@
 			</ul>
 			<div class="clearfix"></div>
 		</div>
-		<div class="x_content">
-			<div id="topology" style="width:100%; height:1120px;">
-				<!-- SPF checkbox !-->
-				<div class="checkbox" id="spf_div">
-					<label><input type="checkbox" id="spf_check" value="">Activate SPF</label>
+				<div class="row">
+					<div class="col-md-12 col-sm-12 col-xs-12">
+						<div class="x_panel">
+							<div class="x_title">
+								<h3>Topology</h3>
+								<div class="x_content">
+									<!-- Div for d3js topology -->
+									<div id="topology" style="width:100%; height:1120px;">
+										<!-- Div for legend -->
+										<div class="x_content" id="legend_div"></div>
+										<!-- SPF div and checkbox !-->
+										<div class="checkbox" id="spf_div">
+											<label>
+												<input type="checkbox" id="spf_check" value="">Activate SPF
+											</label>
+										</div>
+										<!-- Div for SPF results -->
+										<div class="spf_results x_content" id="sfp_div1"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
-				<div id="sfp_div1"></div>
-				<!-- SPF checkbox End !-->
-			</div>
-		</div>
 	</div>
 </div>
 <!-- /bar charts -->

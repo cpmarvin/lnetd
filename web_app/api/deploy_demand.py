@@ -14,8 +14,8 @@ def deploy_demand(arr,source,target,demand):
     paths = list(nx.all_shortest_paths(g, source, target, weight='metric'))
     num_ecmp_paths = len(paths)
     ecmp_links = 0
-    print "number of paths: %s" %num_ecmp_paths
-    print "this are the paths: %s" %paths
+    #print "number of paths: %s" %num_ecmp_paths
+    #print "this are the paths: %s" %paths
     #demand = 10
     for p in paths:
         #print "All nodes  in path: %s" %p

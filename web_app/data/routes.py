@@ -81,7 +81,7 @@ def model_isis_links():
 @login_required
 def model_demand():
     df = pd.read_sql(db.session.query(Links).filter(Links.index >=0).statement,db.session.bind)
-    df['util'] = 0
+    df['util'] = -1
     isis_links = df.to_dict(orient='records')
     #print isis_links
     columns = [
