@@ -9,6 +9,7 @@ from get_graph_fct_ifindex import get_graph_ifindex
 from get_interface_ifName_fct import get_interface_ifName
 from calculateSpf_fct import calculateSpf
 from calculateSpf_latency_fct import calculateSpf_latency
+from model_demand import model_demand_get
 
 blueprint = Blueprint(
     'api_blueprint', 
@@ -45,6 +46,22 @@ def spf():
     results = calculateSpf(arr,source,target)
     #print "results: %s" %jsonify(results)
     return jsonify(results)
+
+@blueprint.route('/model_demand')
+@login_required
+def model_demand():
+    #source = request.args['source']
+    #target = request.args['target']
+    demand_request = request.args['demand']
+    print "------------------------------: %s" %demand_request
+    arr = request.args['arr']
+    df_links = pd.DataFrame(eval(arr))
+    #print df_links
+    results = model_demand_get(df_links,demand_request)
+    results_final = results.to_dict(orient='records')
+    print "results: %s" %jsonify(results_final)
+    return jsonify(results_final)
+
 
 @blueprint.route('/spf_and_latency',methods=['GET', 'POST'])
 def spf_and_latency():
