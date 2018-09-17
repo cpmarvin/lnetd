@@ -4,19 +4,22 @@ import pandas as pd
 
 def deploy_demand(arr,source,target,demand):
     df = arr
+    df['util']=0
     #print df
     d3js_links =[]
     #print "panda in function : %s" %df
     df['metric'] = pd.to_numeric(df['metric'], errors='coerce')
     df['index'] = pd.to_numeric(df['index'], errors='coerce')
 
-    g = nx.from_pandas_edgelist(df, 'source', 'target', ['index', 'metric','l_ip','r_ip'],create_using =nx.MultiDiGraph())
+    g = nx.from_pandas_edgelist(df, 'source', 'target', ['index', 'metric','l_ip','r_ip','util'],create_using =nx.MultiDiGraph())
     paths = list(nx.all_shortest_paths(g, source, target, weight='metric'))
     num_ecmp_paths = len(paths)
+    demand = demand / int(len(paths))
     ecmp_links = 0
     #print "number of paths: %s" %num_ecmp_paths
     #print "this are the paths: %s" %paths
     #demand = 10
+    print df
     for p in paths:
         #print "All nodes  in path: %s" %p
         u=p[0]
@@ -38,7 +41,11 @@ def deploy_demand(arr,source,target,demand):
             #print "demand for each links is : %s" %(int(demand)/int(ecmp_links))
             for d in values_g:
                 if d['metric'] == min_weight:
-                    d['util'] = int(demand)/int(ecmp_links)
+                    print d['util']
+                    if ( d['util'] == demand ):
+                        d['util'] = d['util']
+                    else:
+                        d['util'] = int(d['util']) + int(demand)/int(ecmp_links)
                     d3js_links.append(d)
             ecmp_links = 0
             u=v
