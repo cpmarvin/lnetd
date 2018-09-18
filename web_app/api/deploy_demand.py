@@ -14,12 +14,12 @@ def deploy_demand(arr,source,target,demand):
     g = nx.from_pandas_edgelist(df, 'source', 'target', ['index', 'metric','l_ip','r_ip','util'],create_using =nx.MultiDiGraph())
     paths = list(nx.all_shortest_paths(g, source, target, weight='metric'))
     num_ecmp_paths = len(paths)
-    demand = demand / int(len(paths))
+    demand_path = demand / int(len(paths))
     ecmp_links = 0
     #print "number of paths: %s" %num_ecmp_paths
+    #print "demand per path is : %s " %demand_path
     #print "this are the paths: %s" %paths
-    #demand = 10
-    print df
+    #print "initial list : %s " %d3js_links
     for p in paths:
         #print "All nodes  in path: %s" %p
         u=p[0]
@@ -41,19 +41,24 @@ def deploy_demand(arr,source,target,demand):
             #print "demand for each links is : %s" %(int(demand)/int(ecmp_links))
             for d in values_g:
                 if d['metric'] == min_weight:
-                    print d['util']
-                    if ( d['util'] == demand ):
-                        d['util'] = d['util']
-                    else:
-                        d['util'] = int(d['util']) + int(demand)/int(ecmp_links)
+                    #print "d before : %s" %d
+                    #d['util'] = int(d['util']) + int(demand_path)/int(ecmp_links)
+                    d['util'] = int(demand_path)/int(ecmp_links)
+                    #print "d after : %s" %d
+                    #print "----\nentry d after util added : %s" %d
+                    #print "list before append:\n%s" %d3js_links
                     d3js_links.append(d)
+                    #print "list after append:\n%s" %d3js_links
+            #print "----end for this path list after for d in values :\n %s" %d3js_links
             ecmp_links = 0
             u=v
+    #print "resulting list : \n%s" %d3js_links
     df_demand = pd.DataFrame(d3js_links)
     #print "initial panda \n %s " %df
     #print "resulting panda with demand \n %s" %df_demand
     #print "merge pandas on l_ip\n"
     #df_merge = pd.merge(df,df_demand)
     #print "resulting panda \n%s" %df_merge
+    #print df_demand
     return df_demand
 

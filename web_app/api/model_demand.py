@@ -3,21 +3,6 @@ import pandas as pd
 from sqlalchemy import create_engine
 from deploy_demand import deploy_demand
 
-#connect to sqllite lnetd
-#conn = sqlite3.connect("/opt/lnetd/web_app/database.db")
-
-#create pandas frame
-#df_links=pd.read_sql("SELECT * FROM Links", conn)
-#df_links['util'] = 0
-#links = [df_links.to_dict(orient='records')]
-#print links
-#calculateSpf(links,"A","C")
-
-
-#demand = [
-#{'source':'gb-pe11-lon','target':'gb-pe5-lon','demand':'10'},
-#{'source':'ke-pe3-nbi','target':'gb-pe5-lon','demand':'10'}
-#]
 
 def model_demand_get(df_links,demand):
     demand = eval(demand)

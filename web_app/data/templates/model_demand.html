@@ -17,6 +17,7 @@
   <link href="{{ url_for('static', filename='vendors/alertifyjs/css/themes/bootstrap.css') }}" rel="stylesheet">
   <link href="{{ url_for('static', filename='vendors/alertifyjs/css/alertify.css') }}" rel="stylesheet">
 
+
 {% endblock stylesheets %}
 
 {% block content %}
@@ -31,22 +32,47 @@
 						</div>
 					</div>
 				</div>
+        <!-- Modal used for topology-->
+        <div class="modal fade" id="modal-top" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg " role="document">
+                        <div class="modal-content">
+                                <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Topology view</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                        </button>
+                                </div>
+                                <div class="modal-body" id="modal-body">
+                                  <div id="legend_div"></div>
+                                  <div class="checkbox" id="spf_div">
+                                    <label>
+                                       <input type="checkbox" id="spf_check" value="">Activate SPF
+                                    </label>
+                                  </div>
+                                  <div id="topology"></div> 
+                                </div>
+                                <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                </div>
+                        </div>
+                </div>
+        </div>
 				<div class="row">
 					<div class="col-md-12 col-sm-12 col-xs-12">
 						<form class="form-inline" onsubmit="deploy_demand();return false;">
 							<div class="form-group form-row input-group">
 								<label for="source_filter" class="sr-only">Source</label>
-								<input type="text" class="form-control input" name= "source" id="source" placeholder="router as source">
+								<input type="text" class="form-control input typeahead tt-query" autocomplete="off" name= "source" id="source" placeholder="router as source">
 							</div>
 							<div class="form-group form-row input-group">
 								<label for="source_filter" class="sr-only">Target</label>
-								<input type="text" class="form-control input" name= "target" id="target" placeholder="router as target">
+								<input type="text" class="form-control input typeahead tt-query" name= "target" id="target" placeholder="router as target">
 							</div>
 							<div class="form-group mx-sm-3 form-row input-group">
 								<label for="target_filter" class="sr-only">Demand</label>
-								<input type="text" class="form-control" id="demand" placeholder="demand in Mbps">
+								<input type="text" class="form-control input typeahead" id="demand" placeholder="demand in Mbps">
 								<span class="input-group-btn">
-									<button class="btn btn-primary btn-success" type="submit" name="deploy">Deploy Demand</button>
+									<button class="btn btn-primary btn-success btn-sm" type="submit" name="deploy">Deploy Demand</button>
 								</span>
 							</div>
 						</form>
@@ -86,31 +112,12 @@
 					</div>
 				</div>
 
-				<div class="row">
-					<div class="col-md-12 col-sm-12 col-xs-12">
-						<div class="x_panel">
-							<div class="x_title">
-								<h3>Topology</h3>
-								<div class="x_content">
-									<!-- Div for d3js topology -->
-									<div id="topology" style="width:100%; height:1120px;">
-										<!-- Div for legend -->
-										<div class="x_content" id="legend_div"></div>
-										<!-- SPF div and checkbox !-->
-										<div class="checkbox" id="spf_div">
-											<label>
-												<input type="checkbox" id="spf_check" value="">Activate SPF
-											</label>
-										</div>
-										<!-- Div for SPF results -->
-										<div class="spf_results x_content" id="sfp_div1"></div>
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-
 			</div>
 		</div>
 	</div>
@@ -149,9 +156,30 @@
   <script src="{{ url_for('static', filename='vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js') }}"></script>
   <script src="{{ url_for('static', filename='vendors/datatables.net-scroller/js/dataTables.scroller.min.js') }}"></script>
 
-
+  <!-- Just to test -->
+  <script src="https://gitcdn.link/repo/xcash/bootstrap-autocomplete/master/dist/latest/bootstrap-autocomplete.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/corejs-typeahead/1.2.1/typeahead.bundle.js"></script>
 <script>
-	// bootstrap table from flask variables
+   //autocomplete 
+   var router_name = {{router_name|tojson}}
+   var router_name = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.whitespace,
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        local: router_name
+    });
+    
+    // Initializing the typeahead
+    $('.typeahead').typeahead({
+        hint: true,
+        highlight: true, /* Enable substring highlighting */
+        minLength: 1 /* Specify minimum characters required for showing suggestions */
+    },
+    {
+        name: 'router_name',
+        source: router_name
+    }); 
+
+  // bootstrap table from flask variables
    $(window).load(function() {
     var data = {{values|tojson}};
     var columns = {{columns|tojson}};
@@ -187,9 +215,17 @@
         else {              alertify.notify("Error Demand not deployed ...not sure why ", 'error', 15)} 
         //update table array with new values 
         $('#table').bootstrapTable("load", model_results);
+        // bring modal up
+        $('#modal-top').modal('toggle')
+        //$('#modal-body').attr("id","topology")
+        //$('#modal-body').append('<div id="legend_div"></div>')
+        //display topology
+        createresult()
    }
    function createresult() {
+        $('#table').bootstrapTable('resetSearch', '');
    	alertify.notify("Model Run",'success',5)
+        $('#modal-top').modal('show')
         //remove spf results on a new result
    	jQuery('#sfp_div1').html('');
         // remove previous legend on a new result
@@ -290,6 +326,7 @@
 		}
 		// END FUNCTION
 		// BEGIN UTIL Function
+
 		function get_util(d,start) {
 			var legend = [
 							{'id':'black','low':0,'high':0},
@@ -408,7 +445,7 @@
 					.attr("class", "link")
 					.style("stroke",function(d) { return get_util(d,"0"); })
 					.attr("id",function(d,i) { return "linkId_" + i; })
-					.on("click", function(d) {
+					/* .on("click", function(d) {
 						if (d.l_int == -1 || d.util == -1 ) {
 							alert("NO SNMP DATA") 
 							return
@@ -416,7 +453,7 @@
 						$('#modal-top').modal('toggle')
 						$('#modal-body').attr("id","graph2")
 						.html(graph(d.source.name,d.l_int,d.capacity))
-					})
+					}) */
 
 
 
@@ -432,7 +469,12 @@
 						.attr("dy",0)
 						.attr("startOffset","50%")
 						.attr("xlink:href",function(d,i) { return "#linkId_" + i;})
-						.text(function(d) { return "cost:"  + d.metric + "/IP:"+ d.l_ip });
+						.text(function(d) { 
+	                                         return "cost:"  + d.metric + 
+                                                        "/IP:"   + d.l_ip + 
+                                                        "/load:" + (d.util*100)/(d.capacity*1000000)+
+                                                        "%"
+                                                });
 						//end path 
 
 		//node add

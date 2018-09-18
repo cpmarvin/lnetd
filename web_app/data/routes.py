@@ -83,6 +83,8 @@ def model_demand():
     df = pd.read_sql(db.session.query(Links).filter(Links.index >=0).statement,db.session.bind)
     df['util'] = -1
     isis_links = df.to_dict(orient='records')
+    df_router_name = pd.read_sql(db.session.query(Links.source.distinct()).statement,db.session.bind)
+    router_name = df_router_name['anon_1'].values.tolist()
     #print isis_links
     columns = [
             { "field": "index","title":"index","sortable":False},
@@ -97,5 +99,5 @@ def model_demand():
             { "field": "util","title":"util","sortable":False},
             { "field": "capacity","title":"capacity","sortable":False}
             ]
-    return render_template('model_demand.html',values=isis_links,columns=columns)
+    return render_template('model_demand.html',values=isis_links,columns=columns,router_name=router_name)
 
