@@ -4,7 +4,7 @@ function getSPF(source,target){
 })
         console.log("getSPF_fct array:" +links_spf[0]) 
         var arrStr = encodeURIComponent(JSON.stringify(links_spf));
-        url = "http://<change-me>:8801/api/spf_and_latency?"+"arr="+arrStr+"&"+"source="+source+"&"+"target="+target
+        url = "http://127.0.0.1:8801/api/spf_and_latency?"+"arr="+arrStr+"&"+"source="+source+"&"+"target="+target
         var spf_results = $.ajax({type: "GET", url: url, async: false}).responseJSON;
         return { spf_results }
 }

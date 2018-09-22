@@ -59,6 +59,8 @@
 		</div>
 		<div class="x_content">
 			<div id="topology" style="width:100%; height:1120px;">
+                                                                                <!-- Div for legend -->
+                                                                                <div class="x_content" id="legend_div"></div>
 				<!-- SPF checkbox !-->
 				<div class="checkbox" id="spf_div">
 					<label><input type="checkbox" id="spf_check" value="">Activate SPF</label>
@@ -83,13 +85,13 @@
 <script src="{{ url_for('static', filename='custom/topology/create_graph.js') }}"></script>
 <script src="{{ url_for('static', filename='custom/topology/getSPF_latency.js') }}"></script>
 <script src="{{ url_for('static', filename='custom/topology/position.js') }}"></script>
-<script src="{{ url_for('static', filename='custom/topology/create_legend_latency.js') }}"></script>
+<script src="{{ url_for('static', filename='custom/topology/create_legend.js') }}"></script>
 <script>
 	var grapheDatas = JSON.parse('{{ values | tojson | safe}}');
 	var grapheDatas1 = grapheDatas
 	$(document).ready(function() {
 		updateData()
-		create_legend() 
+		create_legend('latency') 
 	})
 
 	function updateData() {
