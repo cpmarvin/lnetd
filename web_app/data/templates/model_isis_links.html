@@ -141,8 +141,8 @@
         });
 
    function createresult() {
-
-   	jQuery('#sfp_div1').html('');
+        $('#table').bootstrapTable('resetSearch', '');
+   	jQuery('#legend_div').html('');
    	d3.select("#main_svg").remove();
    	create_legend()
    	updateData() }
