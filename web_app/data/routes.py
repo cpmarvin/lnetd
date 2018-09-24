@@ -80,8 +80,10 @@ def model_isis_links():
 @blueprint.route('/model_demand', methods=['GET', 'POST'])
 @login_required
 def model_demand():
+    #netflow_demands =[{}]
+    netflow_demands = [ {'source':'gb-p10-lon','target':'fr-p7-mrs','demand':1000000000} ]
     df = pd.read_sql(db.session.query(Links).filter(Links.index >=0).statement,db.session.bind)
-    df['util'] = -1
+    df['util'] = 0
     isis_links = df.to_dict(orient='records')
     df_router_name = pd.read_sql(db.session.query(Links.source.distinct()).statement,db.session.bind)
     router_name = df_router_name['anon_1'].values.tolist()
@@ -99,5 +101,5 @@ def model_demand():
             { "field": "util","title":"util","sortable":False},
             { "field": "capacity","title":"capacity","sortable":False}
             ]
-    return render_template('model_demand.html',values=isis_links,columns=columns,router_name=router_name)
+    return render_template('model_demand.html',values=isis_links,columns=columns,router_name=router_name,netflow_demands=netflow_demands)
 

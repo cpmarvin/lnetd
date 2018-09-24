@@ -5,7 +5,7 @@ import pandas as pd
 def deploy_demand(arr,source,target,demand):
     df = arr
     #put util 0 at the start ( forget about previous deployed/existing traffic )
-    df['util']=0
+    #df['util']=0
     #print df
     d3js_links =[]
     #print "panda in function : %s" %df
@@ -38,9 +38,9 @@ def deploy_demand(arr,source,target,demand):
             print "keys: %s" %keys
             num_ecmp_links = len(keys)
             for k in keys:
-                g[u][v][k]['util'] = int(demand_path)/int(num_ecmp_links)
+                #g[u][v][k]['util'] = int(demand_path)/int(num_ecmp_links)
                 #if we need to take into account deployed/existing path
-                #g[u][v][k]['util'] += int(demand_path)/int(num_ecmp_links)
+                g[u][v][k]['util'] += int(demand_path)/int(num_ecmp_links)
                 print "test: %s" %g[u][v][k]
                 d3js_links.append(g[u][v][k])
             #print "----end for this path list after for d in values :\n %s" %d3js_links

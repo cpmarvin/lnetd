@@ -94,7 +94,22 @@
 									<button class="btn btn-primary btn-success btn-sm" type="submit" name="deploy">Deploy Demand</button>
 								</span>
 							</div>
-						</form>
+
+  					</form>
+            <!-- New form for reset -->
+            <form class="form-inline" onsubmit="reset_demand();return false;">
+              <div class="form-group mx-sm-3 form-row input-group">
+                <div class="checkbox" class="form-control input" id="deploy_netflow_demands">
+                  <label>
+                     <input type="checkbox" id="netflow_demands" value="">Use Netflow Demands as well
+                  </label>
+                <span class="input-group-btn">
+                  <button class="btn btn-primary btn-warning btn-sm" type="submit" name="deploy">Reset Demand</button>
+                </span>
+              </div>
+            </form>
+          </div>
+            <!-- end form reset -->
 					</div>
 				</div>
 			</div>
@@ -209,60 +224,85 @@
                 });
            });
         });
-
+   // reset table and remove existing demand or metric change
+   function reset_demand() {
+     //console.log("AAAAAAAAAAAAAAAAAAAAAA")
+     var data = {{values|tojson}};
+     $('#table').bootstrapTable("load", data);
+   }
    //if deploy demand button
-   function deploy_demand() {
+ function deploy_demand() {
+        
         //reset search on table 
         $('#table').bootstrapTable('resetSearch', '');
-        var demandarr = []
-        //get form input and create and array , need a better way here
-        var source = document.getElementById("source").value
-        var target = document.getElementById("target").value
-        var demand = document.getElementById("demand").value * 1000000
-        demandarr.push({'source':source,'target':target,'demand':demand})
-        //console.log(demandarr)
-        var demandArrStr = encodeURIComponent(JSON.stringify(demandarr));
-        //console.log(demandArrStr)
-        // create an array with values from table ( as it might been updated (ie: change isis metric) )
-        var jsonTable = new JSONTable($("#table"))
-        var arr= jsonTable.toJSON()
-        var arrStr = encodeURIComponent(JSON.stringify(arr));
-        //pass the table array and the demand array to api and save the results
-        url = "http://127.0.0.1:8801/api/model_demand?"+"arr="+arrStr+"&"+"demand="+demandArrStr
-        var initAjax = function (){
-            var customAjaxResponse = $.ajax({
-                                             type: 'GET',
-                                             url: url,
-                                             beforeSend: function (xhr) {
-                                                            alertify.notify("Running demand ..... ", 'warning', 5)
-                                                            $('#modal-top1').modal('show')
-                                                                         }
-                                             }).done(function (jsondata) {
-                                                            alertify.notify("Demand Deployed OK", 'success', 5)
-                                                            $('#modal-top1').modal('toggle')
-                                             }).error(function (jqXHR, exception) {
-                                                            alertify.notify("Error Demand not deployed...not sure why but it's you!!! ", 'error', 15)
-                                                            $('#modal-top1').modal('toggle')
-        
-                                            });
-            return customAjaxResponse.promise();
+        //get netflow demands 
+        var demandarr = {{netflow_demands|tojson}}
+        if ($('#netflow_demands').is(':checked') )
+          { 
+          var source = document.getElementById("source").value
+          var target = document.getElementById("target").value
+          var demand = document.getElementById("demand").value * 1000000
+          demandarr.push({'source':source,'target':target,'demand':demand})
+          console.log("click and checked")
+          demand_deploy_inside(demandarr)
           }
-       var model_results = initAjax();
-       model_results.then( function( response ){
-                                             $('#table').bootstrapTable("load", response);
-                                             // bring modal up
-                                             $('#modal-top').modal('toggle')
-                                             //display topology
-                                             createresult()
-        });
+        else
+          { 
+          demandarr =[]
+          var source = document.getElementById("source").value
+          var target = document.getElementById("target").value
+          var demand = document.getElementById("demand").value * 1000000
+          demandarr.push({'source':source,'target':target,'demand':demand})
+          console.log("click but not if") 
+          demand_deploy_inside(demandarr)
+          }
 
-
-
-
-
-
-
-   }
+        //var demandarr = {{netflow_demands|tojson}}
+        //console.log(demandarr)
+        //get form input and create and array , need a better way here
+        //var source = document.getElementById("source").value
+        //var target = document.getElementById("target").value
+        //var demand = document.getElementById("demand").value * 1000000
+        //demandarr.push({'source':source,'target':target,'demand':demand})
+        //console.log(demandarr)
+        function demand_deploy_inside(demandarr){
+            console.log(demandarr)
+            var demandArrStr = encodeURIComponent(JSON.stringify(demandarr));
+            //console.log(demandArrStr)
+            // create an array with values from table ( as it might been updated (ie: change isis metric) )
+            var jsonTable = new JSONTable($("#table"))
+            var arr= jsonTable.toJSON()
+            var arrStr = encodeURIComponent(JSON.stringify(arr));
+            //pass the table array and the demand array to api and save the results
+            url = "http://127.0.0.1:8801/api/model_demand?"+"arr="+arrStr+"&"+"demand="+demandArrStr
+            var initAjax = function (){
+                var customAjaxResponse = $.ajax({
+                                                 type: 'GET',
+                                                 url: url,
+                                                 beforeSend: function (xhr) {
+                                                                alertify.notify("Running demand ..... ", 'warning', 5)
+                                                                $('#modal-top1').modal('show')
+                                                                             }
+                                                 }).done(function (jsondata) {
+                                                                alertify.notify("Demand Deployed OK", 'success', 5)
+                                                                $('#modal-top1').modal('toggle')
+                                                 }).error(function (jqXHR, exception) {
+                                                                alertify.notify("Error Demand not deployed...not sure why but it's you!!! ", 'error', 15)
+                                                                $('#modal-top1').modal('toggle')
+            
+                                                });
+                return customAjaxResponse.promise();
+              }
+           var model_results = initAjax();
+           model_results.then(function( response ){
+                                                 $('#table').bootstrapTable("load", response);
+                                                 // bring modal up
+                                                 $('#modal-top').modal('toggle')
+                                                 //display topology
+                                                 createresult()
+            })
+        }
+}
    function createresult() {
         $('#table').bootstrapTable('resetSearch', '');
    	alertify.notify("Model Run",'success',5)

@@ -34,7 +34,7 @@ def model_demand_get(df_links,demand):
     # drop util from initial df_links , needed for proper merge
     df_links = df_links.drop(['util'], axis=1)
     df_final1 = pd.merge(df_links,df_final,  how='left',on=['index','l_ip','r_ip','metric'])
-    df_final1 = df_final1.fillna(-1)
+    df_final1 = df_final1.fillna(0)
     #print "--vs initial"
     #print df_final1
     return df_final1
