@@ -4,6 +4,7 @@ from objects.models import Routers,Links,Links_latency
 from database import db
 from collections import Counter,OrderedDict
 import pandas as pd
+from get_demand_netflow import *
 
 blueprint = Blueprint(
     'data_blueprint', 
@@ -80,8 +81,8 @@ def model_isis_links():
 @blueprint.route('/model_demand', methods=['GET', 'POST'])
 @login_required
 def model_demand():
-    #netflow_demands =[{}]
-    netflow_demands = [ {'source':'gb-p10-lon','target':'fr-p7-mrs','demand':1000000000} ]
+    netflow_demands = get_demand_netflow()
+    #netflow_demands = [ {'source':'gb-p10-lon','target':'fr-p7-mrs','demand':1000000000} ]
     df = pd.read_sql(db.session.query(Links).filter(Links.index >=0).statement,db.session.bind)
     df['util'] = 0
     isis_links = df.to_dict(orient='records')
