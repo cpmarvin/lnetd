@@ -55,6 +55,7 @@ def model_demand():
     demand_request = request.args['demand']
     print "------------------------------: %s" %demand_request
     arr = request.args['arr']
+    #print "array {}".format(arr)
     df_links = pd.DataFrame(eval(arr))
     #print df_links
     results = model_demand_get(df_links,demand_request)
