@@ -51,6 +51,44 @@
   </div>
 </div>
 
+<!-- Netflow modal Modal -->
+<div class="modal fade" id="netflow_modal" tabindex="-1" role="dialog" aria-labelledby="netflow_modal" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="netflow_demand_title">Netflow Demands</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+              <table id="datatable" class="table table-striped table-bordered">
+                <thead>
+                  <tr>
+                    <th>Source</th>
+                    <th>Target</th>
+                    <th>Demand</th>
+                  </tr>
+                </thead>
+                <tbody>
+                 {% for node in netflow_demands %}
+                  <tr>
+                    <td>{{node.source}}</td>
+                    <td>{{node.target}}</td>
+                    <td>{{node.demand}}</td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End netflow modal -->
+
       <!-- Modal used for topology-->
         <div class="modal fade" id="modal-top" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered modal-lg " role="document">
@@ -104,7 +142,9 @@
                      <input type="checkbox" id="netflow_demands" value="">Use Netflow Demands as well
                   </label>
                 <span class="input-group-btn">
-                  <button class="btn btn-primary btn-warning btn-sm" type="submit" name="deploy">Reset Demand</button>
+                  <button type="button" class="btn btn-primary btn-warning btn-sm" data-toggle="modal" data-target="#netflow_modal">
+                  Show existing Netflow Demands</button>
+                  <button class="btn btn-primary btn-warning btn-sm" type="submit" name="deploy">Reset all Deployed Demands</button>
                 </span>
               </div>
             </form>
