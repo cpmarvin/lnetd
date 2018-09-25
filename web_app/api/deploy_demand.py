@@ -1,4 +1,3 @@
-
 import networkx as nx
 import pandas as pd
 
@@ -20,7 +19,6 @@ def deploy_demand(arr,source,target,demand):
         #print "-------paths:%s" %paths
         num_ecmp_paths = len(paths)
         demand_path = demand / int(len(paths))
-        ecmp_links = 0
         #print "number of paths: %s" %num_ecmp_paths
         #print "demand per path is : %s " %demand_path
         #print "this are the paths: %s" %paths
@@ -45,19 +43,21 @@ def deploy_demand(arr,source,target,demand):
                     #if we need to take into account deployed/existing path
                     g[u][v][k]['util'] += int(demand_path)/int(num_ecmp_links)
                     print "test: %s" %g[u][v][k]
-                    d3js_links.append(g[u][v][k])
+                    #d3js_links.append(g[u][v][k])
                 #print "----end for this path list after for d in values :\n %s" %d3js_links
                 u=v
         #print "resulting list : \n%s" %d3js_links
-        df_demand = pd.DataFrame(d3js_links)
+        #df_demand = pd.DataFrame(d3js_links)
         #print "initial panda \n %s " %df
         #print "resulting panda with demand \n %s" %df_demand
         #print "merge pandas on l_ip\n"
         #df_merge = pd.merge(df,df_demand)
         #print "resulting panda \n%s" %df_merge
-        print "df_demand in try: %s" %df_demand
-        return df_demand
-    except:
-        print "Error in deploy_demand.py "
+        #print "df_demand in try: %s" %df_demand
+        #return df_demand
+        df_reverse = nx.to_pandas_edgelist(g)
+        return df_reverse
+    except Exception as error:
+        print "Error in deploy_demand.py:%s " %error
         df_demand = pd.DataFrame()
         return df_demand
