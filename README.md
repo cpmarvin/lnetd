@@ -69,3 +69,5 @@ LnetD expect the db to be in /opt/lnetd/web_app/database.db while the web app ge
 def model_demand():
     netflow_demands = get_demand_netflow()
 ```
+
+To deploy traffic goto webapp > Data Presentation > What if Demand > make sure "Use Netflow Demands as well" is checked and click Deploy Demand. You can also deploy without Netflow using the input box for source/target/demand.
