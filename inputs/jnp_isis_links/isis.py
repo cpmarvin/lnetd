@@ -1,5 +1,5 @@
 """
-Pythonifier for BGP Table/View
+Pythonifier for ISIS Table/View
 """
 from jnpr.junos.factory import loadyaml
 from os.path import splitext

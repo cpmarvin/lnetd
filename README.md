@@ -11,13 +11,13 @@ pip install -r requirements.txt
 
 - change webserver if not run local
 ```
-lab@cpe:/opt/lnetd$ grep -R "<change-me>" *
-web_app/data/templates/model_demand.html:        url = "http://<change-me>:8801/api/model_demand?"+"arr="+arrStr+"&"+"demand="+demandArrStr
-web_app/base/static/custom/topology/model_demand.js:    url = "http://<change-me>:8801/api/model_demand?"+"arr="+arrStr+"&"+"source="+source+"&"+"target="+target
-web_app/base/static/custom/topology/create_graph.js:    var url = "http://<change-me>:8801/api/ifName?"+"ip="+interface+"&"+"host="+source
-web_app/base/static/custom/topology/create_graph.js:    var rawDataURL = "http://<change-me>:8801/api/graph_ifindex?"+"ip="+interface+"&"+"host="+source
-web_app/base/static/custom/topology/getSPF.js:  url = "http://<change-me>:8801/api/spf?"+"arr="+arrStr+"&"+"source="+source+"&"+"target="+target
-web_app/base/static/custom/topology/getSPF_latency.js:        url = "http://<change-me>:8801/api/spf_and_latency?"+"arr="+arrStr+"&"+"source="+source+"&"+"target="+target
+lab@cpe:/opt/lnetd/web_app$ grep -R ":8801" *           
+base/static/custom/topology/create_graph.js:    var url = "http://127.0.0.1:8801/api/ifName?"+"ip="+interface+"&"+"host="+source
+base/static/custom/topology/create_graph.js:    var rawDataURL = "http://127.0.0.1:8801/api/graph_ifindex?"+"ip="+interface+"&"+"host="+source
+base/static/custom/topology/getSPF.js:  url = "http://127.0.0.1:8801/api/spf?"+"arr="+arrStr+"&"+"source="+source+"&"+"target="+target
+base/static/custom/topology/getSPF_latency.js:        url = "http://127.0.0.1:8801/api/spf_and_latency?"+"arr="+arrStr+"&"+"source="+source+"&"+"target="+target
+data/templates/model_demand.html:            url = "http://127.0.0.1:8801/api/model_demand?"+"arr="+arrStr+"&"+"demand="+demandArrStr
+
 ``` 
 - run **/opt/lnetd/web_app**.
 ```

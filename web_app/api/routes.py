@@ -24,7 +24,6 @@ blueprint = Blueprint(
 def ifName():
     ip = request.args['ip']
     host = request.args['host']
-    #print "interface: %s , host : %s " %(ip,host)
     results = get_interface_ifName(host,ip)
     return results
 
@@ -33,7 +32,6 @@ def ifName():
 def graph():
     ip = request.args['ip']
     host = request.args['host']
-    #print "interface: %s , host : %s " %(ip,host)
     results = get_graph_ifindex(host,ip)
     return results
 
@@ -44,20 +42,14 @@ def spf():
     target = request.args['target']
     arr = request.args['arr']
     results = calculateSpf(arr,source,target)
-    #print "results: %s" %jsonify(results)
     return jsonify(results)
 
 @blueprint.route('/model_demand')
 @login_required
 def model_demand():
-    #source = request.args['source']
-    #target = request.args['target']
     demand_request = request.args['demand']
-    print "------------------------------: %s" %demand_request
     arr = request.args['arr']
-    #print "array {}".format(arr)
     df_links = pd.DataFrame(eval(arr))
-    #print df_links
     results = model_demand_get(df_links,demand_request)
     results_final = results.to_dict(orient='records')
     print "results: %s" %jsonify(results_final)
@@ -69,7 +61,6 @@ def spf_and_latency():
     source = request.args['source']
     target = request.args['target']
     arr = request.args['arr']
-    #print "array -----------: %s" %arr
     results = calculateSpf_latency(arr,source,target)
     print "results: %s" %jsonify(results)
     return jsonify(results)

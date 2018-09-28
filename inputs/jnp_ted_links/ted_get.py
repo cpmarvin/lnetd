@@ -8,6 +8,11 @@ from snmp_get import *
 from get_hostname import get_hostname
 from sqlalchemy import create_engine
 
+import sys
+sys.path.append('../utils/')
+
+from lnetd_log import get_module_logger
+
 devices = {'juniper.lab': '10.5.5.5'}
 for name in devices:
 

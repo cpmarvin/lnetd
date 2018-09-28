@@ -1,44 +1,40 @@
 import pandas as pd
 import re
 from get_output import get_output
-from snmp_get import *
 import random
 
+import sys
+sys.path.append('../utils/')
+
+from snmp_get import * 
+from lnetd_log import get_module_logger
+
+logger = get_module_logger(__name__,'DEBUG')
+
 def get_isis_db(router):
+    logger.info('Get isis databse from %s' %(router))
     output_list = get_output(router,'show isis database verbose')
     interface = {}
     line = -1
-    #print output_list 
     for i in output_list.splitlines():
         i = i.strip(' ')
-        #print i
+        logger.debug('Line is : %s' %i)
         if re.match("^Hostname:",i):
-            #line = line +1
-            #print "----------------------"
-            #print "Hostname line : %s" %i
             hostname = i
-            #interface[line] = i.strip().split(':')
-            #line = line + 1
+            logger.debug('hostanme is : %s' %hostname)
         elif re.match("^(Metric:)(?=.*[A-Z])(?=.*\w+[.]\d{2}$)",i):
-            #print "---new line"
             line = line + 1
             interface[line] = hostname.strip().encode('ascii','ignore').split(':')
-            #print "Match neigh line:  %s" %i
             i = i.split(':')[1].replace('IS-Extended','')
             i = " ".join(i.split())
             metric = i.encode('ascii','ignore').split(' ')[0]
-            #print "metric : %s" %metric
             neigh = i.encode('ascii','ignore').split(' ')[1]
-            #print "neigh : %s" %neigh
             interface[line].append(metric.encode('ascii','ignore'))
             interface[line].append(neigh.encode('ascii','ignore'))
-            #line = line +1
+            logger.debug('Metric %s Neighbor %s' %(metric,neigh))
         elif re.match("^Interface IP Address:|^Neighbor IP Address:",i):
-            #print "interface and Neight lines: %s" %i
             interface[line].append(i.split(':')[1])
-            #print interface[line]
-    #return interface
-    #print interface
+            logger.debug('l_ip or r_ip' %(i))
     df = pd.DataFrame(interface.values())
     df = df.dropna()
     df = df[[1,2,3,4,5]]
@@ -47,7 +43,6 @@ def get_isis_db(router):
     df.columns = ['source', 'metric', 'target', 'l_ip','r_ip','l_int','r_int']
     df['target'] = df['target'].str.replace('.00','')
     return df  
-
 
 df4 = get_isis_db('gb-pe11-lon')
 df4 = df4.reset_index()
