@@ -1,10 +1,11 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request ,session 
 from flask_login import login_required
-from objects.models import Routers,Links,Links_latency
+from objects.models import Routers,Links,Links_latency,Node_position
 from database import db
 from collections import Counter,OrderedDict
 import pandas as pd
 from get_demand_netflow import *
+import json 
 
 blueprint = Blueprint(
     'data_blueprint', 
@@ -25,41 +26,56 @@ def isp_pops():
 @blueprint.route('/topology')
 @login_required
 def topology():
+    current_user = session['user_id']
+    node_position = pd.read_sql(db.session.query(Node_position).filter(Node_position.user == current_user ).statement,db.session.bind)
+    #print 'node_position ------: {}'.format(node_position)
+    node_position = node_position.to_dict(orient='records')
     df = pd.read_sql(db.session.query(Links).filter(Links.index >=0).statement,db.session.bind)
     isis_links = df.to_dict(orient='records')
-    #print isis_links 
-    return render_template('topology.html', values=isis_links)
+    return render_template('topology.html', values=isis_links, node_position=node_position)
 
 @blueprint.route('/topology_errors')
 @login_required
 def topology_errors():
+    current_user = str(session['user_id'])
+    node_position = pd.read_sql(db.session.query(Node_position).filter(Node_position.user == current_user).statement,db.session.bind)
+    node_position = node_position.to_dict(orient='records')
     df = pd.read_sql(db.session.query(Links).filter(Links.index >=0).statement,db.session.bind)
     isis_links = df.to_dict(orient='records')
     #print isis_links
-    return render_template('topology_errors.html', values=isis_links)
+    return render_template('topology_errors.html', values=isis_links, node_position=node_position)
 
 @blueprint.route('/topology_latency')
 @login_required
 def topology_latency():
+    current_user = session['user_id']
+    node_position = pd.read_sql(db.session.query(Node_position).filter(Node_position.user == current_user).statement,db.session.bind)
+    node_position = node_position.to_dict(orient='records')
     df = pd.read_sql(db.session.query(Links_latency).filter(Links_latency.index >=0).statement,db.session.bind)
     isis_links = df.to_dict(orient='records')
     #print isis_links
-    return render_template('topology_latency.html', values=isis_links)
+    return render_template('topology_latency.html', values=isis_links, node_position=node_position)
 
 @blueprint.route('/filter_topology',methods=['GET', 'POST'])
 @login_required
 def filter_topology():
+    current_user = session['user_id']
+    node_position = pd.read_sql(db.session.query(Node_position).filter(Node_position.user == current_user).statement,db.session.bind)
+    node_position = node_position.to_dict(orient='records')
     source_filter = request.form.get('source_filter')
     target_filter = request.form.get('source_filter')
     #print source_filter
     df = pd.read_sql(db.session.query(Links).filter(Links.index >=0).statement,db.session.bind)
     isis_links = df.to_dict(orient='records')
-    return render_template('filter_topology.html',values=isis_links,source_filter = source_filter,target_filter=target_filter)
+    return render_template('filter_topology.html',values=isis_links,source_filter = source_filter,target_filter=target_filter, node_position=node_position)
 
 
 @blueprint.route('/model_isis_links', methods=['GET', 'POST'])
 @login_required
 def model_isis_links():
+    current_user = session['user_id']
+    node_position = pd.read_sql(db.session.query(Node_position).filter(Node_position.user == current_user).statement,db.session.bind)
+    node_position = node_position.to_dict(orient='records')
     df = pd.read_sql(db.session.query(Links).filter(Links.index >=0).statement,db.session.bind)
     isis_links = df.to_dict(orient='records')
     print isis_links
@@ -76,11 +92,15 @@ def model_isis_links():
             { "field": "util","title":"util","sortable":False},
             { "field": "capacity","title":"capacity","sortable":False}
             ]
-    return render_template('model_isis_links.html',values=isis_links,columns=columns)
+    return render_template('model_isis_links.html',values=isis_links,columns=columns,node_position=node_position)
 
 @blueprint.route('/model_demand', methods=['GET', 'POST'])
 @login_required
 def model_demand():
+    current_user = session['user_id']
+    node_position = pd.read_sql(db.session.query(Node_position).filter(Node_position.user == current_user).statement,db.session.bind)
+    node_position = node_position.to_dict(orient='records')
+    print 'node position ---------: {}'.format(node_position)
     netflow_demands = get_demand_netflow()
     #netflow_demands = [ {'source':'gb-p10-lon','target':'fr-p7-mrs','demand':1000000000} ]
     df = pd.read_sql(db.session.query(Links).filter(Links.index >=0).statement,db.session.bind)
@@ -102,5 +122,6 @@ def model_demand():
             { "field": "util","title":"util","sortable":False},
             { "field": "capacity","title":"capacity","sortable":False}
             ]
-    return render_template('model_demand.html',values=isis_links,columns=columns,router_name=router_name,netflow_demands=netflow_demands)
+    return render_template('model_demand.html',values=isis_links,columns=columns,router_name=router_name,netflow_demands=netflow_demands,
+                           node_position=node_position)
 

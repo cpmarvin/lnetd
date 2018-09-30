@@ -207,7 +207,6 @@
   <script src="{{ url_for('static', filename='custom/topology/create_graph.js') }}"></script>
   <script src="{{ url_for('static', filename='custom/topology/getSPF.js') }}"></script>
   <script src="{{ url_for('static', filename='custom/topology/jsontables.js') }}"></script>
-  <script src="{{ url_for('static', filename='custom/topology/position.js') }}"></script>
   <!-- Bootsrap table -->
   <script src="{{ url_for('static', filename='vendors/bootstrap-table/bootstrap-table.js') }}"></script>
   <!-- Bootstrap editable extension -->
@@ -234,6 +233,9 @@
   <script src="https://gitcdn.link/repo/xcash/bootstrap-autocomplete/master/dist/latest/bootstrap-autocomplete.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/corejs-typeahead/1.2.1/typeahead.bundle.js"></script>
 <script>
+   //node position
+   var node_position = {{node_position|tojson|safe}}
+   console.log(node_position)
    //autocomplete 
    var router_name = {{router_name|tojson}}
    var router_name = new Bloodhound({
@@ -460,8 +462,8 @@
 						]
 			util = d.util
 
-			if (util == -1 ) {
-				util = -1
+			if (util == 0 ) {
+				util = "blue"
 			}
 			else {
 				var cur_util = util
@@ -491,9 +493,9 @@
 			//result is none at first 
 			result = 'none'
 			//read from position.js 
-			node_postion.forEach(function (d) {
+			node_position.forEach(function (d) {
 				//iterate array
-				if (source === d.id ) {	result = d.x }})
+				if (source === d.id ) {	result = parseInt(d.x) }})
 				//if forgot to define site name random x 
 				if ( result === 'none') { result = Math.floor(1 + Math.random()*(900 + 1 - 1 ))}
 			return result
@@ -502,8 +504,8 @@
 		//need a better way to do this , repeating function is lame 
 		function returnY (source) {
 			result = 'none'
-			node_postion.forEach(function (d) {
-				if (source == d.id ) {	result = d.y }})
+			node_position.forEach(function (d) {
+				if (source == d.id ) {	result = parseInt(d.y) }})
 			    if ( result === 'none') { result = Math.floor(1 + Math.random()*(900 + 1 - 1 ))}
 			return result
 		}

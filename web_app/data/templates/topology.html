@@ -4,6 +4,11 @@
 
 {% block stylesheets %}
   {{ super() }}
+  <!-- bootsrap table -->
+  <!--alertify -->
+  <link href="{{ url_for('static', filename='vendors/alertifyjs/css/themes/bootstrap.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendors/alertifyjs/css/alertify.css') }}" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js-bootstrap-css/1.2.1/typeaheadjs.min.css" rel="stylesheet">
 {% endblock stylesheets %}
 
 {% block content %}
@@ -61,7 +66,7 @@
 					<div class="col-md-12 col-sm-12 col-xs-12">
 						<div class="x_panel">
 							<div class="x_title">
-								<h3>Topology</h3>
+								<h3>Topology <button onclick="javascript:node_position_save();" class="btn btn-info">Save Layout</button> </h3>
 								<div class="x_content">
 									<!-- Div for d3js topology -->
 									<div id="topology" style="width:100%; height:1120px;">
@@ -96,11 +101,32 @@
 <script src="{{ url_for('static', filename='vendors/plotly/plotly-latest.min.js') }}"></script>
 <script src="{{ url_for('static', filename='custom/topology/create_graph.js') }}"></script>
 <script src="{{ url_for('static', filename='custom/topology/getSPF.js') }}"></script>
-<script src="{{ url_for('static', filename='custom/topology/position.js') }}"></script>
 <script src="{{ url_for('static', filename='custom/topology/create_legend.js') }}"></script>
+<script src="{{ url_for('static', filename='vendors/alertifyjs/alertify.min.js') }}"></script>
+
 <script>
+        var node_position = {{node_position | tojson | safe}}
 	var grapheDatas = JSON.parse('{{ values | tojson | safe}}');
 	var grapheDatas1 = grapheDatas
+
+//save node position
+function node_position_save(){
+	node_postion_save =[]
+	d3.selectAll(".link").data().forEach( function (d) { var entry = {'id':d.source.name,'x':d.source.x,'y':d.source.y} ; node_postion_save.push(entry) })
+	var demandArrStr = encodeURIComponent(JSON.stringify(node_postion_save));
+	url = "http://127.0.0.1:8801/api/save_node_position?"+"arr="+demandArrStr
+
+
+	var saveData = $.ajax({
+	      type: 'POST',
+	      url: url,
+	      dataType: "text",
+	      success: function(resultData) { alertify.notify("Node Position Saved ", 'success', 5) }
+	});
+	saveData.error(function() { alertify.notify("Something went wrong",'error',5); });
+}
+
+
 	$(document).ready(function() {
 		updateData()
 		create_legend('traffic') 
@@ -230,25 +256,23 @@
 		var height = 1001;
 		var color = d3.scale.category20();
 
-
-		
 		function returnX (source) {
 			//result is none at first 
 			result = 'none'
 			//read from position.js 
-			node_postion.forEach(function (d) {
+			node_position.forEach(function (d) {
 				//iterate array
-				if (source === d.id ) {	result = d.x }})
+				if (source == d.id ) {	result = parseInt(d.x) }})
 				//if forgot to define site name random x 
-				if ( result === 'none') { result = Math.floor(1 + Math.random()*(900 + 1 - 1 ))}
+				if ( result == 'none') { result = Math.floor(1 + Math.random()*(900 + 1 - 1 ))}
 			return result
 		}
 
 		//need a better way to do this , repeating function is lame 
 		function returnY (source) {
 			result = 'none'
-			node_postion.forEach(function (d) {
-				if (source == d.id ) {	result = d.y }})
+			node_position.forEach(function (d) {
+				if (source == d.id ) {	result = parseInt(d.y) }})
 			    if ( result === 'none') { result = Math.floor(1 + Math.random()*(900 + 1 - 1 ))}
 			return result
 		}
