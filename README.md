@@ -30,13 +30,13 @@ To use your own information you need to run all the isis_get.py from inputs dire
 
 For ISIS:
 ```
-cd /opt/lnetd/inputs/isis_links
+cd /opt/lnetd/inputs/jnp_isis_links
 python2 isis_get.py
 ```
 
 For OSPF via Ted database:
 ```
-cd /opt/lnetd/inputs/ted_links
+cd /opt/lnetd/inputs/jnp_ted_links
 python2 ted_get.py
 ```
 
@@ -61,7 +61,7 @@ cd to pmacct/sbin directory and run
 ./nfacctd -f /opt/lnetd/pmacct/etc/netflow.conf
 ```
 
-LnetD expect the db to be in /opt/lnetd/web_app/database.db while the web app gets the netflow demand using get_demand_netflow() in /opt/lnetd/webapp/data/ 
+LnetD expect the db to be in /opt/lnetd/web_app/database.db and pmacct.db while the web app gets the netflow demand using get_demand_netflow() in /opt/lnetd/webapp/data/ 
 
 ```
 @blueprint.route('/model_demand', methods=['GET', 'POST'])

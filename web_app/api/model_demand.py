@@ -2,10 +2,12 @@ import sqlite3
 import pandas as pd
 from sqlalchemy import create_engine
 from deploy_demand import deploy_demand
-
+import logging
 
 def model_demand_get(df_links,demand):
     demand = eval(demand)
+    #print df_links
+    #print demand
     df_all_demands = pd.DataFrame()
     for entry in demand:
         df_entry = deploy_demand(df_links,entry['source'],entry['target'],entry['demand'])

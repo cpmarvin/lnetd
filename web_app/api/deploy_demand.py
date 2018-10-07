@@ -20,7 +20,7 @@ def deploy_demand(arr,source,target,demand):
                 values_g=(g[u][v].values())
                 items_g=g[u][v].items()
                 keys = [k for k, d in g[u][v].items() if d['metric'] == min_weight]
-                print "keys: %s" %keys
+                print "------------------keys: %s" %keys
                 num_ecmp_links = len(keys)
                 for k in keys:
                     g[u][v][k]['util'] += int(demand_path)/int(num_ecmp_links)

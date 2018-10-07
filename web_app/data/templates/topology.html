@@ -69,7 +69,7 @@
 								<h3>Topology <button onclick="javascript:node_position_save();" class="btn btn-info">Save Layout</button> </h3>
 								<div class="x_content">
 									<!-- Div for d3js topology -->
-									<div id="topology" style="width:100%; height:1120px;">
+									<div id="topology" style="width:100%; height:100%;">
 										<!-- Div for legend -->
 										<div class="x_content" id="legend_div"></div>
 										<!-- SPF div and checkbox !-->
@@ -227,7 +227,7 @@ function node_position_save(){
 							{'id':'yellow','low':30,'high':50},
 							{'id':'orange','low':50,'high':70},
 							{'id':'red','low':70,'high':100},
-							{'id':'pink','low':100,'high':1050}
+							{'id':'fuchsia','low':100,'high':9991050}
 						]
 			util = d.util
 
@@ -250,8 +250,10 @@ function node_position_save(){
 			return util
 		}
 
-		var height = document.getElementById('topology').clientHeight 
-		var width = document.getElementById('topology').clientWidth
+		//var height = document.getElementById('topology').clientHeight 
+		//var width = document.getElementById('topology').clientWidth
+                //var height = document.getElementsByClassName('main_container').clientHeight
+                //var width = document.getElementsByClassName('main_container').clientWidth
 		var width = 1900 ;
 		var height = 1001;
 		var color = d3.scale.category20();

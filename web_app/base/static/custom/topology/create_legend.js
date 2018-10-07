@@ -7,7 +7,8 @@ function create_legend(type) {
 			{'value':'1%-30%','color':'green','y':'30','x':'270'},
 			{'value':'30%-50%','color':'yellow','y':'30','x':'350'},
 			{'value':'50%-70%','color':'orange','y':'30','x':'440'},
-			{'value':'70%-100%','color':'red','y':'30','x':'530'}
+			{'value':'70%-100%','color':'red','y':'30','x':'530'},
+			{'value':'>100%','color':'fuchsia','y':'30','x':'630'}
 				]
         		}
         else if (type == 'latency') {

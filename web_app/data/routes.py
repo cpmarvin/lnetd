@@ -70,37 +70,13 @@ def filter_topology():
     return render_template('filter_topology.html',values=isis_links,source_filter = source_filter,target_filter=target_filter, node_position=node_position)
 
 
-@blueprint.route('/model_isis_links', methods=['GET', 'POST'])
-@login_required
-def model_isis_links():
-    current_user = session['user_id']
-    node_position = pd.read_sql(db.session.query(Node_position).filter(Node_position.user == current_user).statement,db.session.bind)
-    node_position = node_position.to_dict(orient='records')
-    df = pd.read_sql(db.session.query(Links).filter(Links.index >=0).statement,db.session.bind)
-    isis_links = df.to_dict(orient='records')
-    print isis_links
-    columns = [
-            { "field": "index","title":"index","sortable":False},
-            { "field": "source","title":"source","sortable":True},
-            { "field": "target","title":"target","sortable":False},
-            { "field": "l_ip","title":"l_ip","sortable":False},
-            { "field": "metric","title":"metric","sortable":False,"editable":True},
-            { "field": "l_int","title":"l_int","sortable":False},
-            { "field": "r_ip","title":"r_ip","sortable":False},
-            { "field": "r_int","title":"r_int","sortable":False},
-            { "field": "l_ip_r_ip","title":"l_ip_r_ip","sortable":False},
-            { "field": "util","title":"util","sortable":False},
-            { "field": "capacity","title":"capacity","sortable":False}
-            ]
-    return render_template('model_isis_links.html',values=isis_links,columns=columns,node_position=node_position)
-
 @blueprint.route('/model_demand', methods=['GET', 'POST'])
 @login_required
 def model_demand():
     current_user = session['user_id']
     node_position = pd.read_sql(db.session.query(Node_position).filter(Node_position.user == current_user).statement,db.session.bind)
     node_position = node_position.to_dict(orient='records')
-    print 'node position ---------: {}'.format(node_position)
+    #print 'node position ---------: {}'.format(node_position)
     netflow_demands = get_demand_netflow()
     #netflow_demands = [ {'source':'gb-p10-lon','target':'fr-p7-mrs','demand':1000000000} ]
     df = pd.read_sql(db.session.query(Links).filter(Links.index >=0).statement,db.session.bind)
@@ -111,17 +87,48 @@ def model_demand():
     #print isis_links
     columns = [
             { "field": "index","title":"index","sortable":False},
-            { "field": "source","title":"source","sortable":True},
-            { "field": "target","title":"target","sortable":False},
-            { "field": "l_ip","title":"l_ip","sortable":False},
+            { "field": "source","title":"source","sortable":True,"editable":True},
+            { "field": "target","title":"target","sortable":False,"editable":True},
+            { "field": "l_ip","title":"l_ip","sortable":False,"editable":True},
             { "field": "metric","title":"metric","sortable":False,"editable":True},
             { "field": "l_int","title":"l_int","sortable":False},
-            { "field": "r_ip","title":"r_ip","sortable":False},
+            { "field": "r_ip","title":"r_ip","sortable":False,"editable":True},
             { "field": "r_int","title":"r_int","sortable":False},
             { "field": "l_ip_r_ip","title":"l_ip_r_ip","sortable":False},
-            { "field": "util","title":"util","sortable":False},
-            { "field": "capacity","title":"capacity","sortable":False}
+            { "field": "util","title":"util","sortable":False},  
+            { "field": "capacity","title":"capacity","sortable":False,"editable":True},
+            { "field": "Action","title":"Action","formatter":"TableActions"},
             ]
     return render_template('model_demand.html',values=isis_links,columns=columns,router_name=router_name,netflow_demands=netflow_demands,
                            node_position=node_position)
 
+@blueprint.route('/model_edit')
+@login_required
+def model_edit():
+    current_user = session['user_id']
+    node_position = pd.read_sql(db.session.query(Node_position).filter(Node_position.user == current_user).statement,db.session.bind)
+    node_position = node_position.to_dict(orient='records')
+    #print 'node position ---------: {}'.format(node_position)
+    netflow_demands = get_demand_netflow()
+    #netflow_demands = [ {'source':'gb-p10-lon','target':'fr-p7-mrs','demand':1000000000} ]
+    isis_links = {}
+    #df.to_dict(orient='records')
+    df_router_name = pd.read_sql(db.session.query(Links.source.distinct()).statement,db.session.bind)
+    router_name = df_router_name['anon_1'].values.tolist()
+    #print isis_links
+    columns = [
+            { "field": "index","title":"index","sortable":False},
+            { "field": "source","title":"source","sortable":True,"editable":True},
+            { "field": "target","title":"target","sortable":False,"editable":True},
+            { "field": "l_ip","title":"l_ip","sortable":False,"editable":True},
+            { "field": "metric","title":"metric","sortable":False,"editable":True},
+            { "field": "l_int","title":"l_int","sortable":False},
+            { "field": "r_ip","title":"r_ip","sortable":False,"editable":True},
+            { "field": "r_int","title":"r_int","sortable":False},
+            { "field": "l_ip_r_ip","title":"l_ip_r_ip","sortable":False},
+            { "field": "util","title":"util","sortable":False},  
+            { "field": "capacity","title":"capacity","sortable":False,"editable":True},
+	    { "field": "Action","title":"Action","formatter":"TableActions"},
+            ]
+    return render_template('model_edit.html',values=isis_links,columns=columns,router_name=router_name,netflow_demands=netflow_demands,
+                           node_position=node_position)  
