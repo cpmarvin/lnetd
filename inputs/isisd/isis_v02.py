@@ -426,7 +426,7 @@ def parseIsisLsp(msg_len, msg, verbose=1, level=0):
     fragment = lsp_id[2]
     print '\n Nodes List :{} \n'.format(nodes)
     print ('node_id: {} - pseudonode {} - fragment: {} - seq_no: {}' ).format(node_id,pseudonode,fragment,seq_no) 
-    if pseudonode == 3:
+    if pseudonode == 9999: #i care about pseudoneone now
       print "ignore"
     else:
       node = Node(node_id,pseudonode,fragment,seq_no,vfields)
@@ -478,13 +478,17 @@ def parseIsisCsn(msg_len, msg, verbose=0, level=0):
     print '\n------------IsisCSN----------\n'
     #print '\n Nodes List :{} \n'.format(nodes)
     for i in vfields[9][0]['V']:
+      lsp_id = b'%s' %str(i['ID'])
       node_id = hex2isisd(i['ID'])
       pseudonode = i['PN']
       fragment = i['NM']
       seq_no = i['SEQ_NO']
       checksum = i['CKSM']
       lifetime = i['LIFETIME']
-      if pseudonode == 3:
+      #print node_id
+      #print lsp_id
+      #print 'this is what i should be passing to the mkIpsnp: {} {} {} {}'.format(lifetime, lsp_id, seq_no, checksum)
+      if pseudonode == 9999: # need to remove this , i case about pseudone now
         print "ignore - pseudonode for DIS"
       else:
         #print '----node.seq_no: {} checksum: {} lifetime: {}'.format(seq_no,checksum,lifetime)
@@ -495,17 +499,19 @@ def parseIsisCsn(msg_len, msg, verbose=0, level=0):
             position = nodes.index(node)
             #print '----position of {} is {} position'.format(node,position)
             #print '----node.seq_no: {} checksum: {} lifetime: {} and node[position]seq_no:{}'.format(node.seq_no,checksum,lifetime,nodes[position].seq_no)
-            if (node.seq_no == 0 or checksum == 0 or lifetime ==0 or node.seq_no >= nodes[position].seq_no + 2): #this is not correct , need to find out the rfc...
+            if (node.seq_no == 0 or checksum == 0 or lifetime ==0 ): #this is not correct , need to find out the rfc...
               #print '--------found a seq_no or checksum or lifetime with 0...removing node'
               del nodes[position]
             else:
-              print '--------node seq_no or checksum or lifetime NOT 0...nothing to do here'
+              print '--------node seq_no or checksum or lifetime NOT 0...nothing to do here ...'
           else:
-            print 'node {} not in nodes ... nothing to do here'.format(node)
-            #print ' this is the nodes list'.format(nodes)
-        except:
-          print 'something went wrong'
+            print 'node {} not in nodes but lsp exists so please request via psnp'.format(node)
+            psnp = mkIpsnp( isis, 2, lifetime, i['ID'], seq_no, checksum) #lifetime, lsp_id, lsp_seq_no, cksm
+            sendMsgG(isis , psnp, verbose, level)
+        except Exception as e:
+          print 'something went wrong:{}'.format(e)
     print '\n------------END - IsisCSN----------\n'
+    #mkIpsnp( isis ,ln, lifetime, node_id,seq_no,checksum)
     return (pdu_len, src_id, start_lsp_id, end_lsp_id, vfields)
 
 #-------------------------------------------------------------------------------
@@ -1184,9 +1190,10 @@ class VLenFieldExc(Exception): pass
 #-------------------------------------------------------------------------------
 
 class Isis:
-
+    global mkIpsnp
+    global sendMsgG
     _eth_p_802_2 = socket.htons(0x0004)
-    _dev_str     = "eth0"
+    _dev_str     = None
 
     _version          = 1
     _version_proto_id = 1
@@ -1199,7 +1206,7 @@ class Isis:
     class Adj:
 
         def __init__(self, atype, rx_ish, tx_ish):
-
+            
             self._state  = STATES["INITIALISING"]
             self._type   = atype
             self._tx_ish = tx_ish
@@ -1247,11 +1254,15 @@ class Isis:
 
     def __init__(self, dev, area_addr, src_id=None, lan_id=None, src_ip=None):
 
-        self._sock = socket.socket(socket.AF_PACKET, socket.SOCK_RAW,
+        self._sock = socket.socket(socket.PF_PACKET, socket.SOCK_RAW,
                                    Isis._eth_p_802_2)
         self._sockaddr = (dev, 0x0000)
         self._sock.bind(self._sockaddr)
         self._sockname = self._sock.getsockname()
+
+        #print type(self._sock)
+        print 'looking for isis pak'
+        self._sock.recvfrom(1)
 
         # XXX HACK: want to query _sock for IP addr; can't figure out
         # how at the moment
@@ -1341,10 +1352,39 @@ class Isis:
             print "         dsap: %#0.2x, ssap: %#0.2x, ctl: %#0.2x" %\
                   (dsap, ssap, ctrl)
         #print '--------- what are we sending now ----------\n'
-        verbose = 0
+        #verbose = 0
         if verbose > 0:
             parseIsisMsg(len(pkt), pkt, verbose, level)
-        verbose = 0
+        #verbose = 0
+        if len(pkt) <= MAC_PKT_LEN:
+            self._sock.send(pkt)
+    def sendMsgG(self, pkt, verbose=0, level=0):
+
+        (src_mac, dst_mac, length, dsap, ssap, ctrl) = parseMacHdr(pkt)
+        (nlpid, hdr_len, ver_proto_id, resvd,
+         msg_type, ver, eco, user_eco) = parseIsisHdr(pkt)
+
+        if DUMP_MRTD == 1:
+            self._mrtd.writeIsisMsg(msg_type, len(pkt), pkt)
+
+        elif DUMP_MRTD == 2:
+            self._mrtd.writeIsis2Msg(msg_type, len(pkt), pkt)
+
+        if verbose > 2:
+            print "%ssendMsg: send: len=%d%s" %\
+                  (level*INDENT, len(pkt), prthex((level+1)*INDENT, pkt))
+
+        if verbose > 1:
+            print "%ssendMsg: src: %s\n         dst: %s" %\
+                  (level*INDENT, str2hex(src_mac), str2hex(dst_mac))
+            print "         len: %d" % (length, )
+            print "         dsap: %#0.2x, ssap: %#0.2x, ctl: %#0.2x" %\
+                  (dsap, ssap, ctrl)
+        #print '--------- what are we sending now ----------\n'
+        #verbose = 0
+        if verbose > 0:
+            parseIsisMsg(len(pkt), pkt, verbose, level)
+        #verbose = 0
         if len(pkt) <= MAC_PKT_LEN:
             self._sock.send(pkt)
 
@@ -1384,7 +1424,7 @@ class Isis:
                           ISIS_LLC_HDR[0], ISIS_LLC_HDR[1], ISIS_LLC_HDR[2])
         return hdr
 
-    def mkIsisHdr(self, msg_type, hdr_len):
+    def mkIsisHdr(self, msg_type, hdr_len): # this is for hello only , need another one for pnsp or do i , msg_type might help 
 
         nlpid = NLPIDS["ISIS"]
         ret   = struct.pack("8B", nlpid, hdr_len, Isis._version_proto_id,
@@ -1397,15 +1437,19 @@ class Isis:
                           circuit, src_id, holdtimer, pdu_len, prio, lan_id)
         return ret
 
-    def mkVLenField(self, ftype_str, flen, fval=None):
+    def mkIshHdrG(self, pdu_len, src_id):
 
+        ret = struct.pack(">H 6s B", pdu_len ,src_id,0) #B not sure why is needed ? 
+        return ret
+
+    def mkVLenField(self, ftype_str, flen, fval=None):
         ftype = VLEN_FIELDS[ftype_str]
         ret = struct.pack("2B", ftype, flen)
+        #print (prtbin(' ',ret))
         if   ftype == VLEN_FIELDS["AreaAddress"]:
             for i in range(len(fval)):
                 ret = ret +\
                       struct.pack("B %ds" % fval[i][0], fval[i][0], fval[i][1])
-
         elif ftype == VLEN_FIELDS["Padding"]:
             return padPkt(flen+2, "")
 
@@ -1421,6 +1465,12 @@ class Isis:
             for i in range(flen/6):
                 ret = ret + struct.pack("6s", fval[i])
 
+        elif ftype == VLEN_FIELDS["LSPEntries"]:
+            #create a psnp with lsp_entry 0 lifetime 0 checksum and 0 seq
+            ret = ret + struct.pack(">H", 0) #lifetime
+            ret = ret + struct.pack(">8s", fval)#lsp_id 8bytes
+            ret = ret + struct.pack(">L", 0)#seq_no
+            ret = ret + struct.pack(">H", 0)#chcksum
         else:
             raise VLenFieldExc
 
@@ -1463,6 +1513,34 @@ class Isis:
 
         return ish
 
+    def mkIpsnp(self, ln, lifetime, lsp_id, lsp_seq_no, cksm): # is this correct ? 
+
+        isns = []
+        if ln == 1:
+            dst_mac = AllL1ISs
+            for adj in self._adjs.keys():
+                if self._adjs[adj].has_key(1):
+                    isns.append(str2mac(adj))
+
+            msg_type = MSG_TYPES["L1PSN"] 
+
+        elif ln == 2:
+            dst_mac = AllL2ISs
+            for adj in self._adjs.keys():
+                if self._adjs[adj].has_key(2):
+                    isns.append(str2mac(adj))
+
+            msg_type = MSG_TYPES["L2PSN"] 
+
+        ish = self.mkMacHdr(dst_mac, self._src_mac) # make mac header 
+        ish = ish + self.mkIsisHdr(msg_type, ISIS_HDR_LEN + ISIS_PSN_HDR_LEN) # ISIS header
+        ish  = ish + self.mkIshHdrG(35,self._src_id) #make PSN header size to fit one lsp entry  
+
+        ish = ish + self.mkVLenField("LSPEntries", 16 , lsp_id )# pass lsp_id only as the rest will be zero
+        #add padding up to MAC_PKT_LEN
+        ish  = padPkt(MAC_PKT_LEN, ish)
+        return ish
+
     ############################################################################
 
     def processFsm(self, msg, verbose=0, level=0):
@@ -1483,14 +1561,10 @@ class Isis:
 
             k = msg_type - 14 # L1 or L2?
             if not self._adjs[smac].has_key(k):
-                # new adjacency
-                #print 'is this a new adj ? '
                 adj = Isis.Adj(k, msg, self.mkIsh(k, self._lan_id, Isis._holdtimer))
                 self._adjs[smac][k] = adj
 
             else:
-                # existing adjacency
-                #print 'is this existing adj ?'
                 adj = self._adjs[smac][k]
                 adj._state = STATES["UP"]
                 adj._rx_ish = msg
@@ -1513,7 +1587,7 @@ def run_it():
 
     #---------------------------------------------------------------------------
 
-    global VERBOSE, DUMP_MRTD
+    global VERBOSE, DUMP_MRTD , isis
 
     VERBOSE   = 0
     DUMP_MRTD = 0
@@ -1562,9 +1636,6 @@ def run_it():
 
         timeout = Isis._holdtimer
         while 1: # main loop
-            #for node in nodes:
-            #  out.append({'name': node.name,'neighbours': node.to_json() } )
-
             before  = time.time()
             rfds, _, _ = select.select([isis._sock], [], [], timeout)
             after   = time.time()
