@@ -7,10 +7,14 @@ import random
 import logging
 from sqlalchemy import create_engine 
 import sys
+import copy
 sys.path.append('../utils/')
 
 from snmp_get import * 
 from lnetd_log import get_module_logger
+
+config = ConfigParser.ConfigParser()
+config.read("./isisd.ini")
 
 logger = get_module_logger(__name__,'DEBUG')
 
@@ -38,7 +42,7 @@ def lnetd_data_sql_write(df):
     except Exception:
         logging.exception('Got error writing to sqlite3 db')
 def remove_unreachable_nodes(df,source,our_lsp_id):
-  """ get find if from source to destinatio there is a path
+  """ find if from source to destinatio there is a path
   create a subgraph with all the nodes that we have path's to
   return this as panda frame
   """
@@ -47,7 +51,6 @@ def remove_unreachable_nodes(df,source,our_lsp_id):
   g.remove_node(our_lsp_id)
   g = g.subgraph(lst)
   df = nx.to_pandas_edgelist(g)
-  #df.drop_duplicates()
   return df
 
 def get_hostname(sysid):
@@ -92,26 +95,34 @@ while 1:
     time.sleep(20)
     INDENT  = "    "
     new_list = []
-    new_nodes = nodes
+    #print 'new_list at begining',new_list
+    new_nodes = copy.deepcopy(nodes)
     new_nodes.sort()
-    print INDENT,'new_nodes:{}'.format(new_nodes)
+    #print new_nodes
+    #pprint(new_nodes[0].data)
+    #pprint(new_nodes[1].data)
+    #print INDENT,'new_nodes:{}'.format(new_nodes)
     while len(new_nodes) != 0:
         cur_node = new_nodes[0]
         #cur_node.data = {}
-        print INDENT*5,'before extend data this is the data in cur_node\n',cur_node.data
+        #print INDENT*2,'before extend data this is the data in cur_node\n'
+        #pprint(cur_node.data)
         for n in range(1, len(new_nodes)):
             if cur_node.name == new_nodes[n].name:
+                #print INDENT*3,'before extend data this is the data in new_nodes\n'
+                #pprint(new_nodes[n].data)
                 #print INDENT*3,'cur_node and next_node equal:',new_nodes[n].name
                 for key, value in new_nodes[n].data.iteritems():
                     cur_node.data.setdefault(key, []).extend(value)
         new_nodes = [value for value in new_nodes if value.name != cur_node.name]
         #print 'whats remaining in new_nodes {}'.format(new_nodes)
-        print INDENT*5,'\nafter this is the data in cur_node\n',cur_node.data
+        #print INDENT*2,'\nafter this is the data in cur_node\n'
+        #pprint(cur_node.data)
         new_list.append(cur_node)
 
     node_names = {}
     topology = []
-    print 'this is the list now: {}'.format(topology)
+    #print 'this is the list now: {}'.format(topology)
     for i in new_list:
         try:
             node_names.update({i.name:i.data[137][0]['V'][0]})
@@ -143,11 +154,11 @@ while 1:
             #print '-------'
         except:
             print 'something wrong in creating topology'
-    print 'final topology :\n',topology
+    #print 'final topology :\n',topology
     try:
         df = pd.DataFrame(topology)
-        df = df.drop_duplicates()
-        our_lsp_id = '000.503.300.110'
+        #df = df.drop_duplicates()
+        our_lsp_id = config.get('isisd', 'our_lsp') #'000.503.300.110'
         source = df.loc[df['target'] == our_lsp_id ].head(1).to_dict(orient='records')[0]['source']
         df = remove_unreachable_nodes(df,source,our_lsp_id)
         #print '\nthis is after:\n {}'.format(df)
@@ -156,3 +167,4 @@ while 1:
         lnetd_data_sql_write(df)
     except Exception as e:
         print 'something wrong in panda and spf: {}'.format(e)
+

@@ -85,6 +85,8 @@ import sys, getopt, socket, string, os.path, struct, time, select, math
 from mutils import *
 from isisdb import *
 from pprint import pprint
+from lnetd_utils import lnet_cnsp_parsing
+import ConfigParser
 #-------------------------------------------------------------------------------
 
 VERSION = "3.0"
@@ -201,6 +203,45 @@ for d in DLIST:
     for k in d.keys():
         d[ d[k] ] = k
 
+################################################################################
+def lnet_cnsp_parsing(vfields):
+  print '\n------------IsisCSN----------\n'    
+  for i in vfields[9][0]['V']:
+    lsp_id = b'%s' %str(i['ID'])
+    node_id = hex2isisd(i['ID'])
+    pseudonode = i['PN']
+    fragment = i['NM']
+    seq_no = i['SEQ_NO']
+    checksum = i['CKSM']
+    lifetime = i['LIFETIME']
+    #print node_id
+    #print lsp_id
+    #print 'this is what i should be passing to the mkIpsnp: {} {} {} {}'.format(lifetime, lsp_id, seq_no, checksum)
+    if pseudonode == 9999: # need to remove this , i case about pseudone now
+      print "ignore - pseudonode for DIS"
+    else:
+      #print '----node.seq_no: {} checksum: {} lifetime: {}'.format(seq_no,checksum,lifetime)
+      #print 'creating a dummy node class with no data'
+      node = Node(node_id,pseudonode,fragment,seq_no,{})
+      try:
+        if node in nodes:
+          position = nodes.index(node)
+          #print '----position of {} is {} position'.format(node,position)
+          #print '----node.seq_no: {} checksum: {} lifetime: {} and node[position]seq_no:{}'.format(node.seq_no,checksum,lifetime,nodes[position].seq_no)
+          if (node.seq_no == 0 or checksum == 0 or lifetime ==0 ): #this is not correct , need to find out the rfc...
+            #print '--------found a seq_no or checksum or lifetime with 0...removing node'
+            del nodes[position]
+          else:
+            print '--------node seq_no or checksum or lifetime NOT 0...nothing to do here ...'
+        else:
+          print 'node {} not in nodes but lsp exists so please request via psnp'.format(node)
+          psnp = mkIpsnp( isis, 2, i['ID'] ) #lifetime, lsp_id, lsp_seq_no, cksm
+          level = 0
+          verbose = 0
+          sendMsgG(isis , psnp, verbose, level)
+      except Exception as e:
+        print 'something went wrong:{}'.format(e)
+  print '\n------------END - IsisCSN----------\n'
 ################################################################################
 
 def padPkt(tgt_len, pkt):
@@ -475,6 +516,8 @@ def parseIsisCsn(msg_len, msg, verbose=0, level=0):
 
     vfields = parseVLenFieldsLnetD(msg[ISIS_CSN_HDR_LEN:], verbose, level)
     #print 'vfields in IsisCsn are : {}'.format(vfields)
+    lnet_cnsp_parsing(vfields)
+    '''
     print '\n------------IsisCSN----------\n'
     #print '\n Nodes List :{} \n'.format(nodes)
     for i in vfields[9][0]['V']:
@@ -512,6 +555,7 @@ def parseIsisCsn(msg_len, msg, verbose=0, level=0):
           print 'something went wrong:{}'.format(e)
     print '\n------------END - IsisCSN----------\n'
     #mkIpsnp( isis ,ln, lifetime, node_id,seq_no,checksum)
+    '''
     return (pdu_len, src_id, start_lsp_id, end_lsp_id, vfields)
 
 #-------------------------------------------------------------------------------
@@ -1513,7 +1557,7 @@ class Isis:
 
         return ish
 
-    def mkIpsnp(self, ln, lifetime, lsp_id, lsp_seq_no, cksm): # is this correct ? 
+    def mkIpsnp(self, ln, lsp_id): # is this correct ? 
 
         isns = []
         if ln == 1:
@@ -1583,6 +1627,8 @@ class Isis:
 
 #if __name__ == "__main__":
 def run_it():
+    config = ConfigParser.ConfigParser()
+    config.read("./isisd.ini")
     import mrtd
 
     #---------------------------------------------------------------------------
@@ -1595,14 +1641,12 @@ def run_it():
     file_pfx  = mrtd.DEFAULT_FILE
     file_sz   = mrtd.DEFAULT_SIZE
     mrtd_type = None
-    area_addr = '49.00.01'
-    src_id    = '00.05.03.30.01.10'
-    lan_id    = '00.05.03.30.01.10.00'
-    src_ip    = '10.100.100.1'
+    area_addr =  config.get('isisd', 'area_addr')
+    src_id    =  config.get('isisd', 'src_id') #'00.05.03.30.01.10'
+    lan_id    = config.get('isisd', 'lan_id') #'00.05.03.30.01.10.00'
+    src_ip    = config.get('isisd', 'src_ip')
+    Isis._dev_str = config.get('isisd', 'dev')
     #---------------------------------------------------------------------------
-
-
-    Isis._dev_str = 'ens4.100'
     src_id = map(lambda x: int(x, 16), string.split(src_id, '.'))
     src_id = struct.pack("6B",
                                  src_id[0], src_id[1], src_id[2],
@@ -1614,7 +1658,7 @@ def run_it():
                                  lan_id[3], lan_id[4], lan_id[5], lan_id[6])
 
 
-    area_addr = map(lambda x: int(x, 16), string.split('49.00.01', '.'))
+    area_addr = map(lambda x: int(x, 16), string.split(area_addr, '.'))
 
             # this is grim, but that's not important right now...
     area_addr_str = ""
