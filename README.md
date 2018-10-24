@@ -71,3 +71,16 @@ def model_demand():
 ```
 
 To deploy traffic goto webapp > Data Presentation > What if Demand > make sure "Use Netflow Demands as well" is checked and click Deploy Demand. You can also deploy without Netflow using the input box for source/target/demand.
+
+* ISISd passive speaker to get the topology.Still requires TLV22 support with subtlv 6 and 8.
+
+```
+cd /opt/lnetd/inputs/isisd/
+modify isisd.ini
+ip link set eth<x> promisc on
+sudo python lnetd.py
+```
+
+It takes couple of minutes depending of the size of the network. The only packets we LNETD is sending are HELLO and PSNP to request new LSP's.
+No auth support for now.
+
