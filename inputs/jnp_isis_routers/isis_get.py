@@ -50,6 +50,9 @@ def main():
     df=df[df['ip'].str.contains("0.0.0.0") == False]
     #create country from hostname 
     df.loc[:, 'country'] = df['name'].str[0:2]
+    df['vendor'] = df.apply(lambda row: get_sysdesc(row['name']),axis=1)
+    df['version'] = 'NA' #for now
+    print df 
     df2 = df.fillna(0)
 
     try:

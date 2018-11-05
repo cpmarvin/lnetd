@@ -5,6 +5,12 @@ html , body{
  
 }
 
+svg text {
+
+                pointer-events: none;
+        }
+
+
 .typeahead,
 .tt-query,
 .tt-hint {

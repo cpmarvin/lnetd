@@ -11,6 +11,7 @@ from calculateSpf_fct import calculateSpf
 from calculateSpf_latency_fct import calculateSpf_latency
 from model_demand import model_demand_get
 from database import db
+from objects.models import Routers,Links,Links_latency,Node_position
 
 blueprint = Blueprint(
     'api_blueprint', 
@@ -51,6 +52,8 @@ def model_demand():
     demand_request = request.args['demand']
     arr = request.args['arr']
     df_links = pd.DataFrame(eval(arr))
+    #df_links = df_links.replace({'\t': ''}, regex=True)
+    print('arr:\n {},demand_request: \n {}').format(df_links,demand_request)
     results = model_demand_get(df_links,demand_request)
     results_final = results.to_dict(orient='records')
     print "results: %s" %jsonify(results_final)
@@ -83,3 +86,10 @@ def save_node_position():
     trans.commit()
     #end hack , need a better way here , this is lame
     return json.dumps({'success':True}), 200, {'ContentType':'application/json'} 
+
+@blueprint.route('/get_isis_links',methods=['GET'])
+@login_required
+def get_isis_links():
+    df = pd.read_sql(db.session.query(Links).filter(Links.index >=0).statement,db.session.bind)
+    isis_links = df.to_dict(orient='records')
+    return jsonify(isis_links)   

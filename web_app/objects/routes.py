@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template
 from flask_login import login_required
+from .properties import pretty_names
 
 blueprint = Blueprint(
     'objects_blueprint', 
@@ -24,7 +25,7 @@ def isis_prefixes():
 @login_required
 def isis_routers():
     isis_routers = Routers.query.all()
-    return render_template('isis_routers.html', values=isis_routers)
+    return render_template('isis_routers.html', values=isis_routers , names = pretty_names)
 
 @blueprint.route('/isis_links')
 @login_required

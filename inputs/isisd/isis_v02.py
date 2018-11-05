@@ -951,7 +951,7 @@ def parseVLenFieldLnetD(ftype, flen, fval, verbose=0, level=0):
             addrs = struct.unpack("> %dL" % (flen/4, ), fval)
             addrs_strs = map(lambda x: id2str(x), addrs)
 
-            #rv["V"] = addrs_strs
+            rv["V"] = addrs_strs
             if verbose > 0:
                 print level*INDENT + "interface IP addresses: " + `addrs_strs`
         elif ftype == VLEN_FIELDS["DynamicHostname"]:

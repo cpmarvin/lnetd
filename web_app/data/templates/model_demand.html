@@ -21,255 +21,122 @@
 {% endblock stylesheets %}
 
 {% block content %}
-<div class="right_col" role="main">
-	<div class="row"> 
-		<div class="col-md-16 col-sm-16 col-xs-16 col-lg-16">
-			<div class="x_panel">
-				<div class="x_title">
-					<div class="page-title">
-						<div class="title_left">
-							<h3>Deploy Demand</h3>
-						</div>
-					</div>
-				</div>
+  <!-- Include modal for adding links -->
+  {% include 'modal_add_link.html' %}
+  <!-- Include modal for loading screen -->
+  {% include 'modal_loading_screen.html' %}
+  <!-- Include modal for netflow -->
+  {% include 'modal_netflow.html' %}
+  <!-- Include modal for topology -->
+  {% include 'modal_topology.html' %}
+<div>  
+  <div class="right_col" role="main">
+    <div class="row"> 
+      <div class="col-md-16 col-sm-16 col-xs-16 col-lg-16">
+        <div class="x_panel">
+          <div class="x_title">
+            <div class="page-title">
+              <div class="title_left">
+                <h3>Deploy Demand</h3>
+              </div>
+            </div>
+          </div>
 
-<!--Edit links -->
-<div id="add-link" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">
-          <span aria-hidden="true">×</span>
-        </button>
-        <h4 class="modal-title" id="title">Add link </h4>
-      </div>
-      <form id="add-link-form" data-parsley-validate class="form-horizontal form-label-left" method="post">
-        <div class="modal-body">
-          <div class="form-group" style="height: 350px">
-                        <label class="control-label col-md-4 col-sm-4 col-xs-12">Source:</label>
-                        <div class="col-md-6">
-                            <input class="form-control validate" id="source_add" name="source_add" placeholder="source" required autofocus>
-                            <div class="help-block with-errors"></div>
-                        </div>
-                        <label class="control-label col-md-4 col-sm-4 col-xs-12">Target:</label>
-                        <div class="col-md-6">
-                            <input class="form-control validate" id="target_add" name="target_add" placeholder="target" required autofocus>
-                            <div class="help-block with-errors"></div>
-                        </div>
-                        <label class="control-label col-md-4 col-sm-4 col-xs-12">Local IP:</label>
-                        <div class="col-md-6">
-                            <input class="form-control validate" id="l_ip_add" name="l_ip_add" placeholder="l_ip" required autofocus>
-                            <div class="help-block with-errors"></div>
-                        </div>
-                        <label class="control-label col-md-4 col-sm-4 col-xs-12">Remote IP::</label>
-                        <div class="col-md-6">
-                            <input class="form-control validate" id="r_ip_add" name="r_ip_add" placeholder="r_ip" required autofocus>
-                            <div class="help-block with-errors"></div>
-                        </div>
-                        <label class="control-label col-md-4 col-sm-4 col-xs-12">Metric:</label>
-                        <div class="col-md-6">
-                            <input class="form-control validate" id="metric_add" name="metric_add" placeholder="metric" required autofocus>
-                            <div class="help-block with-errors"></div>
-                        </div>
-                        <label class="control-label col-md-4 col-sm-4 col-xs-12">Capacity:</label>
-                        <div class="col-md-6">
-                            <input class="form-control validate" id="capacity_add" name="capacity_add" placeholder="capacity" required autofocus>
-                            <div class="help-block with-errors"></div>
-                        </div>
-                       
-
-        </div>
-</div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-success" onclick="editObject()">Save</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-<!-- End Links --> 
-
-<!-- Modal used for loading screen -->  
-<div class="modal fade " id="modal-top1" tabindex="-1" role="dialog" aria-labelledby="loadingModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
-    <div class="modal-content">
-      <div class="modal-body" id="modal-body">
-        <div id="PageContent"> 
-          <div id="loadingIndicatorCtn">
-            <div class="loadingIndicator">
-              <h1><span class="label label-info">
-                <i class="fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:30px;color:"blue""></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Loading...</span>
-              </h1>
+          <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <form class="form-inline" onsubmit="deploy_demand();return false;">
+                <div class="form-group form-row input-group">
+                  <label for="source_filter" class="sr-only">Source</label>
+                  <input type="text" class="form-control input typeahead tt-query" autocomplete="off" name= "source" id="source" placeholder="router as source">
+                </div>
+                <div class="form-group form-row input-group">
+                  <label for="source_filter" class="sr-only">Target</label>
+                  <input type="text" class="form-control input typeahead tt-query" name= "target" id="target" placeholder="router as target">
+                </div>
+                <div class="form-group mx-sm-3 form-row input-group">
+                  <label for="target_filter" class="sr-only">Demand</label>
+                  <input type="text" class="form-control input typeahead" id="demand" placeholder="demand in Mbps">
+                  <span class="input-group-btn">
+                    <button class="btn btn-primary btn-success btn-sm" type="submit" name="deploy">Deploy Demand</button>
+                  </span>
+                </div>
+              </form>
+              <!-- New form for reset -->
+              <form class="form-inline" onsubmit="reset_demand();return false;">
+                <div class="form-group mx-sm-3 form-row input-group">
+                  <div class="checkbox" class="form-control input" id="deploy_netflow_demands">
+                    <label>
+                      <input type="checkbox" id="netflow_demands" value="">Use Netflow Demands as well
+                    </label>
+                    <span class="input-group-btn">
+                      <button type="button" class="btn btn-primary btn-warning btn-sm" data-toggle="modal" data-target="#netflow_modal">
+                      Show existing Netflow Demands</button>
+                      <button class="btn btn-primary btn-warning btn-sm" type="submit" name="deploy">Reset all</button>
+                    </span>
+                  </div>
+                </form>
+              </div>
+              <!-- end form reset -->
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-</div>
 
-<!-- Netflow modal Modal -->
-<div class="modal fade" id="netflow_modal" tabindex="-1" role="dialog" aria-labelledby="netflow_modal" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="netflow_demand_title">Netflow Demands</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-              <table id="datatable" class="table table-striped table-bordered">
-                <thead>
-                  <tr>
-                    <th>Source</th>
-                    <th>Target</th>
-                    <th>Demand(bps)</th>
-                  </tr>
-                </thead>
-                <tbody>
-                 {% for node in netflow_demands %}
-                  <tr>
-                    <td>{{node.source}}</td>
-                    <td>{{node.target}}</td>
-                    <td>{{node.demand}}</td>
-                  </tr>
-                {% endfor %}
-                </tbody>
-              </table>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- End netflow modal -->
-
-      <!-- Modal used for topology-->
-        <div class="modal fade" id="modal-top" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered modal-lg " role="document" style="width:90%;">
-                        <div class="modal-content">
-                                <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">Topology view</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                        </button>
-                                </div>
-                                <div class="modal-body" id="modal-body">
-                                  <div id="legend_div"></div>
-                                  <div class="checkbox" id="spf_div">
-                                    <label>
-                                       <input type="checkbox" id="spf_check" value="">Activate SPF
-                                    </label>
-                                  </div>
-                                  <div id="topology"></div> 
-                                </div>
-                                <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                </div>
-                        </div>
-                </div>
-        </div>
-				<div class="row">
-					<div class="col-md-12 col-sm-12 col-xs-12">
-						<form class="form-inline" onsubmit="deploy_demand();return false;">
-							<div class="form-group form-row input-group">
-								<label for="source_filter" class="sr-only">Source</label>
-								<input type="text" class="form-control input typeahead tt-query" autocomplete="off" name= "source" id="source" placeholder="router as source">
-							</div>
-							<div class="form-group form-row input-group">
-								<label for="source_filter" class="sr-only">Target</label>
-								<input type="text" class="form-control input typeahead tt-query" name= "target" id="target" placeholder="router as target">
-							</div>
-							<div class="form-group mx-sm-3 form-row input-group">
-								<label for="target_filter" class="sr-only">Demand</label>
-								<input type="text" class="form-control input typeahead" id="demand" placeholder="demand in Mbps">
-								<span class="input-group-btn">
-									<button class="btn btn-primary btn-success btn-sm" type="submit" name="deploy">Deploy Demand</button>
-								</span>
-							</div>
-
-  					</form>
-            <!-- New form for reset -->
-            <form class="form-inline" onsubmit="reset_demand();return false;">
-              <div class="form-group mx-sm-3 form-row input-group">
-                <div class="checkbox" class="form-control input" id="deploy_netflow_demands">
-                  <label>
-                     <input type="checkbox" id="netflow_demands" value="">Use Netflow Demands as well
-                  </label>
-                <span class="input-group-btn">
-                  <button type="button" class="btn btn-primary btn-warning btn-sm" data-toggle="modal" data-target="#netflow_modal">
-                  Show existing Netflow Demands</button>
-                  <button class="btn btn-primary btn-warning btn-sm" type="submit" name="deploy">Reset all</button>
-                </span>
+        <div class="row">
+          <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+              <div class="x_title">
+                <h2>Links <small></small></h2>
+                <ul class="nav navbar-right panel_toolbox">
+                  <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                  </li>
+                </ul>
+                <div class="clearfix"></div>
               </div>
-            </form>
+              <!-- Form -->
+              <form class="form-inline" onsubmit="createresult();return false;">
+                <div class="form-group input-group"></div>
+                <div class="form-group mx-sm-3 input-group">
+                  <span class="input-group-btn">
+                    <button class="btn btn-primary btn-success" type="submit" name="run_model">Run Model</button>
+                  </span>
+                </div>
+                <div class="form-group mx-sm-3 input-group">
+                  <span class="input-group-btn">
+                    <button type="button" class="btn btn-primary btn-success" data-toggle="modal" data-target="#add-link">Add Node/Link</button> 
+                  </span>
+                </div>
+                <div class="form-group mx-sm-3 input-group">
+                  <span class="input-group-btn">
+                    <button type="button" class="btn btn-warning" onclick="reset_demand_only()">Reset demand only</button>
+                  </span>
+                  <span>
+                    <!-- Not yet <button type="button" class="btn btn-success" data-toggle="modal" data-target="#save-model">Save Model</button> -->
+                  </span>
+                </div>
+              </form>
+              <!-- End Form -->
+              <!-- Table -->
+              <div class="x_content">
+                <table id="table" data-toggle="false"
+                data-search= "true"
+                data-show-columes="true"
+                data-pagination="false"
+                data-click-to-select="true"
+                class="table table-striped table-bordered">
+              </table>
+            </div>
+            <!-- End Table -->  
           </div>
-            <!-- end form reset -->
-					</div>
-				</div>
-			</div>
-
-			<div class="row">
-				<div class="col-md-12 col-sm-12 col-xs-12">
-					<div class="x_panel">
-						<div class="x_title">
-							<h2>Links <small></small></h2>
-							<ul class="nav navbar-right panel_toolbox">
-								<li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-								</li>
-							</ul>
-							<div class="clearfix"></div>
-						</div>
-
-						<form class="form-inline" onsubmit="createresult();return false;">
-							<div class="form-group input-group"></div>
-							<div class="form-group mx-sm-3 input-group">
-								<span class="input-group-btn">
-									<button class="btn btn-primary btn-success" type="submit" name="run_model">Run Model</button>
-								</span>
-							</div>
-                                                        <div class="form-group mx-sm-3 input-group">
-                                                                <span class="input-group-btn">
-<button type="button" class="btn btn-primary btn-success" data-toggle="modal" data-target="#add-link">Add Node/Link</button> 
-                                                                </span>
-                                                        </div>
-                                                        <div class="form-group mx-sm-3 input-group">
-                                                                <span class="input-group-btn">
-<button type="button" class="btn btn-warning" onclick="reset_demand_only()">Reset demand only</button>
-</span>
-</div>
-						</form>
-
-						<div class="clearfix"></div>
-						<div class="x_content">
-							<table id="table" data-toggle="false"
-							data-search= "true"
-							data-show-columes="true"
-							data-pagination="false"
-							class="table table-striped table-bordered">
-							</table>
-						</div>
-						</div>
-
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock content %}
 
 {% block javascripts %}
   {{ super() }}
-  <script src="{{ url_for('static', filename='vendors/d3.js/d3.min.js') }}"></script>
+  <!-- <script src="{{ url_for('static', filename='vendors/d3.js/d3.min.js') }}"></script> -->
   <script src="{{ url_for('static', filename='custom/topology/create_legend.js') }}"></script>
   <script src="{{ url_for('static', filename='vendors/plotly/plotly-latest.min.js') }}"></script>
   <script src="{{ url_for('static', filename='custom/topology/create_graph.js') }}"></script>
@@ -283,7 +150,7 @@
   <script src="{{ url_for('static', filename='vendors/x-editable/bootstrap3-editable/js/bootstrap-editable.min.js') }}"></script>
   <!-- alertifyjs -->
   <script src="{{ url_for('static', filename='vendors/alertifyjs/alertify.min.js') }}"></script>
-  <!-- Datatables -->
+  <!-- Datatables 
   <script src="{{ url_for('static', filename='vendors/datatables.net/js/jquery.dataTables.min.js') }}"></script>
   <script src="{{ url_for('static', filename='vendors/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
   <script src="{{ url_for('static', filename='vendors/datatables.net-buttons/js/dataTables.buttons.min.js') }}"></script>
@@ -296,600 +163,160 @@
   <script src="{{ url_for('static', filename='vendors/datatables.net-responsive/js/dataTables.responsive.min.js') }}"></script>
   <script src="{{ url_for('static', filename='vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js') }}"></script>
   <script src="{{ url_for('static', filename='vendors/datatables.net-scroller/js/dataTables.scroller.min.js') }}"></script>
-
+  -->
   <!-- Just to test -->
   <script src="https://gitcdn.link/repo/xcash/bootstrap-autocomplete/master/dist/latest/bootstrap-autocomplete.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/corejs-typeahead/1.2.1/typeahead.bundle.js"></script>
+  <!--
+  <script src="{{ url_for('data_blueprint.static', filename='utils.js') }}"></script>
+  <script src="{{ url_for('data_blueprint.static', filename='d3js_utils.js') }}"></script>
+  -->
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+  <script src="{{ url_for('data_blueprint.static', filename='d3js_v5_utils.js') }}"></script>
+  <script src="{{ url_for('data_blueprint.static', filename='lnet_d3js.js') }}"></script>
+  <script src="{{ url_for('data_blueprint.static', filename='utils.js') }}"></script>
+
 <script>
-
-//delete row if button with .ibtnDel click
-$("#table").on("click", ".ibtnDel", function (event) {
-        $(this).closest("tr").remove();
-        alertify.notify("Link removed ..... ", 'error', 5)
-	})
-
-//function to add another row ( add both the form and reverse ) 
-function editObject() {
-        if ($('#add-link-form').parsley().validate() ) {
-        var entry = $('#add-link-form').serializeArray()
-        var newRow = $("<tr>");
-        var cols = "";
-	cols += '<td>' + Math.floor(Math.random() * 900) + '</td>';
-	cols += '<td>' + entry[0].value + '</td>'; //source
-	cols += '<td>' + entry[1].value + '</td>'; //target
-	cols += '<td>' + entry[2].value + '</td>'; //l_ip
-	cols += '<td>' + entry[4].value + '</td>'; //metric
-	cols += '<td>' + Math.floor(Math.random() * 100) + '</td>';
-	cols += '<td>' + entry[3].value + '</td>';
-	cols += '<td>' + Math.floor(Math.random() * 100) + '</td>';
-	cols += '<td>'+'('+  entry[2].value + ',' + entry[3].value + ')'+'</td>';
-	cols += '<td>' + 0 + '</td>'; 
-        cols += '<td>' + entry[5].value + '</td>';
-
-        cols += '<td><input type="button" class="ibtnDel btn btn-sm btn-danger "  value="Delete"></td>';
-        cols += '</tr>'
-        newRow.append(cols);
-        console.log(newRow)
-        $("#table").append(newRow);
-//reverse
-        var newRow_rev = $("<tr>");
-        var cols_rev = "";
-        cols_rev += '<td>' + Math.floor(Math.random() * 900) + '</td>';
-        cols_rev += '<td>' + entry[1].value + '</td>'; //source
-        cols_rev += '<td>' + entry[0].value + '</td>'; //target
-        cols_rev += '<td>' + entry[3].value + '</td>'; //l_ip
-        cols_rev += '<td>' + entry[4].value + '</td>'; //metric
-        cols_rev += '<td>' + Math.floor(Math.random() * 100) + '</td>'; //l_int
-        cols_rev += '<td>' + entry[2].value + '</td>'; //r_ip
-        cols_rev += '<td>' + Math.floor(Math.random() * 100) + '</td>'; //r_int
-        cols_rev += '<td>'+'('+  entry[2].value + ',' + entry[3].value + ')'+'</td>'; //lip_rip_pair
-        cols_rev += '<td>' + 0 + '</td>'; //util
-        cols_rev += '<td>' + entry[5].value + '</td>'; //capacity
-
-        cols_rev += '<td><input type="button" class="ibtnDel btn btn-sm btn-danger "  value="Delete"></td>';
-        console.log(cols_rev)
-        newRow_rev.append(cols_rev);
-        $("#table").append(newRow_rev);
-
-//reload data into the table to allow modify of the metric
-        var jsonTable = new JSONTable($("#table"))
-        var new_data= jsonTable.toJSON()
-			$('#table').bootstrapTable("load", new_data);
-        alertify.notify("Link added ..... ", 'success', 5)
-
-}
-}
-
-
-
-
-   //node position
-   var node_position = {{node_position|tojson|safe}}
-   //console.log(node_position)
-   //autocomplete 
-   var router_name = {{router_name|tojson}}
-   var router_name = new Bloodhound({
-        datumTokenizer: Bloodhound.tokenizers.whitespace,
-        queryTokenizer: Bloodhound.tokenizers.whitespace,
-        local: router_name
-    });
+ //node position
+ var node_position = {{node_position|tojson|safe}}
+ //console.log(node_position)
+ //autocomplete 
+ var router_name = {{router_name|tojson}}
+ var router_name = new Bloodhound({
+      datumTokenizer: Bloodhound.tokenizers.whitespace,
+      queryTokenizer: Bloodhound.tokenizers.whitespace,
+      local: router_name
+  });
     
-    // Initializing the typeahead
-    $('.typeahead').typeahead({
-        hint: true,
-        highlight: true, /* Enable substring highlighting */
-        minLength: 1 /* Specify minimum characters required for showing suggestions */
-    },
-    {
-        name: 'router_name',
-        source: router_name
-    }); 
+// Initializing the typeahead
+$('.typeahead').typeahead({
+    hint: true,
+    highlight: true, /* Enable substring highlighting */
+    minLength: 1 /* Specify minimum characters required for showing suggestions */
+  },
+  {
+    name: 'router_name',
+    source: router_name
+  }
+); 
 
-  // bootstrap table from flask variables
-   $(window).load(function() {
-    var data = {{values|tojson}};
-    console.log(data)
-    var columns = {{columns|tojson}};
-   $(function() {
-     $('#table').bootstrapTable ({
-        data: data,
-        columns: columns,
-                });
-           });
-        });
+// bootstrap table from flask variables
+$(window).load(function() {
+  var data = {{values|tojson}};
+  console.log(data)
+  var columns = {{columns|tojson}};
+  $(function() {
+    $('#table').bootstrapTable ({
+      data: data,
+      columns: columns,
+    });
+  });
+});
 
-//insert delete button for all rows
-function TableActions (value, row, index) {
-            return [
-                '<input type="button" class="ibtnDel btn btn-sm btn-danger "  value="Delete">'
-            ].join('');
-        }
-
-
-   // reset table and remove existing demand or metric change
-   function reset_demand() {
-     var data = {{values|tojson}};
-     //console.log('-----data is : ' , data.length)
-     if ( data.length == null) {
-          $('#table').bootstrapTable('removeAll')
-     }
-     else {
-     $('#table').bootstrapTable("load", data);
-     }
-   }
-
-//reset only demands
-function reset_demand_only() {
-        var jsonTable = new JSONTable($("#table"))
-        var new_data= jsonTable.toJSON()
-        new_data.forEach( function (d) { 
-           d.util =0 })
-        $('#table').bootstrapTable("load", new_data);
+// reset table and remove existing demand or metric change
+function reset_demand() {
+    console.log('reset_demand')
+    var data = {{values|tojson}} ;
+    if ( data.length == null) {
+        $('#table').bootstrapTable('removeAll')
+    }
+    else {
+        $('#table').bootstrapTable("load", data);
+    }
 }
-   //if deploy demand button
+
+ //if deploy demand button
  function deploy_demand() {
-        
-        //reset search on table 
-        $('#table').bootstrapTable('resetSearch', '');
-        //get netflow demands 
-        var demandarr = {{netflow_demands|tojson}}
-        if ($('#netflow_demands').is(':checked') )
-          { 
-          var source = document.getElementById("source").value
-          var target = document.getElementById("target").value
-          var demand = document.getElementById("demand").value * 1000000
-          demandarr.push({'source':source,'target':target,'demand':demand})
-          console.log("click and checked")
-          demand_deploy_inside(demandarr)
-          }
-        else
-          { 
-          demandarr =[]
-          var source = document.getElementById("source").value
-          var target = document.getElementById("target").value
-          var demand = document.getElementById("demand").value * 1000000
-          demandarr.push({'source':source,'target':target,'demand':demand})
-          console.log("click but not if") 
-          demand_deploy_inside(demandarr)
-          }
+  //reset search on table 
+  $('#table').bootstrapTable('resetSearch', '');
+  //get netflow demands 
+  var demandarr = {{netflow_demands|tojson}}
+  if ($('#netflow_demands').is(':checked') )
+    { 
+    var source = document.getElementById("source").value
+    var target = document.getElementById("target").value
+    var demand = document.getElementById("demand").value * 1000000
+    demandarr.push({'source':source,'target':target,'demand':demand})
+    console.log("click and checked")
+    demand_deploy_inside(demandarr)
+    }
+  else
+    { 
+    demandarr =[]
+    var source = document.getElementById("source").value
+    var target = document.getElementById("target").value
+    var demand = document.getElementById("demand").value * 1000000
+    demandarr.push({'source':source,'target':target,'demand':demand})
+    console.log("click but not if") 
+    demand_deploy_inside(demandarr)
+    }
 
-        function demand_deploy_inside(demandarr){
-            console.log(demandarr)
-            var demandArrStr = encodeURIComponent(JSON.stringify(demandarr));
-            //console.log(demandArrStr)
-            // create an array with values from table ( as it might been updated (ie: change isis metric) )
-            var jsonTable = new JSONTable($("#table"))
-            var arr= jsonTable.toJSON()
-            var arrStr = encodeURIComponent(JSON.stringify(arr));
-            //pass the table array and the demand array to api and save the results
-            url = "http://127.0.0.1:8801/api/model_demand?"+"arr="+arrStr+"&"+"demand="+demandArrStr
-            var initAjax = function (){
-                var customAjaxResponse = $.ajax({
-                                                 type: 'GET',
-                                                 url: url,
-                                                 beforeSend: function (xhr) {
-                                                                alertify.notify("Running demand ..... ", 'warning', 5)
-                                                                $('#modal-top1').modal('show')
-                                                                             }
-                                                 }).done(function (jsondata) {
-                                                                alertify.notify("Demand Deployed OK", 'success', 5)
-                                                                $('#modal-top1').modal('toggle')
-                                                 }).error(function (jqXHR, exception) {
-                                                                alertify.notify("Error Demand not deployed...not sure why but it's you!!! ", 'error', 15)
-                                                                $('#modal-top1').modal('toggle')
-            
-                                                });
-                return customAjaxResponse.promise();
-              }
-           var model_results = initAjax();
-           model_results.then(function( response ){
-                                                 $('#table').bootstrapTable("load", response);
-                                                 // bring modal up
-                                                 $('#modal-top').modal('toggle')
-                                                 //display topology
-                                                 createresult()
-            })
-        }
-}
-   function createresult() {
-        //reset search
-        $('#table').bootstrapTable('resetSearch', '');
-   	alertify.notify("Model Run",'success',5)
-        $('#modal-top').modal('show')
-        //remove spf results on a new result
-   	jQuery('#spf_div1').html('');
-        // remove previous legend on a new result
-        jQuery('#legend_div').html('');
-        // remove previous topology 
-   	d3.select("#main_svg").remove();
-        // create legend
-   	create_legend('traffic')
-        // create d3js topology
-   	updateData() }
-
-	function updateData() {
+    function demand_deploy_inside(demandarr){
+        console.log(demandarr)
+        var demandArrStr = encodeURIComponent(JSON.stringify(demandarr));
+        // create an array with values from table ( as it might been updated (ie: change isis metric) )
         var jsonTable = new JSONTable($("#table"))
-        var grapheDatas1 = jsonTable.toJSON()
+        var arr= jsonTable.toJSON()
+        var arrStr = encodeURIComponent(JSON.stringify(arr));
+        //pass the table array and the demand array to api and save the results
+        console.log('demand_array',demandArrStr)
+        console.log('jsontable',arrStr)
+        url = "http://127.0.0.1:8801/api/model_demand?"+"arr="+arrStr+"&"+"demand="+demandArrStr
+        var initAjax = function (){
+          var customAjaxResponse = $.ajax({
+                                           type: 'GET',
+                                           url: url,
+                                           beforeSend: function (xhr) {
+                                                          alertify.notify("Running demand ..... ", 'warning', 5)
+                                                          $('#modal-top1').modal('show')
+                                                                       }
+                                           }).done(function (jsondata) {
+                                                          alertify.notify("Demand Deployed OK", 'success', 5)
+                                                          $('#modal-top1').modal('toggle')
+                                           }).error(function (jqXHR, exception) {
+                                                          alertify.notify("Error Demand not deployed...not sure why but it's you!!! ", 'error', 15)
+                                                          $('#modal-top1').modal('toggle')
+      
+                                          });
+          return customAjaxResponse.promise();
+          }
+       var model_results = initAjax();
+       model_results.then(function( response ){
+         $('#table').bootstrapTable("load", response);
+         // bring modal up
+         $('#modal-top').modal('toggle')
+         //display topology
+         createresult()
+        })
+    }
+}
+function createresult() {
+  //reset search
+  $('#table').bootstrapTable('resetSearch', '');
+  alertify.notify("Model Run",'success',5)
+  $('#modal-top').modal('show')
+  //remove spf results on a new result
+  jQuery('#spf_div1').html('');
+  // remove previous legend on a new result
+  jQuery('#legend_div').html('');
+  // remove previous topology 
+  d3.select("#main_svg").remove();
+  create_legend('traffic') //create legend 
+  // create d3js topology
+  var jsonTable = new JSONTable($("#table")) //save table 
+  var graphData = jsonTable.toJSON() // save table as json
+  console.log("toJSON:",graphData)
+  var source = '.' //define regexp for topology 
+  var target = source 
+  var re_source = new RegExp (source);
+  var re_target = re_source
+  //updateData(grapheDatas,source) //run d3js topology 
+  result = data_prepare(graphData,re_source,re_target) //this returns the correct link and nodes
+  console.log('results:',result)
+  var run_it = new lnet_d3js(result,'traffic') //run lnet_d3js
+  run_it.restart(result[1],result[0],result[0]) //draw
+}
 
-		var source = '.' 
-		var target = source	
-		var re_source = new RegExp (source);
-		var re_target = new RegExp (target);
-
-		grapheDatas1.sort(function(a,b) {
-			if (a.source > b.source) {return 1;}
-			else if (a.source < b.source) {return -1;}
-			else {
-				if (a.target > b.target) {return 1;}
-				if (a.target < b.target) {return -1;}
-				else {return 0;}
-			}
-		});
-
-		for (var i=0; i<grapheDatas1.length; i++) {
-			if (i != 0 &&
-				grapheDatas1[i].source == grapheDatas1[i-1].source && grapheDatas1[i].target == grapheDatas1[i-1].target) 
-			{
-				grapheDatas1[i].linknum = grapheDatas1[i-1].linknum + 1;
-			}
-			else {
-				grapheDatas1[i].linknum = 1;
-			};
-		};
-
-		for (var i = 0, len = grapheDatas1.length; i < len; i++) { 
-			pair = grapheDatas1[i].l_ip_r_ip[0]+grapheDatas1[i].l_ip_r_ip[1]
-			pair = grapheDatas1[i].l_ip_r_ip
-
-			for (var z=0, len=grapheDatas1.length  ; z < len ; z++){
-				pair2 = grapheDatas1[z].l_ip_r_ip[0]+grapheDatas1[z].l_ip_r_ip[1]
-				pair2 = grapheDatas1[z].l_ip_r_ip
-				if (pair2 == pair ) { grapheDatas1[z].linknum = grapheDatas1[i].linknum }
-
-			} 
-		}
-		//push_unique id for each link
-		for (var i=0; i<grapheDatas1.length; i++) {
-			grapheDatas1[i].link_id = i
-		};
-
-		grapheDatas = grapheDatas1.filter(function(d) { return re_source.test(d.source) && re_target.test(d.target) });
-
-
-		/// FUNCTION see force-horse for calculation 
-		function calcTranslationExact(debug,targetDistance, point0, point1) {
-			let x1_x0 = point1.x - point0.x,
-			y1_y0 = point1.y - point0.y,
-			x2_x0, y2_y0;
-			if (y1_y0 === 0) {
-				x2_x0 = 0;
-				y2_y0 = targetDistance;
-			} 
-			else {
-				let angle = Math.atan((x1_x0) / (y1_y0));
-				x2_x0 = -targetDistance * Math.cos(angle);
-				y2_y0 = targetDistance * Math.sin(angle);
-			}
-			d0x= point0.x + (1 * x2_x0)
-			d0y= point0.y + (1 * y2_y0)
-			d1x= point1.x + ( 1 * x2_x0)
-			d1y= point1.y + (1 * y2_y0)
-
-			dx = d1x - d0x,
-			dy = d1y - d0y,
-			dr = Math.sqrt(dx * dx + dy * dy)
-			var endX = (d1x + d0x) / 2;
-			var endY = (d1y + d0y) / 2;
-			var len = dr - ((dr/2) * Math.sqrt(3));
-			endX = endX + (  len/dr) ;
-			endY = endY + (  len/dr) ;
-		//reverse start and end so that label links switch 
-			if ( endX - d0x > 0 ) {
-				callback = "M" + d0x + "," + d0y   + "L" + endX + "," + endY;
-			}
-			else {
-				callback = "M" + endX + "," + endY   + "L" + d0x + "," + d0y;
-			}
-			return {
-				callback
-			};
-		}
-		// END FUNCTION
-		// BEGIN UTIL Function
-
-		function get_util(d,start) {
-			var legend = [
-							{'id':'black','low':0,'high':0},
-							{'id':'blue','low':0,'high':1},
-							{'id':'green','low':1,'high':30},
-							{'id':'yellow','low':30,'high':50},
-							{'id':'orange','low':50,'high':70},
-							{'id':'red','low':70,'high':100},
-							{'id':'fuchsia','low':100,'high':9999050}
-						]
-			util = d.util
-
-			if (util == 0 ) {
-				util = "blue"
-			}
-			else {
-				var cur_util = util
-				var capacity = d.capacity*1000000
-				util = (cur_util*100)/(capacity)
-				legend.forEach(function (d) { 
-					if (util >= d.low && util <= d.high) 
-					{ 
-						util = d.id ; 
-					}
-				})
-			}
-			if (util == -1)
-				{ util = "#999"}
-			return util
-		}
-
-		var height = document.getElementById('topology').clientHeight 
-		var width = document.getElementById('topology').clientWidth
-		var width = 1900 ;
-		var height = 1001;
-		var color = d3.scale.category20();
-
-
-		
-		function returnX (source) {
-			//result is none at first 
-			result = 'none'
-			//read from position.js 
-			node_position.forEach(function (d) {
-				//iterate array
-				if (source === d.id ) {	result = parseInt(d.x) }})
-				//if forgot to define site name random x 
-				if ( result === 'none') { result = Math.floor(1 + Math.random()*(900 + 1 - 1 ))}
-			return result
-		}
-
-		//need a better way to do this , repeating function is lame 
-		function returnY (source) {
-			result = 'none'
-			node_position.forEach(function (d) {
-				if (source == d.id ) {	result = parseInt(d.y) }})
-			    if ( result === 'none') { result = Math.floor(1 + Math.random()*(900 + 1 - 1 ))}
-			return result
-		}
-
-
-		links = []
-		links = grapheDatas;
-		var nodes = [];
-		//populate nodes based on links 
-		links.forEach(function(link) {
-			link.source = nodes[link.source] || (nodes[link.source] = {name: link.source , fixed:true, x:returnX(link.source), y:returnY(link.source) });
-			link.target = nodes[link.target] || (nodes[link.target] = {name: link.target , fixed:true, x:returnX(link.target), y:returnY(link.target) });
-		});
-
-		//initiate force layout
-		var force = d3.layout.force()
-					.linkDistance(100)
-					.gravity(0.0)
-					.charge(-150)
-					.size([width, height])
-					//get the values without key from nodes object 
-					.nodes(d3.values(nodes))
-					.links(links)
-					.start();
-
-
-
-		//defined mix and max zoom 
-		var min_zoom = 0.2;
-		var max_zoom = 8.0;
-
-		var svg = d3.select("#topology")
-					.append("svg")
-					.attr("id","main_svg")
-					.attr("width", width)
-					.attr("height", height)
-					.call(d3.behavior.zoom().on("zoom", redraw).scaleExtent([min_zoom,max_zoom]))
-					.append('svg:g')
-					.attr("id","main_g")
-					.on('load',function (d) { alert('load') });
-
-
-		//used for L key to display link label , need to find a better way for this. 
-		function keydown() {
-			if (d3.event.key === 76 ) return;
-			pathtext.style("fill-opacity",1)
-		}
-
-		//watch for L press 
-		d3.select('body')  
-		.on('keydown', keydown);
-
-		//path
-		var path = svg.selectAll(".link")
-					.data(force.links())
-					.enter()
-					.append("g")
-					.attr("class","pathG")
-					.append("svg:path")
-					.attr("class", "link")
-					.style("stroke",function(d) { return get_util(d,"0"); })
-					.attr("id",function(d,i) { return "linkId_" + i; })
-					/* .on("click", function(d) {
-						if (d.l_int == -1 || d.util == -1 ) {
-							alert("NO SNMP DATA") 
-							return
-						}
-						$('#modal-top').modal('toggle')
-						$('#modal-body').attr("id","graph2")
-						.html(graph(d.source.name,d.l_int,d.capacity))
-					}) */
-
-
-
-
-		var pathtext =	svg.selectAll(".pathG")
-						.append("text")
-						.append("textPath")
-						.attr( "fill-opacity", 0 )
-						.attr("text-anchor","middle")
-						.style("text-anchor","midlle")
-						.style("font-size", "4px")
-						.style("font-weight","bold")
-						.attr("dy",0)
-						.attr("startOffset","50%")
-						.attr("xlink:href",function(d,i) { return "#linkId_" + i;})
-						.text(function(d) { 
-	                                         return "cost:"  + d.metric + 
-                                                        "/IP:"   + d.l_ip + 
-                                                        "/load:" + (d.util*100)/(d.capacity*1000000)+
-                                                        "%"
-                                                });
-						//end path 
-
-		//node add
-		var node = svg.selectAll(".nodes")
-					.data(force.nodes())
-					.enter()
-					.append("svg:g")
-					.attr("class","nodes")
-					.call(force.drag);
-
-		node.append("circle")
-		.attr("class", "node")
-		.attr("r", function(d) {return 5 ;})
-		//.style("fill", function(d) { return color(d.name.slice(0,3)); })
-		.on("mouseover", fade(.1))
-		.on("mouseout", fade(1))
-		.on("click",function (d) { 
-			if ($('#spf_check').is(':checked')) 
-				{ return onClick1(d);console.log("clicked") }
-			else
-				{ console.log("click but not if") } })
-
-
-//add image for the nodes 
-
-		node.append("image")
-				.attr("xlink:href", "/static/images/router.png")
-				.attr("x", "-12px")
-				.attr("y", "-12px")
-				.attr("width", "24px")
-				.attr("height", "24px")
-				.on("mouseover", fade(.1))
-				.on("mouseout", fade(1))
-				.on("click",function (d) {
-					if ($('#spf_check').is(':checked') )
-						{return onClick1(d);console.log("clicked") }
-					else
-						{ console.log("click but not if") } });
-
-		node.append("text")
-				.attr("x", 12)
-				.attr("dy", ".35em")
-				.attr("class","nodelabel")
-				.style("font-size", "12px")
-				.text(function(d) { return d.name; });
-
-
-
-		var div = d3.select("#graph")
-				.attr("class", "tooltip")
-				.style("opacity", 1)
-		var div1 = div 
-				.attr("id","graph2")
-				.attr("class", "graph2")
-
-		//drag node 
-		function dragstart(d) {
-			d3.event.sourceEvent.stopPropagation();
-			d3.select(this).classed("fixed", d.fixed = true); 
-		}
-
-		//used in zoom 
-		function redraw() { svg.attr("transform","translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")");}
-
-		var drag = force.drag()
-				.on("dragstart", dragstart)
-				.on("dragend", function() { force.stop() } );
-
-
-		var linkedByIndex = {};
-		grapheDatas.forEach(function(d) {
-			linkedByIndex[d.source.index + "," + d.target.index] = 1;});
-
-		function isConnected(a, b) {
-			return linkedByIndex[a.index + "," + b.index] || linkedByIndex[b.index + "," + a.index] || a.index == b.index;
-		}
-
-        //used in spf calculation , check if link id is equal to spf return 
-		function check_link(id) {
-			id = id
-			result = spf_results[0].filter( function (d) { return d.l_ip == id })
-			if (typeof(result[0]) !== "undefined") {
-				results = result[0].l_ip 
-			}
-			else { results = -1 }
-				return results 
-		}
-
-		selectedNodes = []
-		function onClick1(d) {
-			if (selectedNodes.length <2) {
-				d3.selectAll(".link").attr("stroke-width",1)
-				d3.selectAll(".link").attr("stroke-dasharray",null)
-				alert_text = 'Selected:' + d.name
-				alert(alert_text)
-				d3.selectAll(".link").style("stroke",function(d) { return get_util(d,0) })
-				selectedNodes.push(d.name)
-			}
-			if (selectedNodes.length ==2) {
-				var spf_div_1 = document.getElementById('spf_div');
-				spf_div_1.innerHTML =""
-				spf_div_1.innerHTML += 'SPF between '+ 'Source: ' +selectedNodes[0]+'  Target: '+selectedNodes[1];
-				spf_results = getSPF(selectedNodes[0],selectedNodes[1])
-				spf_results = Object.values(spf_results)
-				d3.selectAll(".link")
-					.style("stroke", function(d) { if (check_link(d.l_ip) == d.l_ip || check_link(d.r_ip) == d.r_ip ) { return "black" } else { return get_util(d,0) } })
-				d3.selectAll(".link")
-					.attr("stroke-width", function(d) { if (check_link(d.l_ip) == d.l_ip || check_link(d.r_ip) == d.r_ip) { return 5 } else {  1 } })
-				d3.selectAll(".link")
-					.attr("stroke-dasharray",function(d) { if (check_link(d.l_ip) == d.l_ip || check_link(d.r_ip) == d.r_ip) { return 3.3 } else { } })
-				selectedNodes=[]
-			}
-		}
-
-
-		function fade(opacity) {
-			return function(d) {
-				node.style("opacity", function(o) {
-					thisOpacity = isConnected(d, o) ? 1 : opacity;
-					this.setAttribute('fill-opacity', thisOpacity);
-					return thisOpacity;
-				});
-				path.style("stroke-opacity", function(o) {
-					return o.source === d || o.target === d ? 1 : opacity;
-					}
-				);
-				pathtext.style("fill-opacity", function(o) {
-					{ if (o.source === d || o.target === d)  
-							return 1;
-					}
-				});
-			};
-		}
-
-		force.on("tick", function() {
-			path.attr("d", function(d,i){
-				var LINK_WIDTH = 2
-				var targetDistance = (d.linknum % 2 === 0 ? d.linknum * LINK_WIDTH : (-d.linknum + 1) * LINK_WIDTH);
-				calcTranslationExact(d.source.name,targetDistance, d.source, d.target);
-				return callback;}
-			);
-			node.attr("transform", function(d) {return "translate(" + d.x + "," + d.y + ")";});
-			force.stop()
-		});
-		};
 </script>
 
 {% endblock javascripts %}

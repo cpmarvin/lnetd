@@ -9,6 +9,7 @@
   <link href="{{ url_for('static', filename='vendors/alertifyjs/css/themes/bootstrap.css') }}" rel="stylesheet">
   <link href="{{ url_for('static', filename='vendors/alertifyjs/css/alertify.css') }}" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js-bootstrap-css/1.2.1/typeaheadjs.min.css" rel="stylesheet">
+
 {% endblock stylesheets %}
 
 {% block content %}
@@ -26,8 +27,6 @@
 <div class="clearfix"></div>
 
 <div class="row">
-
-
 	<!-- Modal used for graphs-->
 	<div class="modal fade" id="modal-top" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered modal-lg " role="document">
@@ -74,9 +73,14 @@
 										<div class="x_content" id="legend_div"></div>
 										<!-- SPF div and checkbox !-->
 										<div class="checkbox" id="spf_div">
-											<label>
-												<input type="checkbox" id="spf_check" value="">Activate SPF
-											</label>
+                                              <form>
+                                                <label class="checkbox-inline">
+                                                  <input type="checkbox" id="spf_check" value="">Activate SPF 
+                                                </label>
+                                                <label class="checkbox-inline">
+                                                  <input type="checkbox" id="dynamic_topology" value="">Dynamic Topology
+                                                </label>
+                                              </form>
 										</div>
 										<!-- Div for SPF results -->
 										<div class="spf_results x_content" id="sfp_div1"></div>
@@ -97,17 +101,21 @@
 
 {% block javascripts %}
   {{ super() }}
-<script src="{{ url_for('static', filename='vendors/d3.js/d3.min.js') }}"></script> 
+<!--<script src="{{ url_for('static', filename='vendors/d3.js/d3.min.js') }}"></script> -->
 <script src="{{ url_for('static', filename='vendors/plotly/plotly-latest.min.js') }}"></script>
 <script src="{{ url_for('static', filename='custom/topology/create_graph.js') }}"></script>
 <script src="{{ url_for('static', filename='custom/topology/getSPF.js') }}"></script>
 <script src="{{ url_for('static', filename='custom/topology/create_legend.js') }}"></script>
 <script src="{{ url_for('static', filename='vendors/alertifyjs/alertify.min.js') }}"></script>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="{{ url_for('data_blueprint.static', filename='d3js_v5_utils.js') }}"></script>
+<script src="{{ url_for('data_blueprint.static', filename='lnet_d3js.js') }}"></script>
+
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.7.0/d3.min.js"</script>-->
 
 <script>
-        var node_position = {{node_position | tojson | safe}}
-	var grapheDatas = JSON.parse('{{ values | tojson | safe}}');
-	var grapheDatas1 = grapheDatas
+var node_position = {{node_position | tojson | safe}}
+var graphData = JSON.parse('{{ values | tojson | safe}}');
 
 //save node position
 function node_position_save(){
@@ -127,386 +135,45 @@ function node_position_save(){
 }
 
 
-	$(document).ready(function() {
-		updateData()
-		create_legend('traffic') 
-	})
+$(document).ready(function() {
 
-	function updateData() {
+    create_legend('traffic')
+    var source = "." // filter source target if neede
+    var target = source 
+    var re_source = new RegExp (source);
+    var re_target = re_source
+    result = data_prepare(graphData,re_source,re_target) //this returns the correct link and nodes
 
-		var source = '.' 
-		var target = source	
-		var re_source = new RegExp (source);
-		var re_target = new RegExp (target);
+    var run_it = new lnet_d3js(result,'traffic') //run lnet_d3js
+    run_it.restart(result[1],result[0],result[0]) //draw
 
-		grapheDatas1.sort(function(a,b) {
-			if (a.source > b.source) {return 1;}
-			else if (a.source < b.source) {return -1;}
-			else {
-				if (a.target > b.target) {return 1;}
-				if (a.target < b.target) {return -1;}
-				else {return 0;}
-			}
-		});
+    //dynamic nodes
+    $('#dynamic_topology').change(function() {
+        if(this.checked){
+            console.log("dynamic checked")
+            d3.selectAll(".node").data().forEach(function(d) {
+              d.fx = d.fy = null;
+            })
+        }
+    });
 
-		for (var i=0; i<grapheDatas1.length; i++) {
-			if (i != 0 &&
-				grapheDatas1[i].source == grapheDatas1[i-1].source && grapheDatas1[i].target == grapheDatas1[i-1].target) 
-			{
-				grapheDatas1[i].linknum = grapheDatas1[i-1].linknum + 1;
-			}
-			else {
-				grapheDatas1[i].linknum = 1;
-			};
-		};
+    d3.interval(function() {
+      //console.log('d3.interval run')
+        url = "http://127.0.0.1:8801/api/get_isis_links"
+        var graphData1 = getData(url)
+        graphData1.then(function (data) {
+          result = data_prepare(data,re_source,re_target)
+            nodes = result[1]
+            links = result[0]
+            linkstext = result[0]
+            //console.log('nodes:',nodes)
+            //linkedByIndex = result[2]
+            run_it.restart(nodes,links,linkstext);
+        })
+    }, 60000); //60sec 
 
-		for (var i = 0, len = grapheDatas1.length; i < len; i++) { 
-			pair = grapheDatas1[i].l_ip_r_ip[0]+grapheDatas1[i].l_ip_r_ip[1]
-			pair = grapheDatas1[i].l_ip_r_ip
+})
 
-			for (var z=0, len=grapheDatas1.length  ; z < len ; z++){
-				pair2 = grapheDatas1[z].l_ip_r_ip[0]+grapheDatas1[z].l_ip_r_ip[1]
-				pair2 = grapheDatas1[z].l_ip_r_ip
-				if (pair2 == pair ) { grapheDatas1[z].linknum = grapheDatas1[i].linknum }
-
-			} 
-		}
-		//push_unique id for each link
-		for (var i=0; i<grapheDatas1.length; i++) {
-			grapheDatas1[i].link_id = i
-		};
-
-		grapheDatas = grapheDatas1.filter(function(d) { return re_source.test(d.source) && re_target.test(d.target) });
-
-
-		/// FUNCTION see force-horse for calculation 
-		function calcTranslationExact(debug,targetDistance, point0, point1) {
-			let x1_x0 = point1.x - point0.x,
-			y1_y0 = point1.y - point0.y,
-			x2_x0, y2_y0;
-			if (y1_y0 === 0) {
-				x2_x0 = 0;
-				y2_y0 = targetDistance;
-			} 
-			else {
-				let angle = Math.atan((x1_x0) / (y1_y0));
-				x2_x0 = -targetDistance * Math.cos(angle);
-				y2_y0 = targetDistance * Math.sin(angle);
-			}
-			d0x= point0.x + (1 * x2_x0)
-			d0y= point0.y + (1 * y2_y0)
-			d1x= point1.x + ( 1 * x2_x0)
-			d1y= point1.y + (1 * y2_y0)
-
-			dx = d1x - d0x,
-			dy = d1y - d0y,
-			dr = Math.sqrt(dx * dx + dy * dy)
-			var endX = (d1x + d0x) / 2;
-			var endY = (d1y + d0y) / 2;
-			var len = dr - ((dr/2) * Math.sqrt(3));
-			endX = endX + (  len/dr) ;
-			endY = endY + (  len/dr) ;
-		//reverse start and end so that label links switch 
-			if ( endX - d0x > 0 ) {
-				callback = "M" + d0x + "," + d0y   + "L" + endX + "," + endY;
-			}
-			else {
-				callback = "M" + endX + "," + endY   + "L" + d0x + "," + d0y;
-			}
-			return {
-				callback
-			};
-		}
-		// END FUNCTION
-		// BEGIN UTIL Function
-		function get_util(d,start) {
-			var legend = [
-							{'id':'black','low':0,'high':0},
-							{'id':'blue','low':0,'high':1},
-							{'id':'green','low':1,'high':30},
-							{'id':'yellow','low':30,'high':50},
-							{'id':'orange','low':50,'high':70},
-							{'id':'red','low':70,'high':100},
-							{'id':'fuchsia','low':100,'high':9991050}
-						]
-			util = d.util
-
-			if (util == -1 ) {
-				util = -1
-			}
-			else {
-				var cur_util = util
-				var capacity = d.capacity*1000000
-				util = (cur_util*100)/(capacity)
-				legend.forEach(function (d) { 
-					if (util >= d.low && util <= d.high) 
-					{ 
-						util = d.id ; 
-					}
-				})
-			}
-			if (util == -1)
-				{ util = "#999"}
-			return util
-		}
-
-		//var height = document.getElementById('topology').clientHeight 
-		//var width = document.getElementById('topology').clientWidth
-                //var height = document.getElementsByClassName('main_container').clientHeight
-                //var width = document.getElementsByClassName('main_container').clientWidth
-		var width = 1900 ;
-		var height = 1001;
-		var color = d3.scale.category20();
-
-		function returnX (source) {
-			//result is none at first 
-			result = 'none'
-			//read from position.js 
-			node_position.forEach(function (d) {
-				//iterate array
-				if (source == d.id ) {	result = parseInt(d.x) }})
-				//if forgot to define site name random x 
-				if ( result == 'none') { result = Math.floor(1 + Math.random()*(900 + 1 - 1 ))}
-			return result
-		}
-
-		//need a better way to do this , repeating function is lame 
-		function returnY (source) {
-			result = 'none'
-			node_position.forEach(function (d) {
-				if (source == d.id ) {	result = parseInt(d.y) }})
-			    if ( result === 'none') { result = Math.floor(1 + Math.random()*(900 + 1 - 1 ))}
-			return result
-		}
-
-
-		links = []
-		links = grapheDatas;
-		var nodes = [];
-		//populate nodes based on links 
-		links.forEach(function(link) {
-			link.source = nodes[link.source] || (nodes[link.source] = {name: link.source , fixed:true, x:returnX(link.source), y:returnY(link.source) });
-			link.target = nodes[link.target] || (nodes[link.target] = {name: link.target , fixed:true, x:returnX(link.target), y:returnY(link.target) });
-		});
-
-		//initiate force layout
-		var force = d3.layout.force()
-					.linkDistance(100)
-					.gravity(0.0)
-					.charge(-150)
-					.size([width, height])
-					//get the values without key from nodes object 
-					.nodes(d3.values(nodes))
-					.links(links)
-					.start();
-
-
-
-		//defined mix and max zoom 
-		var min_zoom = 0.2;
-		var max_zoom = 8.0;
-
-		var svg = d3.select("#topology")
-					.append("svg")
-					.attr("id","main_svg")
-					.attr("width", width)
-					.attr("height", height)
-					.call(d3.behavior.zoom().on("zoom", redraw).scaleExtent([min_zoom,max_zoom]))
-					.append('svg:g')
-					.attr("id","main_g")
-					.on('load',function (d) { alert('load') });
-
-
-		//used for L key to display link label , need to find a better way for this. 
-		function keydown() {
-			if (d3.event.key === 76 ) return;
-			pathtext.style("fill-opacity",1)
-		}
-
-		//watch for L press 
-		d3.select('body')  
-		.on('keydown', keydown);
-
-		//path
-		var path = svg.selectAll(".link")
-					.data(force.links())
-					.enter()
-					.append("g")
-					.attr("class","pathG")
-					.append("svg:path")
-					.attr("class", "link")
-					.style("stroke",function(d) { return get_util(d,"0"); })
-					.attr("id",function(d,i) { return "linkId_" + i; })
-					.on("click", function(d) {
-						if (d.l_int == -1 || d.util == -1 ) {
-							alert("NO SNMP DATA") 
-							return
-						}
-						$('#modal-top').modal('toggle')
-						$('#modal-body').attr("id","graph2")
-						.html(graph(d.source.name,d.l_int,d.capacity))
-					})
-
-
-
-
-		var pathtext =	svg.selectAll(".pathG")
-						.append("text")
-						.append("textPath")
-						.attr( "fill-opacity", 0 )
-						.attr("text-anchor","middle")
-						.style("text-anchor","midlle")
-						.style("font-size", "4px")
-						.style("font-weight","bold")
-						.attr("dy",0)
-						.attr("startOffset","50%")
-						.attr("xlink:href",function(d,i) { return "#linkId_" + i;})
-						.text(function(d) { return "cost:"  + d.metric + "/IP:"+ d.l_ip });
-						//end path 
-
-		//node add
-		var node = svg.selectAll(".nodes")
-					.data(force.nodes())
-					.enter()
-					.append("svg:g")
-					.attr("class","nodes")
-					.call(force.drag);
-
-		node.append("circle")
-		.attr("class", "node")
-		.attr("r", function(d) {return 5 ;})
-		//.style("fill", function(d) { return color(d.name.slice(0,3)); })
-		.on("mouseover", fade(.1))
-		.on("mouseout", fade(1))
-		.on("click",function (d) { 
-			if ($('#spf_check').is(':checked')) 
-				{ return onClick1(d);console.log("clicked") }
-			else
-				{ console.log("click but not if") } })
-
-
-//add image for the nodes 
-
-		node.append("image")
-				.attr("xlink:href", "/static/images/router.png")
-				.attr("x", "-12px")
-				.attr("y", "-12px")
-				.attr("width", "24px")
-				.attr("height", "24px")
-				.on("mouseover", fade(.1))
-				.on("mouseout", fade(1))
-				.on("click",function (d) {
-					if ($('#spf_check').is(':checked') )
-						{return onClick1(d);console.log("clicked") }
-					else
-						{ console.log("click but not if") } });
-
-		node.append("text")
-				.attr("x", 12)
-				.attr("dy", ".35em")
-				.attr("class","nodelabel")
-				.style("font-size", "12px")
-				.text(function(d) { return d.name; });
-
-
-
-		var div = d3.select("#graph")
-				.attr("class", "tooltip")
-				.style("opacity", 1)
-		var div1 = div 
-				.attr("id","graph2")
-				.attr("class", "graph2")
-
-		//drag node 
-		function dragstart(d) {
-			d3.event.sourceEvent.stopPropagation();
-			d3.select(this).classed("fixed", d.fixed = true); 
-		}
-
-		//used in zoom 
-		function redraw() { svg.attr("transform","translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")");}
-
-		var drag = force.drag()
-				.on("dragstart", dragstart)
-				.on("dragend", function() { force.stop() } );
-
-
-		var linkedByIndex = {};
-		grapheDatas.forEach(function(d) {
-			linkedByIndex[d.source.index + "," + d.target.index] = 1;});
-
-		function isConnected(a, b) {
-			return linkedByIndex[a.index + "," + b.index] || linkedByIndex[b.index + "," + a.index] || a.index == b.index;
-		}
-
-        //used in spf calculation , check if link id is equal to spf return 
-		function check_link(id) {
-			id = id
-			result = spf_results[0].filter( function (d) { return d.l_ip == id })
-			if (typeof(result[0]) !== "undefined") {
-				results = result[0].l_ip 
-			}
-			else { results = -1 }
-				return results 
-		}
-
-		selectedNodes = []
-		function onClick1(d) {
-			if (selectedNodes.length <2) {
-				d3.selectAll(".link").attr("stroke-width",1)
-				d3.selectAll(".link").attr("stroke-dasharray",null)
-				alert_text = 'Selected:' + d.name
-				alert(alert_text)
-				d3.selectAll(".link").style("stroke",function(d) { return get_util(d,0) })
-				selectedNodes.push(d.name)
-			}
-			if (selectedNodes.length ==2) {
-				var spf_div_1 = document.getElementById('sfp_div1');
-				spf_div_1.innerHTML =""
-				spf_div_1.innerHTML += 'SPF between '+ 'Source: ' +selectedNodes[0]+'  Target: '+selectedNodes[1];
-				spf_results = getSPF(selectedNodes[0],selectedNodes[1])
-				spf_results = Object.values(spf_results)
-				d3.selectAll(".link")
-					.style("stroke", function(d) { if (check_link(d.l_ip) == d.l_ip || check_link(d.r_ip) == d.r_ip ) { return "black" } else { return get_util(d,0) } })
-				d3.selectAll(".link")
-					.attr("stroke-width", function(d) { if (check_link(d.l_ip) == d.l_ip || check_link(d.r_ip) == d.r_ip) { return 5 } else {  1 } })
-				d3.selectAll(".link")
-					.attr("stroke-dasharray",function(d) { if (check_link(d.l_ip) == d.l_ip || check_link(d.r_ip) == d.r_ip) { return 3.3 } else { } })
-				selectedNodes=[]
-			}
-		}
-
-
-		function fade(opacity) {
-			return function(d) {
-				node.style("opacity", function(o) {
-					thisOpacity = isConnected(d, o) ? 1 : opacity;
-					this.setAttribute('fill-opacity', thisOpacity);
-					return thisOpacity;
-				});
-				path.style("stroke-opacity", function(o) {
-					return o.source === d || o.target === d ? 1 : opacity;
-					}
-				);
-				pathtext.style("fill-opacity", function(o) {
-					{ if (o.source === d || o.target === d)  
-							return 1;
-					}
-				});
-			};
-		}
-
-		force.on("tick", function() {
-			path.attr("d", function(d,i){
-				var LINK_WIDTH = 2
-				var targetDistance = (d.linknum % 2 === 0 ? d.linknum * LINK_WIDTH : (-d.linknum + 1) * LINK_WIDTH);
-				calcTranslationExact(d.source.name,targetDistance, d.source, d.target);
-				return callback;}
-			);
-			node.attr("transform", function(d) {return "translate(" + d.x + "," + d.y + ")";});
-			force.stop()
-		});
-		};
 </script>
 
 {% endblock javascripts %}

@@ -2,6 +2,7 @@ import datetime
 import pandas as pd
 from influxdb import InfluxDBClient
 from lnetd_log import get_module_logger
+import re
 
 logger = get_module_logger(__name__,'INFO')
 
@@ -73,7 +74,6 @@ def get_errors_ifIndex(hostname,interface,start):
     queryurl = '''SELECT non_negative_derivative(last(ifInErrors), 1s) from interface_statistics 
                   where hostname =~ /%s/ and  ifIndex = '%s' AND time >= now()- %sh10m and time <=now()- %sh 
                   GROUP BY time(5m)''' %(hostname,interface,start,start)
-    print queryurl
     result = client.query(queryurl)
     points = list(result.get_points(measurement='interface_statistics'))
     if not points:
@@ -84,3 +84,27 @@ def get_errors_ifIndex(hostname,interface,start):
     df=df.to_dict(orient='records')
     result = int(round(df[0]['bps']))
     return result
+
+def get_sysdesc(hostname):
+    #logger.debug('Get sysDesc from influxdb based on %s with %s'%(hostname))
+    timestamp = datetime.datetime.utcnow().isoformat()
+    queryurl = '''SELECT last(sysDesc) from snmp where hostname =~ /%s/''' %(hostname)
+    print queryurl
+    result = client.query(queryurl)
+    points = list(result.get_points(measurement='snmp'))
+    print points
+    if not points:
+        #logger.warning('No sysDesc data for %s => replace with -1'%(hostname,interface))
+        return 'NA'
+    if re.match("^Cisco IOS XR Software",points[0]['last']):
+        vendor = 'cisco_xr'
+    elif re.match("^Cisco IOS Software",points[0]['last']):
+        vendor = 'cisco_ios'
+    elif re.search(r".Huawei",points[0]['last']):
+        vendor = 'huawei'
+    elif re.match("^Juniper Networks",points[0]['last']):
+        vendor = 'juniper_junos'
+    else:
+        vendor = 'NA'
+    return vendor
+

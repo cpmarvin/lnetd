@@ -10,7 +10,8 @@ class Routers(Base, UserMixin):
     name = Column(String(300), unique=True)
     ip = Column(String(120), unique=True)
     country = Column(String(30))
-
+    vendor = Column(String(30))
+    version = Column(String(30))
     def __init__(self, **kwargs):
         for property, value in kwargs.items():
             # depending on whether value is an iterable or not, we must

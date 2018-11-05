@@ -81,11 +81,14 @@ def model_demand():
     #netflow_demands = [ {'source':'gb-p10-lon','target':'fr-p7-mrs','demand':1000000000} ]
     df = pd.read_sql(db.session.query(Links).filter(Links.index >=0).statement,db.session.bind)
     df['util'] = 0
+    df['id'] = df['index']
     isis_links = df.to_dict(orient='records')
     df_router_name = pd.read_sql(db.session.query(Links.source.distinct()).statement,db.session.bind)
     router_name = df_router_name['anon_1'].values.tolist()
     #print isis_links
     columns = [
+            { "field": "state","checkbox":True},
+            { "field": "id","title":"id","sortable":False},
             { "field": "index","title":"index","sortable":False},
             { "field": "source","title":"source","sortable":True,"editable":True},
             { "field": "target","title":"target","sortable":False,"editable":True},
@@ -117,6 +120,8 @@ def model_edit():
     router_name = df_router_name['anon_1'].values.tolist()
     #print isis_links
     columns = [
+            { "field": "state","checkbox":True},
+            { "field": "id","title":"id","sortable":False},
             { "field": "index","title":"index","sortable":False},
             { "field": "source","title":"source","sortable":True,"editable":True},
             { "field": "target","title":"target","sortable":False,"editable":True},

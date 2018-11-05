@@ -45,6 +45,8 @@
                     <th>Name</th>
                     <th>IP</th>
                     <th>Country</th>
+                    <th>Vendor</th>
+                    <th>Version</th>
                   </tr>
                 </thead>
 
@@ -55,6 +57,8 @@
                     <td>{{node.name}}</td>
                     <td>{{node.ip}}</td>
                     <td>{{node.country}}</td>
+                    <td> {{names[node.vendor]}}</td>
+                    <td>{{node.version}}</td>
                   </tr>
 		{% endfor %}
 

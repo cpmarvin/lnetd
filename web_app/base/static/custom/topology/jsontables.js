@@ -20,7 +20,7 @@ function JSONTable(tableObject)
                         tableRow = $(tableRows[rc]).children()
                         for (var cc = 0; cc < tableRow.length; cc++)
                         {
-                                tableJsonObject[tableHeaderArray[cc]] = tableRow[cc].innerText
+                                tableJsonObject[tableHeaderArray[cc]] = tableRow[cc].innerText.trim()
                         }
                         tableJsonObjectList.push(tableJsonObject)
                 }

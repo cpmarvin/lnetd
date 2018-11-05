@@ -17,30 +17,93 @@ config = ConfigParser.ConfigParser()
 config.read("./isisd.ini")
 
 logger = get_module_logger(__name__,'DEBUG')
-
-def lnetd_data_creation(df):
-    logger.info('Generate l_ip r_ip pair')
-    df.loc[:, 'l_ip_r_ip'] = pd.Series([tuple(sorted(each)) for each in list(zip(df.l_ip.values.tolist(), df.r_ip.values.tolist()))])
-    logger.info('Set l_ip r_ip pair as string')
-    df['l_ip_r_ip'] = df['l_ip_r_ip'].astype(str)
-    logger.info('Fill NA values with 0')
-    df = df.fillna(0)
-    df['l_int'] = 34
-    df['r_int'] = 34
-    df['util'] = random.randint(0,2000)
-    df['capacity'] = 1000
-    df['errors'] = random.randint(0,2000)
-    #print '\npanda after the function:\n{}'.format(df)
+def lnetd_routers(new_list):
+    routers_list = []
+    for i in new_list:
+        try:
+            source = i.data[137][0]['V'][0]
+            #print INDENT,'name',i.name
+            #print INDENT,'132:',i.data[132]
+            ip = i.data[132][0]['V'][0]
+            routers = {"name": source,
+                                "ip": ip}
+            routers_list.append(routers)
+            #print '-------'
+        except Exception as e:
+            print 'something wrong in router list',e
+    if len(routers_list) > 1:
+        df = pd.DataFrame(routers_list)
+        df.loc[:, 'country'] = df['name'].str[0:2]
+        df['vendor'] = df.apply(lambda row: get_sysdesc(row['name']),axis=1)
+        df['version'] = 'NA' #for now
+        return df 
+    else:
+        logger.warning('something wrong in lnetd_routers')
+def lnetd_links(df):
+    topology = []
+    for i in new_list:
+        try:
+            source = i.data[137][0]['V'][0]
+            #print INDENT,'name',i.name
+            #print INDENT,'137:',i.data[137][0]['V'][0]
+            for data_22 in i.data[22]:
+                for n in data_22['V']:
+                    #print 'this is the n:',n
+                    #print 'this is the nodes_names',node_names
+                    target = get_hostname(n['lsp_id'])
+                    metric = n['metric']
+                    l_ip = n['l_ip']
+                    r_ip = n['r_ip']
+                    #print ('%s,%s,%s') %(source,target,metric)
+                    final_entry = {"source": source,
+                                   "target": target,
+                                   "metric": metric,
+                                   "l_ip": l_ip,
+                                   "r_ip": r_ip
+                               }
+                    #print '-----final_entry :',final_entry
+                    topology.append(final_entry)
+            #print '-------'
+        except:
+            logger.warning('something wrong in creating topology')
+    #print 'final topology :\n',topology
+    if len(topology) > 1:
+        try:
+            df = pd.DataFrame(topology)
+            our_lsp_id = config.get('isisd', 'our_lsp') #'000.503.300.110'
+            logger.info('Remove our lsp_id')
+            df = remove_unreachable_nodes(df,source,our_lsp_id)
+            logger.info('Generate l_ip r_ip pair')
+            df.loc[:, 'l_ip_r_ip'] = pd.Series([tuple(sorted(each)) for each in list(zip(df.l_ip.values.tolist(), df.r_ip.values.tolist()))])
+            logger.info('Set l_ip r_ip pair as string')
+            df['l_ip_r_ip'] = df['l_ip_r_ip'].astype(str)
+            logger.info('Fill NA values with 0')
+            df = df.fillna(0)
+            #df['l_int'] = 34
+            df['r_int'] = -1
+            #df['util'] = random.randint(0,2000)
+            #df['capacity'] = 1000
+            #df['errors'] = random.randint(0,2000)
+            df['l_int'] = df.apply(lambda row: get_ifIndex_IP(row['source'],row['l_ip']),axis=1)
+            df['util'] = df.apply(lambda row: get_uti_ifIndex(row['source'],row['l_int'],0),axis=1)
+            df['capacity'] = df.apply(lambda row: get_capacity_ifIndex(row['source'],row['l_int']),axis=1)
+            df['errors'] = df.apply(lambda row: get_errors_ifIndex(row['source'],row['l_int'],0),axis=1)
+            #print '\npanda after the function:\n{}'.format(df)
+            #remove rows if both source and target are the same
+            df = df.query("source != target")
+        except Exception as e:
+            print 'something went wrong on lnetd_links',e
+            df = [] 
     return df 
-def lnetd_data_sql_write(df):
+def lnetd_data_sql_write(df,db):
     try:
         logger.info('Write to database')
         disk_engine = create_engine('sqlite:////opt/lnetd/web_app/database.db')
-        df.to_sql('Links', disk_engine, if_exists='replace')
+        df.to_sql(db, disk_engine, if_exists='replace')
         logger.info('All done')
-        #logger.debug('here is the resulting info :\n %s' %(df))
-    except Exception:
-        logging.exception('Got error writing to sqlite3 db')
+        logger.debug('here is the resulting info :\n %s' %(df))
+    except Exception as e:
+        logging.exception('Got error writing to sqlite3 db: %s') %e 
 def remove_unreachable_nodes(df,source,our_lsp_id):
   """ find if from source to destinatio there is a path
   create a subgraph with all the nodes that we have path's to
@@ -121,50 +184,20 @@ while 1:
         new_list.append(cur_node)
 
     node_names = {}
-    topology = []
     #print 'this is the list now: {}'.format(topology)
     for i in new_list:
         try:
             node_names.update({i.name:i.data[137][0]['V'][0]})
         except:
             print 'error'
-    #print 'nodes_names : \n',node_names
-    for i in new_list:
-        try:
-            source = i.data[137][0]['V'][0]
-            #print INDENT,'name',i.name
-            #print INDENT,'137:',i.data[137][0]['V'][0]
-            for data_22 in i.data[22]:
-                for n in data_22['V']:
-                    #print 'this is the n:',n
-                    #print 'this is the nodes_names',node_names
-                    target = get_hostname(n['lsp_id'])
-                    metric = n['metric']
-                    l_ip = n['l_ip']
-                    r_ip = n['r_ip']
-                    #print ('%s,%s,%s') %(source,target,metric)
-                    final_entry = {"source": source,
-                                   "target": target,
-                                   "metric": metric,
-                                   "l_ip": l_ip,
-                                   "r_ip": r_ip
-                               }
-                    #print '-----final_entry :',final_entry
-                    topology.append(final_entry)
-            #print '-------'
-        except:
-            print 'something wrong in creating topology'
-    #print 'final topology :\n',topology
+    #get routers
     try:
-        df = pd.DataFrame(topology)
-        #df = df.drop_duplicates()
-        our_lsp_id = config.get('isisd', 'our_lsp') #'000.503.300.110'
-        source = df.loc[df['target'] == our_lsp_id ].head(1).to_dict(orient='records')[0]['source']
-        df = remove_unreachable_nodes(df,source,our_lsp_id)
-        #print '\nthis is after:\n {}'.format(df)
-        df = lnetd_data_creation(df)
-        print '--------------------------:\n',df
-        lnetd_data_sql_write(df)
+        links = lnetd_links(new_list)
+        routers = lnetd_routers(new_list)
+        #if not links.empty:
+        lnetd_data_sql_write(links,'Links')
+        #elif not routers.empty:
+        lnetd_data_sql_write(routers,'Routers')
     except Exception as e:
-        print 'something wrong in panda and spf: {}'.format(e)
+        print 'something wrong in writing to sql module: {}'.format(e)
 
