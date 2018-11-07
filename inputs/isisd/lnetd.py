@@ -17,6 +17,43 @@ config = ConfigParser.ConfigParser()
 config.read("./isisd.ini")
 
 logger = get_module_logger(__name__,'DEBUG')
+def lnetd_prefixes(new_list):
+    prefixes_list = []
+    for i in new_list:
+        try:
+            source = i.data[137][0]['V'][0]
+            #print INDENT,'name',i.name
+            #print INDENT,'132:',i.data[132]
+            for data_135 in i.data[135]:
+                for n in data_135['V']:
+                    #print 'this is the n:',n
+                    #print 'this is the nodes_names',node_names
+                    ip = n['prefix']
+                    #print ('%s,%s,%s') %(source,target,metric)
+                    prefixes = {"name": source,
+                                "ip": ip,
+                               }
+                    #print '-----final_entry :',final_entry
+                    prefixes_list.append(prefixes)
+            for data_236 in i.data[236]:
+                for n in data_236['V']:
+                    #print 'this is the n:',n
+                    #print 'this is the nodes_names',node_names
+                    ip = n['prefix']
+                    #print ('%s,%s,%s') %(source,target,metric)
+                    prefixes = {"name": source,
+                                "ip": ip,
+                               }
+                    #print '-----final_entry :',final_entry
+                    prefixes_list.append(prefixes)
+        except Exception as e:
+            print 'something wrong in prefixes list',e
+    if len(prefixes_list) > 1:
+        df = pd.DataFrame(prefixes_list)
+        return df 
+    else:
+        logger.warning('something wrong in lnetd_prefixes')
+
 def lnetd_routers(new_list):
     routers_list = []
     for i in new_list:
@@ -194,10 +231,10 @@ while 1:
     try:
         links = lnetd_links(new_list)
         routers = lnetd_routers(new_list)
-        #if not links.empty:
+        prefixes = lnetd_prefixes(new_list)
         lnetd_data_sql_write(links,'Links')
-        #elif not routers.empty:
         lnetd_data_sql_write(routers,'Routers')
+        lnetd_data_sql_write(routers,'Prefixes')
     except Exception as e:
         print 'something wrong in writing to sql module: {}'.format(e)
 

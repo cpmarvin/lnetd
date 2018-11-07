@@ -25,7 +25,7 @@
 #
 
 import string, struct, sys
-
+import netaddr
 #-------------------------------------------------------------------------------
 
 def error(message):
@@ -284,3 +284,18 @@ def int2hex(i):
 
 ################################################################################
 ################################################################################
+def small_str2ip(small_ip):
+    '''this can be written better
+    '''
+    ip_pass1 = str2hex(small_ip)
+    ip_pass2 = ip_pass1.split('.')
+    if len(ip_pass2) < 4:
+        ip_pass2.append('0')
+    for i in range(len(ip_pass2)):
+        ip_pass2[i]  = str(int(ip_pass2[i], 16))
+    return '.'.join(ip_pass2)
+
+def str2ipv6(value):
+    value_decimal = str2dec(value)
+    ipv6 = netaddr.IPAddress(value_decimal)
+    return str(ipv6)

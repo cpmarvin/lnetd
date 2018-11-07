@@ -234,7 +234,7 @@ def lnet_cnsp_parsing(vfields):
           else:
             print '--------node seq_no or checksum or lifetime NOT 0...nothing to do here ...'
         else:
-          print 'node {} not in nodes but lsp exists so please request via psnp'.format(node)
+          print 'node {} not in nodes but lsp exists so requesting via psnp'.format(node)
           psnp = mkIpsnp( isis, 2, i['ID'] ) #lifetime, lsp_id, lsp_seq_no, cksm
           level = 0
           verbose = 0
@@ -954,6 +954,97 @@ def parseVLenFieldLnetD(ftype, flen, fval, verbose=0, level=0):
             rv["V"] = addrs_strs
             if verbose > 0:
                 print level*INDENT + "interface IP addresses: " + `addrs_strs`
+        elif ftype == VLEN_FIELDS["TEIPReach"]:
+            ## 135
+            rv["V"] = []
+            #print INDENT*5 + "working on 135"
+            while len(fval) > 0:
+              #print prthex(fval)
+              metric = struct.unpack(">L",fval[0:4]) #0-3
+              fval = fval[4:]
+              #print 'metric:{}'.format(metric)
+              distibution_sub_tlv_mask = struct.unpack(">s",fval[0])
+              #print 'distibution_sub_tlv_mask:{}'.format(distibution_sub_tlv_mask)
+              fval = fval[1:]
+              distibution_sub_tlv_mask1  = str2bin(distibution_sub_tlv_mask[0])
+              sub_tlv_present = distibution_sub_tlv_mask1[2]
+              #print 'this is the sub_tlv_present:{}'.format(sub_tlv_present)
+              mask = int(distibution_sub_tlv_mask1[2:].split('.')[0],2)
+              #print 'this is the mask:{}'.format(mask)
+              #print 'this is the mask in decimal : {}'.format(mask)
+              if mask > 17 and mask < 25:
+                addr_len = 3
+              elif mask > 25:
+                addr_len = 4 
+              #print 'addr_len: {}'.format(addr_len)
+              addr = struct.unpack(">%ds" %addr_len, fval[0:addr_len])#addr_len-1
+              #print 'addr:{}'.format(addr)
+              #print 'addr:{}'.format(small_str2ip(addr[0]))
+              final_addr = small_str2ip(addr[0])
+              final_mask = str(mask)
+              final_prefix = final_addr + '/' + final_mask
+              final = {'prefix': final_prefix }
+              #print "**********final:{}".format(final)
+              rv["V"].append(final)
+              fval = fval[addr_len:]
+              if int(sub_tlv_present) == 1:
+                  '''becuase we have a sub_tlv 
+                  we need to push the packet
+                  with the value of the tlv
+                  '''
+                  sub_tlv_len = struct.unpack(">B",fval[0])[0]
+                  fval = fval[1:]
+                  fval = fval[sub_tlv_len:]
+
+        elif ftype == VLEN_FIELDS["IPv6IPReach"]:
+            ## 236
+            rv["V"] = []
+            #print 'found TLV 236 working on it'
+            #print prthex(INDENT*2,fval)
+            '''     
+           0                   1                   2                   3
+           0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+           +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+           |  Type = 236   |    Length     |          Metric ..            |
+           +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+           |          .. Metric            |U|X|S| Reserve |  Prefix Len   |
+           +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+           |  Prefix ...
+           +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+            '''
+            while len(fval) > 0:
+                metric = struct.unpack(">L",fval[0:4]) #0-3
+                fval = fval[4:]
+                #print '>>metric:{}'.format(metric)
+                #print prthex(INDENT*2,fval[0:4])
+                up_down_external_sub_tlv  = struct.unpack(">s",fval[0])
+                #print prthex(INDENT*2,fval[0])
+                up_down_external_sub_tlv  = str2bin(up_down_external_sub_tlv[0])
+                #print '>>up_down_external_sub_tlv:{}'.format(up_down_external_sub_tlv)
+                sub_tlv_present = up_down_external_sub_tlv[2]
+                #print '>>sub_tlv_present:{}'.format(sub_tlv_present)
+                fval = fval[1:]
+                mask = struct.unpack(">B",fval[0])
+                #print prthex(INDENT*2,fval[0])
+                #print '>>mask:{}'.format(mask)
+                fval = fval[1:]
+                #print prthex(INDENT*2,fval[0:16])
+                addr = struct.unpack(">16s",fval[0:16])
+                #print '>>addr:{}'.format(str2ipv6(addr[0]))
+                fval = fval[16:]
+                final_addr  = str2ipv6(addr[0])
+                final_mask = str(mask[0])
+                final_prefix = final_addr + '/' + final_mask
+                final = {'prefix': final_prefix }
+                #print "**********final:{}".format(final)
+                rv["V"].append(final)
+                if int(sub_tlv_present) == 1:
+                  sub_tlv_len = struct.unpack(">B",fval[0])[0]
+                  #print 'sub_tlv_len:{}'.format(sub_tlv_len)
+                  fval = fval[1:]
+                  fval = fval[sub_tlv_len:]
+                #print 'Done with tlv'
+
         elif ftype == VLEN_FIELDS["DynamicHostname"]:
             ## 137
             name = struct.unpack("> %ds" % flen, fval)
@@ -1305,7 +1396,7 @@ class Isis:
         self._sockname = self._sock.getsockname()
 
         #print type(self._sock)
-        print 'looking for isis pak'
+        print 'looking for isis packet'
         self._sock.recvfrom(1)
 
         # XXX HACK: want to query _sock for IP addr; can't figure out
