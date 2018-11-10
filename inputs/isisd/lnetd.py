@@ -41,15 +41,16 @@ def lnetd_prefixes(new_list):
                     #print 'this is the nodes_names',node_names
                     ip = n['prefix']
                     #print ('%s,%s,%s') %(source,target,metric)
-                    prefixes = {"name": source,
+                    prefixes_v6 = {"name": source,
                                 "ip": ip,
                                }
                     #print '-----final_entry :',final_entry
-                    prefixes_list.append(prefixes)
+                    prefixes_list.append(prefixes_v6)
         except Exception as e:
-            print 'something wrong in prefixes list',e
+            print 'something wrong in prefixes list:',e
     if len(prefixes_list) > 1:
         df = pd.DataFrame(prefixes_list)
+        df.loc[:, 'country'] = df['name'].str[0:2]
         return df 
     else:
         logger.warning('something wrong in lnetd_prefixes')
@@ -234,7 +235,7 @@ while 1:
         prefixes = lnetd_prefixes(new_list)
         lnetd_data_sql_write(links,'Links')
         lnetd_data_sql_write(routers,'Routers')
-        lnetd_data_sql_write(routers,'Prefixes')
+        lnetd_data_sql_write(prefixes,'Prefixes')
     except Exception as e:
         print 'something wrong in writing to sql module: {}'.format(e)
 

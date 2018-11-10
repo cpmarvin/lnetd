@@ -1,6 +1,6 @@
 //zoom
 var zoom = d3.zoom()
-  .scaleExtent([1, 100])
+  .scaleExtent([0.1, 900])
   //.translateExtent([[150, 150],[150, 150]])
   .on('zoom', zoomFn);
 
@@ -131,6 +131,13 @@ grapheDatas1.forEach(function(link) {
   link.target = nodes[link.target] || (nodes[link.target] = {name: link.target , fixed:true, fx:returnX(link.target), fy:returnY(link.target) });
 });
 
+Object.values(nodes).forEach(function(d){
+      console.log(d.name)
+      d.weight = grapheDatas1.filter(function(l) {
+      return l.source.name == d.name // || l.target.index == d.index
+    }).length
+})
+
     return [ Object.values(grapheDatas1) , Object.values(nodes)  ]
 }
 
@@ -260,3 +267,89 @@ function check_link(id) {
     return results 
 }
 
+//use to calculated node_weight
+function node_weight(d) {
+    d.weight = links.filter(function(l) {
+      return l.source.index == d.index // || l.target.index == d.index 
+    }).length
+    return d.weight
+  }
+
+//circle
+$('#circle_topology').change(function() {
+      if(this.checked){
+          var circleCoord = function(node, index, num_nodes){
+                  var circumference = circle1.node().getTotalLength();
+                  var pointAtLength = function(l){return circle1.node().getPointAtLength(l)};
+                  var sectionLength = (circumference)/num_nodes;
+                  var position = sectionLength*index+sectionLength/2;
+                  return pointAtLength(circumference-position)
+                      }
+                  var width = 950
+                  var dim = width-50
+                  var circle1 = d3.select("#main_svg").select("#main_g").append("path")
+                      .attr("d", "M 40, "+(dim/2+40)+" a "+dim/2+","+dim/2+" 0 1,0 "+dim+",0 a "+dim/2+","+dim/2+" 0 1,0 "+dim*-1+",0")
+                      .style("fill", "none");
+          d3.selectAll(".node").data().forEach(function(d,i) {
+                var coord = circleCoord(d, i, nodes.length)
+                                  d.fx = coord.x
+                                  d.fy = coord.y
+          })
+      }
+  });
+
+
+
+//tier of connectivity 
+$('#level_topology').change(function() {
+      if(this.checked){
+          var pathCoord = function(node, index, num_nodes, level){
+                  var circumference = level.node().getTotalLength();
+                  var pointAtLength = function(l){return level.node().getPointAtLength(l)};
+                  var sectionLength = (circumference)/num_nodes;
+                  var position = sectionLength*index+sectionLength/2;
+                  return pointAtLength(circumference-position)
+                      }
+                  var width = 950
+                  var dim = width-50
+                  var level1 = d3.select("#main_svg").select("#main_g").append("path")
+                      .attr("d","M 100 300 L 700 300")
+                      //.attr("d", "M 40, "+(dim/2+40)+" a "+dim/2+","+dim/2+" 0 1,0 "+dim+",0 a "+dim/2+","+dim/2+" 0 1,0 "+dim*-1+",0")
+                      .style("fill", "red");
+
+                  var level2 = d3.select("#main_svg").select("#main_g").append("path")
+                      .attr("d","M 100 200 L 700 200")
+                      //.attr("d", "M 40, "+(dim/2+40)+" a "+dim/2+","+dim/2+" 0 1,0 "+dim+",0 a "+dim/2+","+dim/2+" 0 1,0 "+dim*-1+",0")
+                      .style("fill", "yellow");
+
+                  var level3 = d3.select("#main_svg").select("#main_g").append("path")
+                      .attr("d","M 100 100 L 700 100")
+                      //.attr("d", "M 40, "+(dim/2+40)+" a "+dim/2+","+dim/2+" 0 1,0 "+dim+",0 a "+dim/2+","+dim/2+" 0 1,0 "+dim*-1+",0")
+                      .style("fill", "green");
+
+                  var level4 = d3.select("#main_svg").select("#main_g").append("path")
+                      .attr("d","M 100 100 L 700 100")
+                      //.attr("d", "M 40, "+(dim/2+40)+" a "+dim/2+","+dim/2+" 0 1,0 "+dim+",0 a "+dim/2+","+dim/2+" 0 1,0 "+dim*-1+",0")
+                      .style("fill", "green");
+
+
+          d3.selectAll(".node").data().forEach(function(d,i) {
+                var valueToUse
+                if (node_weight(d) == 1){ //at least 1 link
+                  valueToUse = level1
+                }
+                else if (node_weight(d) == 2){
+                  valueToUse = level2
+                }
+                else if (node_weight(d) == 3){
+                  valueToUse = level3
+                }
+                else {
+                  valueToUse = level4
+                }
+                var coord = pathCoord(d, i, nodes.length,valueToUse)
+                                  d.fx = coord.x
+                                  d.fy = coord.y
+          })
+      }
+  });

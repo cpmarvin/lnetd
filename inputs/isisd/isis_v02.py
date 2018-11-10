@@ -214,22 +214,14 @@ def lnet_cnsp_parsing(vfields):
     seq_no = i['SEQ_NO']
     checksum = i['CKSM']
     lifetime = i['LIFETIME']
-    #print node_id
-    #print lsp_id
-    #print 'this is what i should be passing to the mkIpsnp: {} {} {} {}'.format(lifetime, lsp_id, seq_no, checksum)
     if pseudonode == 9999: # need to remove this , i case about pseudone now
       print "ignore - pseudonode for DIS"
     else:
-      #print '----node.seq_no: {} checksum: {} lifetime: {}'.format(seq_no,checksum,lifetime)
-      #print 'creating a dummy node class with no data'
       node = Node(node_id,pseudonode,fragment,seq_no,{})
       try:
         if node in nodes:
           position = nodes.index(node)
-          #print '----position of {} is {} position'.format(node,position)
-          #print '----node.seq_no: {} checksum: {} lifetime: {} and node[position]seq_no:{}'.format(node.seq_no,checksum,lifetime,nodes[position].seq_no)
           if (node.seq_no == 0 or checksum == 0 or lifetime ==0 ): #this is not correct , need to find out the rfc...
-            #print '--------found a seq_no or checksum or lifetime with 0...removing node'
             del nodes[position]
           else:
             print '--------node seq_no or checksum or lifetime NOT 0...nothing to do here ...'
@@ -458,15 +450,12 @@ def parseIsisLsp(msg_len, msg, verbose=1, level=0):
                ("UNUSED", "L1", "UNUSED", "L1+L2")[ist])
         print (level+1)*INDENT + "attached: %s" % att
     vfields = parseVLenFieldsLnetD(msg[ISIS_LSP_HDR_LEN:], lsp_id, seq_no , verbose, level)
-    #print 'ISISLSP:',INDENT,'lsp_id:{} \n seq_no: {} \n'.format(lsp_id,seq_no)
-    #print 'lsp_id:{} \n'.format(lsp_id)
-    #print 'ISISLSP:',INDENT*2,'vfields are :{} '.format(vfields)
     print '\n------------ISIS-LSP----------\n'
     node_id = hex2isisd(lsp_id[0])
     pseudonode = lsp_id[1]
     fragment = lsp_id[2]
-    print '\n Nodes List :{} \n'.format(nodes)
-    print ('node_id: {} - pseudonode {} - fragment: {} - seq_no: {}' ).format(node_id,pseudonode,fragment,seq_no) 
+    #print '\n Nodes List :{} \n'.format(nodes)
+    #print ('node_id: {} - pseudonode {} - fragment: {} - seq_no: {}' ).format(node_id,pseudonode,fragment,seq_no) 
     if pseudonode == 9999: #i care about pseudoneone now
       print "ignore"
     else:
@@ -475,9 +464,6 @@ def parseIsisLsp(msg_len, msg, verbose=1, level=0):
       if node not in nodes:
         print 'found a new node with node: {} that is not in nodes: '.format(node)
         nodes.append(node)
-        #print 'update ^'
-        #for i in nodes:
-          #print 'what are the nodes at the moment : \n \n {} \n \n ----'.format(i)
       else:
         position = nodes.index(node)
         print ' position of {} is {} position'.format(node,position)
@@ -489,9 +475,9 @@ def parseIsisLsp(msg_len, msg, verbose=1, level=0):
           print ' node is :{} and seg_no is :{} and its higher that {} with {}'.format(node,node.seq_no,nodes[position],nodes[position].seq_no) 
           print ' found a newer seq_no'
           del nodes[position]
-          #print ' delete old lsp_id'
+          print ' delete old lsp_id'
           nodes.append(node)
-          #print 'add new one'
+          print 'add new one'
         else:
           pass
     print '\n------------END ISIS-LSP---------- \n'
@@ -515,47 +501,7 @@ def parseIsisCsn(msg_len, msg, verbose=0, level=0):
               "end LSP ID: %s" % (str2hex(end_lsp_id),)
 
     vfields = parseVLenFieldsLnetD(msg[ISIS_CSN_HDR_LEN:], verbose, level)
-    #print 'vfields in IsisCsn are : {}'.format(vfields)
     lnet_cnsp_parsing(vfields)
-    '''
-    print '\n------------IsisCSN----------\n'
-    #print '\n Nodes List :{} \n'.format(nodes)
-    for i in vfields[9][0]['V']:
-      lsp_id = b'%s' %str(i['ID'])
-      node_id = hex2isisd(i['ID'])
-      pseudonode = i['PN']
-      fragment = i['NM']
-      seq_no = i['SEQ_NO']
-      checksum = i['CKSM']
-      lifetime = i['LIFETIME']
-      #print node_id
-      #print lsp_id
-      #print 'this is what i should be passing to the mkIpsnp: {} {} {} {}'.format(lifetime, lsp_id, seq_no, checksum)
-      if pseudonode == 9999: # need to remove this , i case about pseudone now
-        print "ignore - pseudonode for DIS"
-      else:
-        #print '----node.seq_no: {} checksum: {} lifetime: {}'.format(seq_no,checksum,lifetime)
-        #print 'creating a dummy node class with no data'
-        node = Node(node_id,pseudonode,fragment,seq_no,{})
-        try:
-          if node in nodes:
-            position = nodes.index(node)
-            #print '----position of {} is {} position'.format(node,position)
-            #print '----node.seq_no: {} checksum: {} lifetime: {} and node[position]seq_no:{}'.format(node.seq_no,checksum,lifetime,nodes[position].seq_no)
-            if (node.seq_no == 0 or checksum == 0 or lifetime ==0 ): #this is not correct , need to find out the rfc...
-              #print '--------found a seq_no or checksum or lifetime with 0...removing node'
-              del nodes[position]
-            else:
-              print '--------node seq_no or checksum or lifetime NOT 0...nothing to do here ...'
-          else:
-            print 'node {} not in nodes but lsp exists so please request via psnp'.format(node)
-            psnp = mkIpsnp( isis, 2, lifetime, i['ID'], seq_no, checksum) #lifetime, lsp_id, lsp_seq_no, cksm
-            sendMsgG(isis , psnp, verbose, level)
-        except Exception as e:
-          print 'something went wrong:{}'.format(e)
-    print '\n------------END - IsisCSN----------\n'
-    #mkIpsnp( isis ,ln, lifetime, node_id,seq_no,checksum)
-    '''
     return (pdu_len, src_id, start_lsp_id, end_lsp_id, vfields)
 
 #-------------------------------------------------------------------------------
@@ -601,8 +547,6 @@ def parseVLenFields(fields, verbose=0, level=0):
 def parseVLenFieldsLnetD(fields, lsp_id, seq_no, verbose=0, level=0):
 
     vfields = {}
-    #print 'this is the lsp_id {} with lsp_id_xx {}'.format(str2hex(lsp_id[0]),lsp_id[1])
-    #print 'this is the seq_no {}'.format(seq_no)
 
     while len(fields) > 1:
         # XXX: strange -- have seen single null byte vfields...
@@ -743,10 +687,7 @@ def parseVLenFieldLnetD(ftype, flen, fval, verbose=0, level=0):
                 cnt = cnt + 1
                 lifetime, lsp_id, lsp_seq_no, cksm =\
                           struct.unpack("> H 8s L H", fval[:16])
-                #print 'lsp_id before unpack again',lsp_id
                 lsp_id = struct.unpack("> 6sBB", lsp_id)
-                #print 'lsp_id after unpack ',lsp_id
-
                 lsp_entry = { "ID"       : lsp_id[0],
                               "PN"       : lsp_id[1],
                               "NM"       : lsp_id[2],
@@ -781,10 +722,7 @@ def parseVLenFieldLnetD(ftype, flen, fval, verbose=0, level=0):
               lsp_id = struct.unpack("> 7s", fval[0:7])
               metric = struct.unpack("> sss", fval[7:10])
               tlv_len = struct.unpack(">B",fval[10])
-              #print "LSP: %s , METRIC: %s , tlv_l: %s" %(hex2isisd(lsp_id[0]),str2dec(metric),tlv_len)
               metric = int(str2dec(metric))
-              #print 'tlv_len---------:',tlv_len[0]
-              #print 'fval_len--------:',len(fval)
               '''
               after lsp_id and metric found move packet and check for subtlv
               '''
@@ -792,10 +730,6 @@ def parseVLenFieldLnetD(ftype, flen, fval, verbose=0, level=0):
                               'metric':metric,
                               'l_ip': None,
                               'r_ip': None})
-              #print INDENT*1,'***packet at: {}'.format(len(fval))
-              #print INDENT*1,'***Found a neighbour(len7):',hex2isisd(lsp_id[0])
-              #print INDENT*1,'***Found a metric(len3):',metric
-              #print INDENT*1,'***Found a tlv:(len1)',tlv_len[0]
               fval = fval[11:]
               #print INDENT*1,'***packet at: {}'.format(len(fval))
               rem_tvl = tlv_len[0]  # is for the subtlv , nee a better way ,new variable for tlv lenght 
@@ -805,73 +739,26 @@ def parseVLenFieldLnetD(ftype, flen, fval, verbose=0, level=0):
                 while we have packets in buffer we find what type of sub_tlv and len
                 we have
                 '''
-                #print prthex(':',fval)
-                #print '*******************************enter here ? ********************'
                 rem_tvl  -= 2
                 #print INDENT*2,'remaining tlv: {}'.format(rem_tvl)
                 (sub_ftype, sub_flen) = struct.unpack(">BB", fval[0:2]) # find sub_tlv type and len
                 fval = fval[2:] # move packet to sub_tlv content 
-                #print INDENT*2,'***found a sub_tlv with type:{} and len: {} packet(len2-sub_type,sub_len) is at position: {}'.format(sub_ftype,sub_flen,len(fval))
-                #print 'sub_ftype and len',sub_ftype,sub_flen
-                #print "before sub_type RV is : {}".format(rv['V'][cnt])
                 if sub_ftype == 6 and sub_flen >0: # if we found the sub_tlv we are looking for and the sub_tlv not 0 ? can this happen 
-                    #print INDENT*4,'found subtlv 6'
-                    #print prthex('l_ip:',fval[0:sub_flen])
                     l_ip = struct.unpack(">L",fval[0:sub_flen]) # get local_ip
                     l_ip =id2str(l_ip[0])
                     #print 'l_ip:{}'.format(l_ip)
                     fval = fval[sub_flen:] #move packet forward 
                     rem_tvl -= sub_flen # decrease remaining tvl with this subtlv lenght 
-                    #print INDENT*2,'remaining tlv: {}'.format(rem_tvl)
-                    #print prthex('next:',fval[17:21])
-                    #print len(fval)
                     rv["V"][cnt]['l_ip'] = l_ip #append the info to something ? need to find a clean way
-                    #print "rv[V][0][l_ip]:{}".format(rv["V"][cnt]['l_ip'])
-                    #print "at this stage RV is : {}".format(rv)
-                    #print INDENT*2,'***with local_ip:{} and packet at: {}'.format(l_ip,len(fval))
                 elif sub_ftype == 8 and sub_flen >0: #if we found the sub_tlv we are looking for and the sub_tlv not 0 ? can this happen
-                    #print INDENT*4,'found subtlv 8'
-                    #print prthex('FFF:',fval[0:sub_flen])
                     r_ip = struct.unpack(">L",fval[0:sub_flen]) # get remove_ip
                     r_ip = id2str(r_ip[0])
-                    #print 'r_ip:{}'.format(r_ip)
                     rv["V"][cnt]['r_ip'] = r_ip  #append the info to something ? need to find a clean way 
-                    #print "rv[V][0][r_ip]: {}".format(rv["V"][cnt]['r_ip'])
-                    #print "at this stage RV is : {}".format(rv)
                     fval = fval[sub_flen:] #move packet forward
                     rem_tvl -=sub_flen # decrease rem_tlv
-                    #print INDENT*2,'remaining tlv: {}'.format(rem_tvl)
-                    #print INDENT*2,'***with remote_ip:{} and packet at: {}'.format(r_ip,len(fval))
                 else: # we don't care about rest of sub_tlv's
                     fval = fval[sub_flen:] # move packet forward
                     rem_tvl -=sub_flen # decrease rem_tlv
-                    #print 'else tlv '
-                    #print "at this stage RV is : {}".format(rv)
-                    #print INDENT*2,'remaining tlv: {}'.format(rem_tvl)
-                    #print INDENT*2,'**did not match 6 or 8 and packet at: {} and remaing tlv_len is:{}'.format(len(fval),rem_tvl)
-              #print 'anything left in the packet ? '
-              '''try:
-                  entry_final = { "lsp_id" : hex2isisd(lsp_id[0]),
-                                  "metric" : metric,
-                                  "l_ip": l_ip,
-                                  "r_ip": r_ip
-                               }
-              #except:
-              entry_final = { "lsp_id" : hex2isisd(lsp_id[0]),
-                                  "metric" : metric,
-                                  "l_ip": rv['SV'],
-                                  "r_ip": rv['SV'],
-                                  }               	
-
-              rv["V"].append(entry_final)
-              ''' 
-            #print 'print rv here: ------------------',rv
-            ''' 
-            entry_final = {"RV": rv['V'],
-                           'SRV': rv['SV']}
-            #print INDENT*5,'entry_final:\n\n',entry_final,'\n'
-            rv["V"].append(entry_final)
-            '''
             fval = fval[11+tlv_len[0]:] # move packet just in case there was no tlv otherwise the packet is already moved by sub_tlv routine
 
         elif ftype == VLEN_FIELDS["IPIntReach"]:
@@ -959,32 +846,28 @@ def parseVLenFieldLnetD(ftype, flen, fval, verbose=0, level=0):
             rv["V"] = []
             #print INDENT*5 + "working on 135"
             while len(fval) > 0:
-              #print prthex(fval)
               metric = struct.unpack(">L",fval[0:4]) #0-3
               fval = fval[4:]
-              #print 'metric:{}'.format(metric)
               distibution_sub_tlv_mask = struct.unpack(">s",fval[0])
-              #print 'distibution_sub_tlv_mask:{}'.format(distibution_sub_tlv_mask)
               fval = fval[1:]
               distibution_sub_tlv_mask1  = str2bin(distibution_sub_tlv_mask[0])
-              sub_tlv_present = distibution_sub_tlv_mask1[2]
-              #print 'this is the sub_tlv_present:{}'.format(sub_tlv_present)
+              sub_tlv_present = distibution_sub_tlv_mask1[1]
               mask = int(distibution_sub_tlv_mask1[2:].split('.')[0],2)
-              #print 'this is the mask:{}'.format(mask)
-              #print 'this is the mask in decimal : {}'.format(mask)
-              if mask > 17 and mask < 25:
+              if mask == 0:
+                addr_len = 0
+              elif mask >= 1 and mask <= 8:
+                addr_len = 1
+              elif mask >= 9 and mask <= 16:
+                addr_len = 2
+              elif mask >= 17 and mask <= 24:
                 addr_len = 3
-              elif mask > 25:
+              elif mask >= 25:
                 addr_len = 4 
-              #print 'addr_len: {}'.format(addr_len)
               addr = struct.unpack(">%ds" %addr_len, fval[0:addr_len])#addr_len-1
-              #print 'addr:{}'.format(addr)
-              #print 'addr:{}'.format(small_str2ip(addr[0]))
               final_addr = small_str2ip(addr[0])
               final_mask = str(mask)
               final_prefix = final_addr + '/' + final_mask
               final = {'prefix': final_prefix }
-              #print "**********final:{}".format(final)
               rv["V"].append(final)
               fval = fval[addr_len:]
               if int(sub_tlv_present) == 1:
@@ -995,7 +878,7 @@ def parseVLenFieldLnetD(ftype, flen, fval, verbose=0, level=0):
                   sub_tlv_len = struct.unpack(">B",fval[0])[0]
                   fval = fval[1:]
                   fval = fval[sub_tlv_len:]
-
+                  
         elif ftype == VLEN_FIELDS["IPv6IPReach"]:
             ## 236
             rv["V"] = []
@@ -1015,24 +898,24 @@ def parseVLenFieldLnetD(ftype, flen, fval, verbose=0, level=0):
             while len(fval) > 0:
                 metric = struct.unpack(">L",fval[0:4]) #0-3
                 fval = fval[4:]
-                #print '>>metric:{}'.format(metric)
-                #print prthex(INDENT*2,fval[0:4])
                 up_down_external_sub_tlv  = struct.unpack(">s",fval[0])
-                #print prthex(INDENT*2,fval[0])
                 up_down_external_sub_tlv  = str2bin(up_down_external_sub_tlv[0])
-                #print '>>up_down_external_sub_tlv:{}'.format(up_down_external_sub_tlv)
                 sub_tlv_present = up_down_external_sub_tlv[2]
-                #print '>>sub_tlv_present:{}'.format(sub_tlv_present)
                 fval = fval[1:]
-                mask = struct.unpack(">B",fval[0])
-                #print prthex(INDENT*2,fval[0])
-                #print '>>mask:{}'.format(mask)
+                mask = struct.unpack("!B",fval[0])
                 fval = fval[1:]
-                #print prthex(INDENT*2,fval[0:16])
-                addr = struct.unpack(">16s",fval[0:16])
-                #print '>>addr:{}'.format(str2ipv6(addr[0]))
-                fval = fval[16:]
+                '''prefix octets = integer of ((prefix length + 7) / 8)'''
+                len_addr = (mask[0]+7)/8
+                #print '>>len_addr:{}'.format(len_addr)
+                if len_addr == 0:
+                  addr = ['::']
+                else:
+                  #print prthex('This is the ipv6 hex :\n',fval[0:len_addr])
+                  addr = struct.unpack(">%ds" %len_addr ,fval[0:len_addr])
+                  #print '>>addr:{}'.format(addr)
+                  fval = fval[len_addr:]
                 final_addr  = str2ipv6(addr[0])
+                #print 'final_addr:{}'.format(final_addr)
                 final_mask = str(mask[0])
                 final_prefix = final_addr + '/' + final_mask
                 final = {'prefix': final_prefix }
