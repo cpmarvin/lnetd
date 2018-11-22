@@ -4,21 +4,31 @@ import threading
 import logging
 import time
 import sys
+import json
+import datetime
+from kafka import SimpleProducer, KafkaClient
 sys.dont_write_bytecode = True
 
-import telemetry_pb2, ifstatsbag_generic_pb2 #cisco
+import telemetry_pb2 #cisco
+import ifstatsbag_generic_pb2 # cisco interface stats
+import im_cmd_info_pb2 #cisco interface info 
 import telemetry_top_pb2,logical_port_pb2 # juniper
 
-verbose = 2
+from gbp_parse_msg import * #create kafka message and write it 
 
+verbose = 2
+kafka_msg = True
+influx_msg = False
 #move this to anothe module
 from influxdb import InfluxDBClient
 client = InfluxDBClient(host='127.0.0.1', port=8086, database='lnetd')
+#kafka
+kafka = KafkaClient('127.0.0.1:9092')
+producer = SimpleProducer(kafka)
 
 def decode_cisco_msg_tcp(msg):
 	header = msg.recv(12) #header 
 	msg_type, encode_type, msg_version, flags, msg_length = struct.unpack('>hhhhi',header)
-	#print 'msg_type:{}\n encode_type:{}\n msg_version:{}\n flags:{}\n msg_length:{}\n'.format(msg_type, encode_type, msg_version, flags, msg_length)
 	msg_data = b''
 	if encode_type == 1:
 		while len(msg_data) < msg_length:
@@ -30,41 +40,68 @@ def decode_cisco_msg_tcp(msg):
 		if gpb_parser.encoding_path == 'Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters':
 			row_key = ifstatsbag_generic_pb2.ifstatsbag_generic_KEYS()
 			row_data = ifstatsbag_generic_pb2.ifstatsbag_generic()
-			metrics = {}
-			metrics['measurement'] = "iox_xr_counters"
-			metrics['tags'] = {}
-			metrics['fields'] ={}
 			for new_row in gpb_parser.data_gpb.row:
 				row_data.ParseFromString(new_row.content)
 				row_key.ParseFromString(new_row.keys)
-				metrics['tags']['hostname'] = gpb_parser.node_id_str
-				metrics['tags']['ifName'] = row_key.interface_name
-				metrics['fields']['ifHCOutOctets'] = row_data.bytes_sent
-				metrics['fields']['ifInErrors'] = row_data.input_drops
-				#print '\nthis will be sent to infuxdb:\n{}'.format(metrics)
-				client.write_points([metrics])
+				if kafka_msg:
+					kafka_msg_parse = create_kafka_message(gpb_parser.encoding_path,gpb_parser.node_id_str,row_key,row_data)
+					producer.send_messages(b'ios_xr_interface_counters',kafka_msg_parse)
+				elif influx_msg:
+					influx_msg_parse = create_influx_message(gpb_parser.encoding_path,gpb_parser.node_id_str,row_key,row_data)
+					client.write_points([influx_msg_parse])
+				else:
+					print ('Row_key:{}\n,Row_data:{}').format(row_key,row_data)
+		elif gpb_parser.encoding_path == 'Cisco-IOS-XR-pfi-im-cmd-oper:interfaces/interface-xr/interface':
+			row_key = ifstatsbag_generic_pb2.ifstatsbag_generic_KEYS()
+			row_data = im_cmd_info_pb2.im_cmd_info()
+			for new_row in gpb_parser.data_gpb.row:
+				row_data.ParseFromString(new_row.content)
+				row_key.ParseFromString(new_row.keys)
+				if kafka_msg:
+					kafka_msg_parse = create_kafka_message(gpb_parser.encoding_path,gpb_parser.node_id_str,row_key,row_data)
+					producer.send_messages(b'ios_xr_interface_info',kafka_msg_parse)
+				elif influx_msg:
+					influx_msg_parse = create_influx_message(gpb_parser.encoding_path,gpb_parser.node_id_str,row_key,row_data)
+					client.write_points([influx_msg_parse])
+				else:
+					print ('Row_key:{}\n,Row_data:{}').format(row_key,row_data)
+		elif gpb_parser.encoding_path == 'Cisco-IOS-XR-snmp-agent-oper:snmp/if-indexes/if-index':
+			print('fournd {} but no protoc yet....'.format(gpb_parser.encoding_path))
+			#no protoc yet
+			'''
+			row_key = ifstatsbag_generic_pb2.ifstatsbag_generic_KEYS()
+			row_data = im_cmd_info_pb2.im_cmd_info()
+			for new_row in gpb_parser.data_gpb.row:
+				row_data.ParseFromString(new_row.content)
+				row_key.ParseFromString(new_row.keys)
+				if kafka_msg:
+					kafka_msg_parse = create_kafka_message(gpb_parser.encoding_path,gpb_parser.node_id_str,row_key,row_data)
+					producer.send_messages(b'ios_xr_interface_snmp',kafka_msg_parse)
+				elif influx_msg:
+					influx_msg_parse = create_influx_message(gpb_parser.encoding_path,gpb_parser.node_id_str,row_key,row_data)
+					client.write_points([influx_msg_parse])
+				else:
+					print ('Row_key:{}\n,Row_data:{}').format(row_key,row_data)
+			'''
 		else:
 			print 'No support for this path yet'
 	return 0
 def decode_jnp_msg_udp(msg):
-	metrics = {}
-	metrics['measurement'] = "jnp_counters"
-	metrics['tags'] = {}
-	metrics['fields'] ={}
 	gpb_parser = telemetry_top_pb2.TelemetryStream()
 	gpb_parser.ParseFromString(msg)
-	#print gpb_parser.system_id
-	#print gpb_parser.sensor_name
 	if gpb_parser.sensor_name == 'LOGICAL-INTERFACE-SENSOR:/junos/system/linecard/interface/logical/usage/:/junos/system/linecard/interface/logical/usage/:PFE':
 		hostname = gpb_parser.system_id.split(':')[0]
 		jnpr_ext = gpb_parser.enterprise.Extensions[telemetry_top_pb2.juniperNetworks]
 		ports = jnpr_ext.Extensions[logical_port_pb2.jnprLogicalInterfaceExt]
 		for port in ports.interface_info :
-			metrics['tags']['hostname'] = hostname
-			metrics['tags']['ifName'] = port.if_name
-			metrics['fields']['ifHCOutOctets'] = port.egress_stats.if_octets
-			#print '\nthis will be sent to infuxdb:\n{}'.format(metrics)
-			client.write_points([metrics])
+			if kafka_msg:
+				kafka_msg_parse = create_kafka_message(gpb_parser.sensor_name,hostname,'',port)
+				producer.send_messages(b'jnp_interface_stats',kafka_msg_parse)
+			elif influx_msg:
+				influx_msg_parse = create_influx_message(gpb_parser.sensor_name,hostname,'',port)
+				client.write_points([influx_msg_parse])
+			else:
+				print ('Row_key:{}\n,Row_data:{}').format('',port)
 	else:
 		print 'No support for this path yet'
 
@@ -97,7 +134,7 @@ def tcp_rcv_message(verbose=verbose):
 			print("ERROR: Failed to get TCP message. Attempting to reopen connection: {}".format(e))
 def main():
 	global tcp_sock,udp_sock
-	logging.basicConfig(format='%(asctime)s %(message)s' , level=logging.DEBUG)
+	logging.basicConfig(format='%(asctime)s %(message)s' , level=logging.INFO)
 	socket_type = socket.AF_INET
 	#bind udp 
 	udp_sock = socket.socket(socket_type, socket.SOCK_DGRAM)
@@ -111,7 +148,7 @@ def main():
 	#bind tcp 
 	tcp_sock = socket.socket(socket_type)
 	tcp_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-	tcp_sock.bind(('172.16.0.2', 5001))
+	tcp_sock.bind(('172.16.0.2', 15001))
 	tcp_sock.listen(1)
 
 	# this will come later , static for now  
