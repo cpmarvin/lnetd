@@ -1,3 +1,5 @@
+from google.protobuf import text_format
+
 import socket
 import struct
 import threading
@@ -13,6 +15,7 @@ import telemetry_pb2 #cisco
 import ifstatsbag_generic_pb2 # cisco interface stats
 import im_cmd_info_pb2 #cisco interface info 
 import telemetry_top_pb2,logical_port_pb2 # juniper
+import snmp_agen_oper_if_index_pb2 # cisco snmp ifindex
 
 from gbp_parse_msg import * #create kafka message and write it 
 
@@ -30,13 +33,12 @@ def decode_cisco_msg_tcp(msg):
 	header = msg.recv(12) #header 
 	msg_type, encode_type, msg_version, flags, msg_length = struct.unpack('>hhhhi',header)
 	msg_data = b''
+	print encode_type
 	if encode_type == 1:
 		while len(msg_data) < msg_length:
 			msg_data += msg.recv(msg_length - len(msg_data))
 		gpb_parser = telemetry_pb2.Telemetry()
 		gpb_data = gpb_parser.ParseFromString(msg_data)
-
-		#print(gpb_parser)
 		if gpb_parser.encoding_path == 'Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters':
 			row_key = ifstatsbag_generic_pb2.ifstatsbag_generic_KEYS()
 			row_data = ifstatsbag_generic_pb2.ifstatsbag_generic()
@@ -46,6 +48,7 @@ def decode_cisco_msg_tcp(msg):
 				if kafka_msg:
 					kafka_msg_parse = create_kafka_message(gpb_parser.encoding_path,gpb_parser.node_id_str,row_key,row_data)
 					producer.send_messages(b'ios_xr_interface_counters',kafka_msg_parse)
+					logging.info('Write {} to kafka topic'.format(gpb_parser.encoding_path))
 				elif influx_msg:
 					influx_msg_parse = create_influx_message(gpb_parser.encoding_path,gpb_parser.node_id_str,row_key,row_data)
 					client.write_points([influx_msg_parse])
@@ -57,32 +60,31 @@ def decode_cisco_msg_tcp(msg):
 			for new_row in gpb_parser.data_gpb.row:
 				row_data.ParseFromString(new_row.content)
 				row_key.ParseFromString(new_row.keys)
+				print row_data
 				if kafka_msg:
 					kafka_msg_parse = create_kafka_message(gpb_parser.encoding_path,gpb_parser.node_id_str,row_key,row_data)
 					producer.send_messages(b'ios_xr_interface_info',kafka_msg_parse)
+					logging.info('Write {} to kafka topic'.format(gpb_parser.encoding_path))
 				elif influx_msg:
 					influx_msg_parse = create_influx_message(gpb_parser.encoding_path,gpb_parser.node_id_str,row_key,row_data)
 					client.write_points([influx_msg_parse])
 				else:
 					print ('Row_key:{}\n,Row_data:{}').format(row_key,row_data)
 		elif gpb_parser.encoding_path == 'Cisco-IOS-XR-snmp-agent-oper:snmp/if-indexes/if-index':
-			print('fournd {} but no protoc yet....'.format(gpb_parser.encoding_path))
-			#no protoc yet
-			'''
-			row_key = ifstatsbag_generic_pb2.ifstatsbag_generic_KEYS()
-			row_data = im_cmd_info_pb2.im_cmd_info()
+			row_data = snmp_agen_oper_if_index_pb2.snmp_ifindex_ifname()
+			row_key = snmp_agen_oper_if_index_pb2.snmp_ifindex_ifname_KEYS()
 			for new_row in gpb_parser.data_gpb.row:
 				row_data.ParseFromString(new_row.content)
 				row_key.ParseFromString(new_row.keys)
 				if kafka_msg:
 					kafka_msg_parse = create_kafka_message(gpb_parser.encoding_path,gpb_parser.node_id_str,row_key,row_data)
 					producer.send_messages(b'ios_xr_interface_snmp',kafka_msg_parse)
+					logging.info('Write {} to kafka topic'.format(gpb_parser.encoding_path))
 				elif influx_msg:
 					influx_msg_parse = create_influx_message(gpb_parser.encoding_path,gpb_parser.node_id_str,row_key,row_data)
-					client.write_points([influx_msg_parse])
+					#client.write_points([influx_msg_parse])
 				else:
 					print ('Row_key:{}\n,Row_data:{}').format(row_key,row_data)
-			'''
 		else:
 			print 'No support for this path yet'
 	return 0
@@ -97,6 +99,7 @@ def decode_jnp_msg_udp(msg):
 			if kafka_msg:
 				kafka_msg_parse = create_kafka_message(gpb_parser.sensor_name,hostname,'',port)
 				producer.send_messages(b'jnp_interface_stats',kafka_msg_parse)
+				logging.info('Write {} to kafka topic'.format(gpb_parser.sensor_name))
 			elif influx_msg:
 				influx_msg_parse = create_influx_message(gpb_parser.sensor_name,hostname,'',port)
 				client.write_points([influx_msg_parse])
@@ -148,7 +151,7 @@ def main():
 	#bind tcp 
 	tcp_sock = socket.socket(socket_type)
 	tcp_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-	tcp_sock.bind(('172.16.0.2', 15001))
+	tcp_sock.bind(('172.16.0.2', 5001))
 	tcp_sock.listen(1)
 
 	# this will come later , static for now  

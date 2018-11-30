@@ -1,0 +1,24 @@
+SET 'ksql.streams.retention.ms' = '86400000';
+
+CREATE STREAM ios_xr_interface_counters_stream (hostname VARCHAR, ifName VARCHAR, ifHCOutOctets bigint, ifInErrors bigint,timestamp string)\
+with (kafka_topic='ios_xr_interface_counters', value_format='JSON',timestamp='timestamp', TIMESTAMP_FORMAT='yyyy-MM-dd''T''HH:mm:ss.SSSSSS');
+
+CREATE STREAM ios_xr_interface_info_stream (hostname VARCHAR, ifName VARCHAR, ifHighSpeed bigint, ipAddress string,timestamp string)\
+with (kafka_topic='ios_xr_interface_info', value_format='JSON',timestamp='timestamp', TIMESTAMP_FORMAT='yyyy-MM-dd''T''HH:mm:ss.SSSSSS');
+
+CREATE STREAM ios_xr_interface_snmp_stream (hostname VARCHAR, ifName VARCHAR, ifIndex bigint, timestamp string)\
+with (kafka_topic='ios_xr_interface_snmp', value_format='JSON',timestamp='timestamp', TIMESTAMP_FORMAT='yyyy-MM-dd''T''HH:mm:ss.SSSSSS');
+
+SELECT ios_xr_interface_counters_stream.ifName,\
+ios_xr_interface_counters_stream.hostname,\
+ios_xr_interface_counters_stream.ifHCOutOctets, \
+ios_xr_interface_counters_stream.ifInErrors, \
+ipAddress, \
+ifHighSpeed \
+FROM ios_xr_interface_counters_stream  \
+LEFT JOIN ios_xr_interface_info_stream \
+WITHIN (10 SECONDS, 10 SECONDS) ON \
+ios_xr_interface_counters_stream.ifName = ios_xr_interface_info_stream.ifName \
+WHERE ios_xr_interface_counters_stream.hostname = ios_xr_interface_info_stream.hostname AND \
+ios_xr_interface_info_stream.ipAddress != '';
+

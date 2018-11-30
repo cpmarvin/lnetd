@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='openconfig-interfaces.proto',
   package='openconfig_interfaces',
   syntax='proto3',
-  serialized_pb=_b('\n\x1bopenconfig-interfaces.proto\x12\x15openconfig_interfaces\"L\n\nInterfaces\x12>\n\tinterface\x18\x01 \x03(\x0b\x32+.openconfig_interfaces.Interfaces_Interface\"\x99\x02\n\x14Interfaces_Interface\x12\x37\n\x06\x63onfig\x18\x01 \x01(\x0b\x32\'.openconfig_interfaces.Interface_Config\x12<\n\thold_time\x18\x02 \x01(\x0b\x32).openconfig_interfaces.Interface_HoldTime\x12\x0c\n\x04name\x18\x03 \x01(\t\x12\x35\n\x05state\x18\x04 \x01(\x0b\x32&.openconfig_interfaces.Interface_State\x12\x45\n\rsubinterfaces\x18\x05 \x01(\x0b\x32..openconfig_interfaces.Interface_Subinterfaces\"x\n\x10Interface_Config\x12\x13\n\x0b\x64\x65scription\x18\x01 \x01(\t\x12\x0f\n\x07\x65nabled\x18\x02 \x01(\x08\x12\x15\n\rloopback_mode\x18\x03 \x01(\x08\x12\x0b\n\x03mtu\x18\x04 \x01(\r\x12\x0c\n\x04name\x18\x05 \x01(\t\x12\x0c\n\x04type\x18\x06 \x01(\t\"\x96\x01\n\x12Interface_HoldTime\x12@\n\x06\x63onfig\x18\x01 \x01(\x0b\x32\x30.openconfig_interfaces.Interface_HoldTime_Config\x12>\n\x05state\x18\x02 \x01(\x0b\x32/.openconfig_interfaces.Interface_HoldTime_State\"5\n\x19Interface_HoldTime_Config\x12\x0c\n\x04\x64own\x18\x01 \x01(\r\x12\n\n\x02up\x18\x02 \x01(\r\"4\n\x18Interface_HoldTime_State\x12\x0c\n\x04\x64own\x18\x01 \x01(\r\x12\n\n\x02up\x18\x02 \x01(\r\"\x91\x05\n\x0fInterface_State\x12H\n\x0c\x61\x64min_status\x18\x01 \x01(\x0e\x32\x32.openconfig_interfaces.Interface_State.AdminStatus\x12\x41\n\x08\x63ounters\x18\x02 \x01(\x0b\x32/.openconfig_interfaces.Interface_State_Counters\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\x12\x0f\n\x07\x65nabled\x18\x04 \x01(\x08\x12\x0f\n\x07ifindex\x18\x05 \x01(\r\x12\x13\n\x0blast_change\x18\x06 \x01(\x04\x12\x0f\n\x07logical\x18\x07 \x01(\x08\x12\x15\n\rloopback_mode\x18\x08 \x01(\x08\x12\x0b\n\x03mtu\x18\t \x01(\r\x12\x0c\n\x04name\x18\n \x01(\t\x12\x46\n\x0boper_status\x18\x0b \x01(\x0e\x32\x31.openconfig_interfaces.Interface_State.OperStatus\x12\x0c\n\x04type\x18\x0c \x01(\t\"P\n\x0b\x41\x64minStatus\x12\x14\n\x10\x41\x64minStatus_DOWN\x10\x00\x12\x17\n\x13\x41\x64minStatus_TESTING\x10\x01\x12\x12\n\x0e\x41\x64minStatus_UP\x10\x02\"\xb9\x01\n\nOperStatus\x12\x16\n\x12OperStatus_DORMANT\x10\x00\x12\x13\n\x0fOperStatus_DOWN\x10\x01\x12\x1f\n\x1bOperStatus_LOWER_LAYER_DOWN\x10\x02\x12\x1a\n\x16OperStatus_NOT_PRESENT\x10\x03\x12\x16\n\x12OperStatus_TESTING\x10\x04\x12\x16\n\x12OperStatus_UNKNOWN\x10\x05\x12\x11\n\rOperStatus_UP\x10\x06\"\xba\x03\n\x18Interface_State_Counters\x12\x1b\n\x13\x63\x61rrier_transitions\x18\x01 \x01(\x04\x12\x19\n\x11in_broadcast_pkts\x18\x02 \x01(\x04\x12\x13\n\x0bin_discards\x18\x03 \x01(\x04\x12\x11\n\tin_errors\x18\x04 \x01(\x04\x12\x15\n\rin_fcs_errors\x18\x05 \x01(\x04\x12\x19\n\x11in_multicast_pkts\x18\x06 \x01(\x04\x12\x11\n\tin_octets\x18\x07 \x01(\x04\x12\x0f\n\x07in_pkts\x18\x08 \x01(\x04\x12\x17\n\x0fin_unicast_pkts\x18\t \x01(\x04\x12\x19\n\x11in_unknown_protos\x18\n \x01(\x04\x12\x12\n\nlast_clear\x18\x0b \x01(\x04\x12\x1a\n\x12out_broadcast_pkts\x18\x0c \x01(\x04\x12\x14\n\x0cout_discards\x18\r \x01(\x04\x12\x12\n\nout_errors\x18\x0e \x01(\x04\x12\x1a\n\x12out_multicast_pkts\x18\x0f \x01(\x04\x12\x12\n\nout_octets\x18\x10 \x01(\x04\x12\x10\n\x08out_pkts\x18\x11 \x01(\x04\x12\x18\n\x10out_unicast_pkts\x18\x12 \x01(\x04\"l\n\x17Interface_Subinterfaces\x12Q\n\x0csubinterface\x18\x01 \x03(\x0b\x32;.openconfig_interfaces.Interface_Subinterfaces_Subinterface\"\xbf\x01\n$Interface_Subinterfaces_Subinterface\x12\x44\n\x06\x63onfig\x18\x01 \x01(\x0b\x32\x34.openconfig_interfaces.Interface_Subinterface_Config\x12\r\n\x05index\x18\x02 \x01(\t\x12\x42\n\x05state\x18\x03 \x01(\x0b\x32\x33.openconfig_interfaces.Interface_Subinterface_State\"T\n\x1dInterface_Subinterface_Config\x12\x13\n\x0b\x64\x65scription\x18\x01 \x01(\t\x12\x0f\n\x07\x65nabled\x18\x02 \x01(\x08\x12\r\n\x05index\x18\x03 \x01(\r\"\xa2\x05\n\x1cInterface_Subinterface_State\x12U\n\x0c\x61\x64min_status\x18\x01 \x01(\x0e\x32?.openconfig_interfaces.Interface_Subinterface_State.AdminStatus\x12N\n\x08\x63ounters\x18\x02 \x01(\x0b\x32<.openconfig_interfaces.Interface_Subinterface_State_Counters\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\x12\x0f\n\x07\x65nabled\x18\x04 \x01(\x08\x12\x0f\n\x07ifindex\x18\x05 \x01(\r\x12\r\n\x05index\x18\x06 \x01(\r\x12\x13\n\x0blast_change\x18\x07 \x01(\x04\x12\x0f\n\x07logical\x18\x08 \x01(\x08\x12\x0c\n\x04name\x18\t \x01(\t\x12S\n\x0boper_status\x18\n \x01(\x0e\x32>.openconfig_interfaces.Interface_Subinterface_State.OperStatus\"P\n\x0b\x41\x64minStatus\x12\x14\n\x10\x41\x64minStatus_DOWN\x10\x00\x12\x17\n\x13\x41\x64minStatus_TESTING\x10\x01\x12\x12\n\x0e\x41\x64minStatus_UP\x10\x02\"\xb9\x01\n\nOperStatus\x12\x16\n\x12OperStatus_DORMANT\x10\x00\x12\x13\n\x0fOperStatus_DOWN\x10\x01\x12\x1f\n\x1bOperStatus_LOWER_LAYER_DOWN\x10\x02\x12\x1a\n\x16OperStatus_NOT_PRESENT\x10\x03\x12\x16\n\x12OperStatus_TESTING\x10\x04\x12\x16\n\x12OperStatus_UNKNOWN\x10\x05\x12\x11\n\rOperStatus_UP\x10\x06\"\xc7\x03\n%Interface_Subinterface_State_Counters\x12\x1b\n\x13\x63\x61rrier_transitions\x18\x01 \x01(\x04\x12\x19\n\x11in_broadcast_pkts\x18\x02 \x01(\x04\x12\x13\n\x0bin_discards\x18\x03 \x01(\x04\x12\x11\n\tin_errors\x18\x04 \x01(\x04\x12\x15\n\rin_fcs_errors\x18\x05 \x01(\x04\x12\x19\n\x11in_multicast_pkts\x18\x06 \x01(\x04\x12\x11\n\tin_octets\x18\x07 \x01(\x04\x12\x0f\n\x07in_pkts\x18\x08 \x01(\x04\x12\x17\n\x0fin_unicast_pkts\x18\t \x01(\x04\x12\x19\n\x11in_unknown_protos\x18\n \x01(\x04\x12\x12\n\nlast_clear\x18\x0b \x01(\x04\x12\x1a\n\x12out_broadcast_pkts\x18\x0c \x01(\x04\x12\x14\n\x0cout_discards\x18\r \x01(\x04\x12\x12\n\nout_errors\x18\x0e \x01(\x04\x12\x1a\n\x12out_multicast_pkts\x18\x0f \x01(\x04\x12\x12\n\nout_octets\x18\x10 \x01(\x04\x12\x10\n\x08out_pkts\x18\x11 \x01(\x04\x12\x18\n\x10out_unicast_pkts\x18\x12 \x01(\x04\x62\x06proto3')
+  serialized_pb=_b('\n\x1bopenconfig-interfaces.proto\x12\x15openconfig_interfaces\"L\n\nInterfaces\x12>\n\tinterface\x18\x01 \x03(\x0b\x32+.openconfig_interfaces.Interfaces_Interface\"\x99\x02\n\x14Interfaces_Interface\x12\x37\n\x06\x63onfig\x18\x01 \x01(\x0b\x32\'.openconfig_interfaces.Interface_Config\x12<\n\thold_time\x18\x02 \x01(\x0b\x32).openconfig_interfaces.Interface_HoldTime\x12\x0c\n\x04name\x18\x03 \x01(\t\x12\x35\n\x05state\x18\x04 \x01(\x0b\x32&.openconfig_interfaces.Interface_State\x12\x45\n\rsubinterfaces\x18\x05 \x01(\x0b\x32..openconfig_interfaces.Interface_Subinterfaces\"a\n\x10Interface_Config\x12\x13\n\x0b\x64\x65scription\x18\x01 \x01(\t\x12\x0f\n\x07\x65nabled\x18\x02 \x01(\x08\x12\x0b\n\x03mtu\x18\x03 \x01(\r\x12\x0c\n\x04name\x18\x04 \x01(\t\x12\x0c\n\x04type\x18\x05 \x01(\t\"\x96\x01\n\x12Interface_HoldTime\x12@\n\x06\x63onfig\x18\x01 \x01(\x0b\x32\x30.openconfig_interfaces.Interface_HoldTime_Config\x12>\n\x05state\x18\x02 \x01(\x0b\x32/.openconfig_interfaces.Interface_HoldTime_State\"5\n\x19Interface_HoldTime_Config\x12\x0c\n\x04\x64own\x18\x01 \x01(\r\x12\n\n\x02up\x18\x02 \x01(\r\"4\n\x18Interface_HoldTime_State\x12\x0c\n\x04\x64own\x18\x01 \x01(\r\x12\n\n\x02up\x18\x02 \x01(\r\"\xe9\x04\n\x0fInterface_State\x12H\n\x0c\x61\x64min_status\x18\x01 \x01(\x0e\x32\x32.openconfig_interfaces.Interface_State.AdminStatus\x12\x41\n\x08\x63ounters\x18\x02 \x01(\x0b\x32/.openconfig_interfaces.Interface_State_Counters\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\x12\x0f\n\x07\x65nabled\x18\x04 \x01(\x08\x12\x0f\n\x07ifindex\x18\x05 \x01(\r\x12\x13\n\x0blast_change\x18\x06 \x01(\r\x12\x0b\n\x03mtu\x18\x07 \x01(\r\x12\x0c\n\x04name\x18\x08 \x01(\t\x12\x46\n\x0boper_status\x18\t \x01(\x0e\x32\x31.openconfig_interfaces.Interface_State.OperStatus\x12\x0c\n\x04type\x18\n \x01(\t\"P\n\x0b\x41\x64minStatus\x12\x14\n\x10\x41\x64minStatus_DOWN\x10\x00\x12\x17\n\x13\x41\x64minStatus_TESTING\x10\x01\x12\x12\n\x0e\x41\x64minStatus_UP\x10\x02\"\xb9\x01\n\nOperStatus\x12\x16\n\x12OperStatus_DORMANT\x10\x00\x12\x13\n\x0fOperStatus_DOWN\x10\x01\x12\x1f\n\x1bOperStatus_LOWER_LAYER_DOWN\x10\x02\x12\x1a\n\x16OperStatus_NOT_PRESENT\x10\x03\x12\x16\n\x12OperStatus_TESTING\x10\x04\x12\x16\n\x12OperStatus_UNKNOWN\x10\x05\x12\x11\n\rOperStatus_UP\x10\x06\"\xe3\x02\n\x18Interface_State_Counters\x12\x19\n\x11in_broadcast_pkts\x18\x01 \x01(\x04\x12\x13\n\x0bin_discards\x18\x02 \x01(\x04\x12\x11\n\tin_errors\x18\x03 \x01(\x04\x12\x19\n\x11in_multicast_pkts\x18\x04 \x01(\x04\x12\x11\n\tin_octets\x18\x05 \x01(\x04\x12\x17\n\x0fin_unicast_pkts\x18\x06 \x01(\x04\x12\x19\n\x11in_unknown_protos\x18\x07 \x01(\r\x12\x12\n\nlast_clear\x18\x08 \x01(\t\x12\x1a\n\x12out_broadcast_pkts\x18\t \x01(\x04\x12\x14\n\x0cout_discards\x18\n \x01(\x04\x12\x12\n\nout_errors\x18\x0b \x01(\x04\x12\x1a\n\x12out_multicast_pkts\x18\x0c \x01(\x04\x12\x12\n\nout_octets\x18\r \x01(\x04\x12\x18\n\x10out_unicast_pkts\x18\x0e \x01(\x04\"l\n\x17Interface_Subinterfaces\x12Q\n\x0csubinterface\x18\x01 \x03(\x0b\x32;.openconfig_interfaces.Interface_Subinterfaces_Subinterface\"\xbf\x01\n$Interface_Subinterfaces_Subinterface\x12\x44\n\x06\x63onfig\x18\x01 \x01(\x0b\x32\x34.openconfig_interfaces.Interface_Subinterface_Config\x12\r\n\x05index\x18\x02 \x01(\t\x12\x42\n\x05state\x18\x03 \x01(\x0b\x32\x33.openconfig_interfaces.Interface_Subinterface_State\"b\n\x1dInterface_Subinterface_Config\x12\x13\n\x0b\x64\x65scription\x18\x01 \x01(\t\x12\x0f\n\x07\x65nabled\x18\x02 \x01(\x08\x12\r\n\x05index\x18\x03 \x01(\r\x12\x0c\n\x04name\x18\x04 \x01(\t\"\x91\x05\n\x1cInterface_Subinterface_State\x12U\n\x0c\x61\x64min_status\x18\x01 \x01(\x0e\x32?.openconfig_interfaces.Interface_Subinterface_State.AdminStatus\x12N\n\x08\x63ounters\x18\x02 \x01(\x0b\x32<.openconfig_interfaces.Interface_Subinterface_State_Counters\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\x12\x0f\n\x07\x65nabled\x18\x04 \x01(\x08\x12\x0f\n\x07ifindex\x18\x05 \x01(\r\x12\r\n\x05index\x18\x06 \x01(\r\x12\x13\n\x0blast_change\x18\x07 \x01(\r\x12\x0c\n\x04name\x18\x08 \x01(\t\x12S\n\x0boper_status\x18\t \x01(\x0e\x32>.openconfig_interfaces.Interface_Subinterface_State.OperStatus\"P\n\x0b\x41\x64minStatus\x12\x14\n\x10\x41\x64minStatus_DOWN\x10\x00\x12\x17\n\x13\x41\x64minStatus_TESTING\x10\x01\x12\x12\n\x0e\x41\x64minStatus_UP\x10\x02\"\xb9\x01\n\nOperStatus\x12\x16\n\x12OperStatus_DORMANT\x10\x00\x12\x13\n\x0fOperStatus_DOWN\x10\x01\x12\x1f\n\x1bOperStatus_LOWER_LAYER_DOWN\x10\x02\x12\x1a\n\x16OperStatus_NOT_PRESENT\x10\x03\x12\x16\n\x12OperStatus_TESTING\x10\x04\x12\x16\n\x12OperStatus_UNKNOWN\x10\x05\x12\x11\n\rOperStatus_UP\x10\x06\"\xf0\x02\n%Interface_Subinterface_State_Counters\x12\x19\n\x11in_broadcast_pkts\x18\x01 \x01(\x04\x12\x13\n\x0bin_discards\x18\x02 \x01(\x04\x12\x11\n\tin_errors\x18\x03 \x01(\x04\x12\x19\n\x11in_multicast_pkts\x18\x04 \x01(\x04\x12\x11\n\tin_octets\x18\x05 \x01(\x04\x12\x17\n\x0fin_unicast_pkts\x18\x06 \x01(\x04\x12\x19\n\x11in_unknown_protos\x18\x07 \x01(\r\x12\x12\n\nlast_clear\x18\x08 \x01(\t\x12\x1a\n\x12out_broadcast_pkts\x18\t \x01(\x04\x12\x14\n\x0cout_discards\x18\n \x01(\x04\x12\x12\n\nout_errors\x18\x0b \x01(\x04\x12\x1a\n\x12out_multicast_pkts\x18\x0c \x01(\x04\x12\x12\n\nout_octets\x18\r \x01(\x04\x12\x18\n\x10out_unicast_pkts\x18\x0e \x01(\x04\x62\x06proto3')
 )
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -46,8 +46,8 @@ _INTERFACE_STATE_ADMINSTATUS = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1190,
-  serialized_end=1270,
+  serialized_start=1127,
+  serialized_end=1207,
 )
 _sym_db.RegisterEnumDescriptor(_INTERFACE_STATE_ADMINSTATUS)
 
@@ -88,8 +88,8 @@ _INTERFACE_STATE_OPERSTATUS = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1273,
-  serialized_end=1458,
+  serialized_start=1210,
+  serialized_end=1395,
 )
 _sym_db.RegisterEnumDescriptor(_INTERFACE_STATE_OPERSTATUS)
 
@@ -114,8 +114,8 @@ _INTERFACE_SUBINTERFACE_STATE_ADMINSTATUS = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1190,
-  serialized_end=1270,
+  serialized_start=1127,
+  serialized_end=1207,
 )
 _sym_db.RegisterEnumDescriptor(_INTERFACE_SUBINTERFACE_STATE_ADMINSTATUS)
 
@@ -156,8 +156,8 @@ _INTERFACE_SUBINTERFACE_STATE_OPERSTATUS = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1273,
-  serialized_end=1458,
+  serialized_start=1210,
+  serialized_end=1395,
 )
 _sym_db.RegisterEnumDescriptor(_INTERFACE_SUBINTERFACE_STATE_OPERSTATUS)
 
@@ -274,29 +274,22 @@ _INTERFACE_CONFIG = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='loopback_mode', full_name='openconfig_interfaces.Interface_Config.loopback_mode', index=2,
-      number=3, type=8, cpp_type=7, label=1,
-      has_default_value=False, default_value=False,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    _descriptor.FieldDescriptor(
-      name='mtu', full_name='openconfig_interfaces.Interface_Config.mtu', index=3,
-      number=4, type=13, cpp_type=3, label=1,
+      name='mtu', full_name='openconfig_interfaces.Interface_Config.mtu', index=2,
+      number=3, type=13, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='name', full_name='openconfig_interfaces.Interface_Config.name', index=4,
-      number=5, type=9, cpp_type=9, label=1,
+      name='name', full_name='openconfig_interfaces.Interface_Config.name', index=3,
+      number=4, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='type', full_name='openconfig_interfaces.Interface_Config.type', index=5,
-      number=6, type=9, cpp_type=9, label=1,
+      name='type', full_name='openconfig_interfaces.Interface_Config.type', index=4,
+      number=5, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -314,7 +307,7 @@ _INTERFACE_CONFIG = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=416,
-  serialized_end=536,
+  serialized_end=513,
 )
 
 
@@ -351,8 +344,8 @@ _INTERFACE_HOLDTIME = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=539,
-  serialized_end=689,
+  serialized_start=516,
+  serialized_end=666,
 )
 
 
@@ -389,8 +382,8 @@ _INTERFACE_HOLDTIME_CONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=691,
-  serialized_end=744,
+  serialized_start=668,
+  serialized_end=721,
 )
 
 
@@ -427,8 +420,8 @@ _INTERFACE_HOLDTIME_STATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=746,
-  serialized_end=798,
+  serialized_start=723,
+  serialized_end=775,
 )
 
 
@@ -476,49 +469,35 @@ _INTERFACE_STATE = _descriptor.Descriptor(
       options=None),
     _descriptor.FieldDescriptor(
       name='last_change', full_name='openconfig_interfaces.Interface_State.last_change', index=5,
-      number=6, type=4, cpp_type=4, label=1,
+      number=6, type=13, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='logical', full_name='openconfig_interfaces.Interface_State.logical', index=6,
-      number=7, type=8, cpp_type=7, label=1,
-      has_default_value=False, default_value=False,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    _descriptor.FieldDescriptor(
-      name='loopback_mode', full_name='openconfig_interfaces.Interface_State.loopback_mode', index=7,
-      number=8, type=8, cpp_type=7, label=1,
-      has_default_value=False, default_value=False,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    _descriptor.FieldDescriptor(
-      name='mtu', full_name='openconfig_interfaces.Interface_State.mtu', index=8,
-      number=9, type=13, cpp_type=3, label=1,
+      name='mtu', full_name='openconfig_interfaces.Interface_State.mtu', index=6,
+      number=7, type=13, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='name', full_name='openconfig_interfaces.Interface_State.name', index=9,
-      number=10, type=9, cpp_type=9, label=1,
+      name='name', full_name='openconfig_interfaces.Interface_State.name', index=7,
+      number=8, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='oper_status', full_name='openconfig_interfaces.Interface_State.oper_status', index=10,
-      number=11, type=14, cpp_type=8, label=1,
+      name='oper_status', full_name='openconfig_interfaces.Interface_State.oper_status', index=8,
+      number=9, type=14, cpp_type=8, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='type', full_name='openconfig_interfaces.Interface_State.type', index=11,
-      number=12, type=9, cpp_type=9, label=1,
+      name='type', full_name='openconfig_interfaces.Interface_State.type', index=9,
+      number=10, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -537,8 +516,8 @@ _INTERFACE_STATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=801,
-  serialized_end=1458,
+  serialized_start=778,
+  serialized_end=1395,
 )
 
 
@@ -550,127 +529,99 @@ _INTERFACE_STATE_COUNTERS = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='carrier_transitions', full_name='openconfig_interfaces.Interface_State_Counters.carrier_transitions', index=0,
+      name='in_broadcast_pkts', full_name='openconfig_interfaces.Interface_State_Counters.in_broadcast_pkts', index=0,
       number=1, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='in_broadcast_pkts', full_name='openconfig_interfaces.Interface_State_Counters.in_broadcast_pkts', index=1,
+      name='in_discards', full_name='openconfig_interfaces.Interface_State_Counters.in_discards', index=1,
       number=2, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='in_discards', full_name='openconfig_interfaces.Interface_State_Counters.in_discards', index=2,
+      name='in_errors', full_name='openconfig_interfaces.Interface_State_Counters.in_errors', index=2,
       number=3, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='in_errors', full_name='openconfig_interfaces.Interface_State_Counters.in_errors', index=3,
+      name='in_multicast_pkts', full_name='openconfig_interfaces.Interface_State_Counters.in_multicast_pkts', index=3,
       number=4, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='in_fcs_errors', full_name='openconfig_interfaces.Interface_State_Counters.in_fcs_errors', index=4,
+      name='in_octets', full_name='openconfig_interfaces.Interface_State_Counters.in_octets', index=4,
       number=5, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='in_multicast_pkts', full_name='openconfig_interfaces.Interface_State_Counters.in_multicast_pkts', index=5,
+      name='in_unicast_pkts', full_name='openconfig_interfaces.Interface_State_Counters.in_unicast_pkts', index=5,
       number=6, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='in_octets', full_name='openconfig_interfaces.Interface_State_Counters.in_octets', index=6,
-      number=7, type=4, cpp_type=4, label=1,
+      name='in_unknown_protos', full_name='openconfig_interfaces.Interface_State_Counters.in_unknown_protos', index=6,
+      number=7, type=13, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='in_pkts', full_name='openconfig_interfaces.Interface_State_Counters.in_pkts', index=7,
-      number=8, type=4, cpp_type=4, label=1,
-      has_default_value=False, default_value=0,
+      name='last_clear', full_name='openconfig_interfaces.Interface_State_Counters.last_clear', index=7,
+      number=8, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='in_unicast_pkts', full_name='openconfig_interfaces.Interface_State_Counters.in_unicast_pkts', index=8,
+      name='out_broadcast_pkts', full_name='openconfig_interfaces.Interface_State_Counters.out_broadcast_pkts', index=8,
       number=9, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='in_unknown_protos', full_name='openconfig_interfaces.Interface_State_Counters.in_unknown_protos', index=9,
+      name='out_discards', full_name='openconfig_interfaces.Interface_State_Counters.out_discards', index=9,
       number=10, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='last_clear', full_name='openconfig_interfaces.Interface_State_Counters.last_clear', index=10,
+      name='out_errors', full_name='openconfig_interfaces.Interface_State_Counters.out_errors', index=10,
       number=11, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='out_broadcast_pkts', full_name='openconfig_interfaces.Interface_State_Counters.out_broadcast_pkts', index=11,
+      name='out_multicast_pkts', full_name='openconfig_interfaces.Interface_State_Counters.out_multicast_pkts', index=11,
       number=12, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='out_discards', full_name='openconfig_interfaces.Interface_State_Counters.out_discards', index=12,
+      name='out_octets', full_name='openconfig_interfaces.Interface_State_Counters.out_octets', index=12,
       number=13, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='out_errors', full_name='openconfig_interfaces.Interface_State_Counters.out_errors', index=13,
+      name='out_unicast_pkts', full_name='openconfig_interfaces.Interface_State_Counters.out_unicast_pkts', index=13,
       number=14, type=4, cpp_type=4, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    _descriptor.FieldDescriptor(
-      name='out_multicast_pkts', full_name='openconfig_interfaces.Interface_State_Counters.out_multicast_pkts', index=14,
-      number=15, type=4, cpp_type=4, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    _descriptor.FieldDescriptor(
-      name='out_octets', full_name='openconfig_interfaces.Interface_State_Counters.out_octets', index=15,
-      number=16, type=4, cpp_type=4, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    _descriptor.FieldDescriptor(
-      name='out_pkts', full_name='openconfig_interfaces.Interface_State_Counters.out_pkts', index=16,
-      number=17, type=4, cpp_type=4, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    _descriptor.FieldDescriptor(
-      name='out_unicast_pkts', full_name='openconfig_interfaces.Interface_State_Counters.out_unicast_pkts', index=17,
-      number=18, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -687,8 +638,8 @@ _INTERFACE_STATE_COUNTERS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1461,
-  serialized_end=1903,
+  serialized_start=1398,
+  serialized_end=1753,
 )
 
 
@@ -718,8 +669,8 @@ _INTERFACE_SUBINTERFACES = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1905,
-  serialized_end=2013,
+  serialized_start=1755,
+  serialized_end=1863,
 )
 
 
@@ -763,8 +714,8 @@ _INTERFACE_SUBINTERFACES_SUBINTERFACE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2016,
-  serialized_end=2207,
+  serialized_start=1866,
+  serialized_end=2057,
 )
 
 
@@ -796,6 +747,13 @@ _INTERFACE_SUBINTERFACE_CONFIG = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
+    _descriptor.FieldDescriptor(
+      name='name', full_name='openconfig_interfaces.Interface_Subinterface_Config.name', index=3,
+      number=4, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
   ],
   extensions=[
   ],
@@ -808,8 +766,8 @@ _INTERFACE_SUBINTERFACE_CONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2209,
-  serialized_end=2293,
+  serialized_start=2059,
+  serialized_end=2157,
 )
 
 
@@ -864,28 +822,21 @@ _INTERFACE_SUBINTERFACE_STATE = _descriptor.Descriptor(
       options=None),
     _descriptor.FieldDescriptor(
       name='last_change', full_name='openconfig_interfaces.Interface_Subinterface_State.last_change', index=6,
-      number=7, type=4, cpp_type=4, label=1,
+      number=7, type=13, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='logical', full_name='openconfig_interfaces.Interface_Subinterface_State.logical', index=7,
-      number=8, type=8, cpp_type=7, label=1,
-      has_default_value=False, default_value=False,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    _descriptor.FieldDescriptor(
-      name='name', full_name='openconfig_interfaces.Interface_Subinterface_State.name', index=8,
-      number=9, type=9, cpp_type=9, label=1,
+      name='name', full_name='openconfig_interfaces.Interface_Subinterface_State.name', index=7,
+      number=8, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='oper_status', full_name='openconfig_interfaces.Interface_Subinterface_State.oper_status', index=9,
-      number=10, type=14, cpp_type=8, label=1,
+      name='oper_status', full_name='openconfig_interfaces.Interface_Subinterface_State.oper_status', index=8,
+      number=9, type=14, cpp_type=8, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -904,8 +855,8 @@ _INTERFACE_SUBINTERFACE_STATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2296,
-  serialized_end=2970,
+  serialized_start=2160,
+  serialized_end=2817,
 )
 
 
@@ -917,127 +868,99 @@ _INTERFACE_SUBINTERFACE_STATE_COUNTERS = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='carrier_transitions', full_name='openconfig_interfaces.Interface_Subinterface_State_Counters.carrier_transitions', index=0,
+      name='in_broadcast_pkts', full_name='openconfig_interfaces.Interface_Subinterface_State_Counters.in_broadcast_pkts', index=0,
       number=1, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='in_broadcast_pkts', full_name='openconfig_interfaces.Interface_Subinterface_State_Counters.in_broadcast_pkts', index=1,
+      name='in_discards', full_name='openconfig_interfaces.Interface_Subinterface_State_Counters.in_discards', index=1,
       number=2, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='in_discards', full_name='openconfig_interfaces.Interface_Subinterface_State_Counters.in_discards', index=2,
+      name='in_errors', full_name='openconfig_interfaces.Interface_Subinterface_State_Counters.in_errors', index=2,
       number=3, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='in_errors', full_name='openconfig_interfaces.Interface_Subinterface_State_Counters.in_errors', index=3,
+      name='in_multicast_pkts', full_name='openconfig_interfaces.Interface_Subinterface_State_Counters.in_multicast_pkts', index=3,
       number=4, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='in_fcs_errors', full_name='openconfig_interfaces.Interface_Subinterface_State_Counters.in_fcs_errors', index=4,
+      name='in_octets', full_name='openconfig_interfaces.Interface_Subinterface_State_Counters.in_octets', index=4,
       number=5, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='in_multicast_pkts', full_name='openconfig_interfaces.Interface_Subinterface_State_Counters.in_multicast_pkts', index=5,
+      name='in_unicast_pkts', full_name='openconfig_interfaces.Interface_Subinterface_State_Counters.in_unicast_pkts', index=5,
       number=6, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='in_octets', full_name='openconfig_interfaces.Interface_Subinterface_State_Counters.in_octets', index=6,
-      number=7, type=4, cpp_type=4, label=1,
+      name='in_unknown_protos', full_name='openconfig_interfaces.Interface_Subinterface_State_Counters.in_unknown_protos', index=6,
+      number=7, type=13, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='in_pkts', full_name='openconfig_interfaces.Interface_Subinterface_State_Counters.in_pkts', index=7,
-      number=8, type=4, cpp_type=4, label=1,
-      has_default_value=False, default_value=0,
+      name='last_clear', full_name='openconfig_interfaces.Interface_Subinterface_State_Counters.last_clear', index=7,
+      number=8, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='in_unicast_pkts', full_name='openconfig_interfaces.Interface_Subinterface_State_Counters.in_unicast_pkts', index=8,
+      name='out_broadcast_pkts', full_name='openconfig_interfaces.Interface_Subinterface_State_Counters.out_broadcast_pkts', index=8,
       number=9, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='in_unknown_protos', full_name='openconfig_interfaces.Interface_Subinterface_State_Counters.in_unknown_protos', index=9,
+      name='out_discards', full_name='openconfig_interfaces.Interface_Subinterface_State_Counters.out_discards', index=9,
       number=10, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='last_clear', full_name='openconfig_interfaces.Interface_Subinterface_State_Counters.last_clear', index=10,
+      name='out_errors', full_name='openconfig_interfaces.Interface_Subinterface_State_Counters.out_errors', index=10,
       number=11, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='out_broadcast_pkts', full_name='openconfig_interfaces.Interface_Subinterface_State_Counters.out_broadcast_pkts', index=11,
+      name='out_multicast_pkts', full_name='openconfig_interfaces.Interface_Subinterface_State_Counters.out_multicast_pkts', index=11,
       number=12, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='out_discards', full_name='openconfig_interfaces.Interface_Subinterface_State_Counters.out_discards', index=12,
+      name='out_octets', full_name='openconfig_interfaces.Interface_Subinterface_State_Counters.out_octets', index=12,
       number=13, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='out_errors', full_name='openconfig_interfaces.Interface_Subinterface_State_Counters.out_errors', index=13,
+      name='out_unicast_pkts', full_name='openconfig_interfaces.Interface_Subinterface_State_Counters.out_unicast_pkts', index=13,
       number=14, type=4, cpp_type=4, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    _descriptor.FieldDescriptor(
-      name='out_multicast_pkts', full_name='openconfig_interfaces.Interface_Subinterface_State_Counters.out_multicast_pkts', index=14,
-      number=15, type=4, cpp_type=4, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    _descriptor.FieldDescriptor(
-      name='out_octets', full_name='openconfig_interfaces.Interface_Subinterface_State_Counters.out_octets', index=15,
-      number=16, type=4, cpp_type=4, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    _descriptor.FieldDescriptor(
-      name='out_pkts', full_name='openconfig_interfaces.Interface_Subinterface_State_Counters.out_pkts', index=16,
-      number=17, type=4, cpp_type=4, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    _descriptor.FieldDescriptor(
-      name='out_unicast_pkts', full_name='openconfig_interfaces.Interface_Subinterface_State_Counters.out_unicast_pkts', index=17,
-      number=18, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -1054,8 +977,8 @@ _INTERFACE_SUBINTERFACE_STATE_COUNTERS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2973,
-  serialized_end=3428,
+  serialized_start=2820,
+  serialized_end=3188,
 )
 
 _INTERFACES.fields_by_name['interface'].message_type = _INTERFACES_INTERFACE
