@@ -1,0 +1,30 @@
+dbrp "telemetry"."autogen"
+
+// Define a batch query that retrieves 1 minute realtime data every 1s
+// It's a good practice to use a tag ('hostname,ifName') in the groupBy statement instead of * (star)
+// With the last statement we ensure that we get the last (fresh) entry
+var interface_snmp = batch
+                |query('select ifIndex FROM "telemetry"."autogen"."ios_xr_interface_snmp"')
+                    .period(1m)
+                    .every(1m)
+                    .groupBy('hostname','ifName')
+                //|log()
+
+var interface_info = batch
+                |query('select ifHighSpeed FROM "telemetry"."autogen"."ios_xr_interface_info"')
+                    .period(1m)
+                    .every(1m)
+                    .groupBy('hostname','ifName','ipAddress')
+                //|log()
+
+
+var interface_address = interface_info
+               |join(interface_snmp)
+                    .as('interface_snmp','interface_info')
+                    .tolerance(10s)
+                    .fill(0.0)
+                    .on('hostname','ifName')
+               |log()
+               |influxDBOut()
+	                .database('telemetry')
+			.measurement('interface_address')

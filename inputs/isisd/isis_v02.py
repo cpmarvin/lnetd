@@ -85,7 +85,7 @@ import sys, getopt, socket, string, os.path, struct, time, select, math
 from mutils import *
 from isisdb import *
 from pprint import pprint
-from lnetd_utils import lnet_cnsp_parsing
+#from lnetd_utils import lnet_cnsp_parsing
 import ConfigParser
 #-------------------------------------------------------------------------------
 

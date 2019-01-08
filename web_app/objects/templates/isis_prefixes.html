@@ -43,8 +43,9 @@
                 <thead>
                   <tr>
                     <th>Name</th>
-                    <th>IP</th>
                     <th>Country</th>
+                    <th>IP</th>
+		    <th>Version</th>
                   </tr>
                 </thead>
 
@@ -53,8 +54,9 @@
  		 {% for node in values %}
                   <tr>
                     <td>{{node.name}}</td>
-                    <td>{{node.ip}}</td>
                     <td>{{node.country}}</td>
+                    <td>{{node.ip}}</td>
+                    <td>{{node.version}}</td>
                   </tr>
 		{% endfor %}
 

@@ -12,12 +12,16 @@ pip install -r requirements.txt
 - change webserver if not run local
 ```
 lab@cpe:/opt/lnetd/web_app$ grep -R ":8801" *           
-base/static/custom/topology/create_graph.js:    var url = "http://127.0.0.1:8801/api/ifName?"+"ip="+interface+"&"+"host="+source
-base/static/custom/topology/create_graph.js:    var rawDataURL = "http://127.0.0.1:8801/api/graph_ifindex?"+"ip="+interface+"&"+"host="+source
-base/static/custom/topology/getSPF.js:  url = "http://127.0.0.1:8801/api/spf?"+"arr="+arrStr+"&"+"source="+source+"&"+"target="+target
-base/static/custom/topology/getSPF_latency.js:        url = "http://127.0.0.1:8801/api/spf_and_latency?"+"arr="+arrStr+"&"+"source="+source+"&"+"target="+target
-data/templates/model_demand.html:            url = "http://127.0.0.1:8801/api/model_demand?"+"arr="+arrStr+"&"+"demand="+demandArrStr
-
+web_app/data/templates/topology.html   
+web_app/data/templates/topology.html       
+web_app/data/templates/model_edit.html        
+web_app/data/templates/topology_errors.html   
+web_app/data/templates/topology_errors.html        
+web_app/data/templates/model_demand.html        
+web_app/base/static/custom/topology/create_graph.js    
+web_app/base/static/custom/topology/create_graph.js   
+web_app/base/static/custom/topology/getSPF.js
+web_app/base/static/custom/topology/getSPF_latency.js
 ``` 
 - run **/opt/lnetd/web_app**.
 ```
@@ -26,33 +30,29 @@ python2 app.py
 ```
 - go to webserver port 8801 , username is lab password is lab123
 
-To use your own information you need to run all the isis_get.py from inputs directory.
+For input you can use either isisd or rpc scripts.
 
-For ISIS:
+For ISISd.
 ```
-cd /opt/lnetd/inputs/jnp_isis_links
+cd /opt/lnetd/inputs/isisd
+sudo python lnetd.py
+```
+
+For RPC via a juniper device
+```
+cd /opt/lnetd/inputs/
+jnp_isis_links
+jnp_isis_prefixes
+jnp_isis_routers
 python2 isis_get.py
 ```
 
-For OSPF via Ted database:
+Once you have the input info to move the info from input database to web app database run below . there is config.ini that you select the input
 ```
-cd /opt/lnetd/inputs/jnp_ted_links
-python2 ted_get.py
-```
-
-isis_routes/isis_prefixes don't required the information from influxdb + telegraf but isis_links does. To make it easier until you have the telegraf + influxdb up and running ( telegraf snmp configuration in the repo ) the if_index/util/and capacity is commented out and instead static values will be in the db. 
-
-```
-uncomment this if influxdb and telegraf info available
-df4['l_int'] = df4.apply(lambda row: get_ifIndex_IP(row['source'],row['l_ip']),axis=1)
-df4['util'] = df4.apply(lambda row: get_uti_ifIndex(row['source'],row['l_int'],0),axis=1)
-df4['capacity'] = df4.apply(lambda row: get_capacity_ifIndex(row['source'],row['l_int']),axis=1)
-
-#comment below once influxdb and telegraf is up and running
-df4['l_int'] = 34
-df4['util'] = 50
-df4['capacity'] = 100
-```
+cd /opt/lnetd/output
+python2 to_db_links.py
+python2 to_db_prefixes.py
+python2 to_db_routers.py
 
 pmacct integration , to use netflow traffic as a demand you need pmacctd configured with sqlite3 support.
 
@@ -72,15 +72,45 @@ def model_demand():
 
 To deploy traffic goto webapp > Data Presentation > What if Demand > make sure "Use Netflow Demands as well" is checked and click Deploy Demand. You can also deploy without Netflow using the input box for source/target/demand.
 
-* ISISd passive speaker to get the topology.Still requires TLV22 support with subtlv 6 and 8.
 
+The database is formed of the following tables. 
 ```
-cd /opt/lnetd/inputs/isisd/
-modify isisd.ini
-ip link set eth<x> promisc on
-sudo python lnetd.py
+sqlite> .tables
+Links               Prefixes            isisd_prefixes      rpc_routers
+Links_latency       Routers             isisd_routers
+Node_position       User                rpc_links
+Node_position_temp  isisd_links         rpc_prefixes
 ```
 
-It takes couple of minutes depending of the size of the network. The only packets we LNETD is sending are HELLO and PSNP to request new LSP's.
-No auth support for now.
+The input module will write to either isisd_ or rpc_ while the output module will read from isisd_|rpc_ and write to Links,Prefixes or Routers
+
+Links:
+sqlite> select * from isisd_links limit 1;
+index|l_ip|metric|r_ip|source|target|l_ip_r_ip
+
+sqlite> select * from rpc_links limit 1;
+index|source|target|metric|l_ip|r_ip|l_ip_r_ip
+
+sqlite> select * from Links limit 1;
+index|l_ip|metric|r_ip|source|target|l_ip_r_ip|l_int|util|capacity|errors
+
+Prefixes:
+sqlite> select * from isisd_prefixes limit 1;
+index|ip|name|country
+
+sqlite> select * from rpc_prefixes limit 1;
+index|name|ip|country
+
+sqlite> select * from Prefixes limit 1;
+index|ip|name|country|version
+
+Routers:
+sqlite> select * from isisd_routers limit 1;
+index|ip|name|country
+
+sqlite> select * from rpc_routers limit 1;
+index|name|ip|country
+
+sqlite> select * from Routers limit 1;
+index|ip|name|country|vendor|model|version
 

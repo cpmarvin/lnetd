@@ -27,7 +27,6 @@ function editObject() {
             cols += '<td>' + entry[4].value + '</td>'; //metric
             cols += '<td>' + Math.floor(Math.random() * 100) + '</td>'; //l_int
             cols += '<td>' + entry[3].value + '</td>'; //r_ip
-            cols += '<td>' + Math.floor(Math.random() * 100) + '</td>'; //r_int
             cols += '<td>'+'('+  entry[2].value + ',' + entry[3].value + ')'+'</td>'; //lip_rip_pair
             cols += '<td>' + 0 + '</td>';  //util
             cols += '<td>' + entry[5].value + '</td>'; //capacity
@@ -48,7 +47,6 @@ function editObject() {
             cols_rev += '<td>' + entry[4].value + '</td>'; //metric
             cols_rev += '<td>' + Math.floor(Math.random() * 100) + '</td>'; //l_int
             cols_rev += '<td>' + entry[2].value + '</td>'; //r_ip
-            cols_rev += '<td>' + Math.floor(Math.random() * 100) + '</td>'; //r_int
             cols_rev += '<td>'+'('+  entry[2].value + ',' + entry[3].value + ')'+'</td>'; //lip_rip_pair
             cols_rev += '<td>' + 0 + '</td>'; //util
             cols_rev += '<td>' + entry[5].value + '</td>'; //capacity

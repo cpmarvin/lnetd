@@ -1,0 +1,32 @@
+dbrp "telemetry"."autogen"
+
+//q1
+var interface_info = batch
+       |query('select max(ifHighSpeed) as ifHighSpeed FROM "telemetry"."autogen"."ios_xr_interface_info"')
+        .period(1m)
+        .every(1m)
+        .align()
+        .groupBy(time(1m),'hostname', 'ifName' ,'ipAddress')
+//q2
+var interface_snmp = batch
+    |query('select max(ifIndex) as ifIndex FROM "telemetry"."autogen"."ios_xr_interface_snmp"')
+        .period(1m)
+        .every(1m)
+        .align()
+        .groupBy(time(1m),'hostname', 'ifName')
+//q3
+var interface_counters = batch
+    |query('select max(ifInErrors) as ifInErrors, max(ifHCOutOctets) as ifHCOutOctets FROM "telemetry"."autogen"."ios_xr_interface_counters"')
+        .period(1m)
+        .every(1m)
+        .align()
+        .groupBy('time(1m)','hostname', 'ifName')
+
+var interface_statistics = interface_counters
+     |join(interface_snmp, interface_info)
+        .as('interface_counters', 'interface_snmp', 'interface_info')
+        .fill(0)
+        .on('hostname', 'ifName')
+     |influxDBOut()
+        .database('telemetry')
+        .measurement('interface_statistics1')

@@ -101,7 +101,6 @@
 
 {% block javascripts %}
   {{ super() }}
-<!--<script src="{{ url_for('static', filename='vendors/d3.js/d3.min.js') }}"></script> -->
 <script src="{{ url_for('static', filename='vendors/plotly/plotly-latest.min.js') }}"></script>
 <script src="{{ url_for('static', filename='custom/topology/create_graph.js') }}"></script>
 <script src="{{ url_for('static', filename='custom/topology/getSPF.js') }}"></script>
@@ -111,7 +110,6 @@
 <script src="{{ url_for('data_blueprint.static', filename='d3js_v5_utils.js') }}"></script>
 <script src="{{ url_for('data_blueprint.static', filename='lnet_d3js.js') }}"></script>
 
-<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.7.0/d3.min.js"</script>-->
 
 <script>
 var node_position = {{node_position | tojson | safe}}
@@ -138,12 +136,11 @@ function node_position_save(){
 $(document).ready(function() {
 
     create_legend('traffic')
-    var source = "." // filter source target if neede
+    var source = "" // filter source target if neede
     var target = source 
     var re_source = new RegExp (source);
     var re_target = re_source
     result = data_prepare(graphData,re_source,re_target) //this returns the correct link and nodes
-
     var run_it = new lnet_d3js(result,'traffic') //run lnet_d3js
     run_it.restart(result[1],result[0],result[0]) //draw
 

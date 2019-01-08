@@ -1,0 +1,32 @@
+dbrp "telemetry"."autogen"
+
+// Get errors stream data
+var errors = stream
+    |from()
+        .measurement('ios_xr_interface_snmp')
+        .groupBy(*)
+    |window()
+.period(10s)
+.align()
+// Get views stream data
+var views = stream
+    |from()
+        .measurement('ios_xr_interface_counters')
+        .groupBy(*)
+    |window()
+.period(10s)
+.align()
+// Join errors and views
+views
+    |join(errors)
+        .as('views','errors')
+    //Calculate percentage
+    //|eval(lambda: "errors.value")
+        // Give the resulting field a name
+      //  .as('error_percent')
+    |log()
+        .prefix('[DEBUG]-3')
+        .level('DEBUG')
+    |influxDBOut()
+        .database('telemetry')
+        .measurement('error_percent')

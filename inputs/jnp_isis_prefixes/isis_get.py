@@ -38,9 +38,7 @@ def main():
     i = 0
     logger.info('Iterate over data %s received from device: %s' %(isis_table,devices))
     for isis in isis_table:
-        #print "for isis in isis_table : %s" %isis
         for level in isis.levelTable:
-            #print "for level in isis.table: %s" %level
             for tlv in level.tlvTable:
                 a = (level.lsp_id[:-6],tlv.address)
                 isis_db.insert(i,(a))
@@ -57,7 +55,7 @@ def main():
       logger.info('Write to database')
       #write to sql db
       disk_engine = create_engine('sqlite:////opt/lnetd/web_app/database.db')
-      df2.to_sql('Prefixes', disk_engine, if_exists='replace')
+      df2.to_sql('rpc_prefixes', disk_engine, if_exists='replace')
       logger.debug('all done - this is the final panda : \n %s' %df2)
     except Exception:
       logging.exception('Got error writing to sqlite3 db')

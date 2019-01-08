@@ -3,6 +3,7 @@ from google.protobuf import text_format
 import socket
 import struct
 import threading
+from thread import start_new_thread
 import logging
 import time
 import sys
@@ -20,20 +21,23 @@ import snmp_agen_oper_if_index_pb2 # cisco snmp ifindex
 from gbp_parse_msg import * #create kafka message and write it 
 
 verbose = 2
-kafka_msg = True
-influx_msg = False
+kafka_msg = False
+influx_msg = True
 #move this to anothe module
 from influxdb import InfluxDBClient
-client = InfluxDBClient(host='127.0.0.1', port=8086, database='lnetd')
+client = InfluxDBClient(host='127.0.0.1', port=8086, database='telemetry')
 #kafka
-kafka = KafkaClient('127.0.0.1:9092')
-producer = SimpleProducer(kafka)
+#kafka = KafkaClient('127.0.0.1:9092')
+#producer = SimpleProducer(kafka)
 
 def decode_cisco_msg_tcp(msg):
 	header = msg.recv(12) #header 
 	msg_type, encode_type, msg_version, flags, msg_length = struct.unpack('>hhhhi',header)
 	msg_data = b''
 	print encode_type
+        msg.send('ACK!')
+        msg.close()
+        '''
 	if encode_type == 1:
 		while len(msg_data) < msg_length:
 			msg_data += msg.recv(msg_length - len(msg_data))
@@ -51,7 +55,8 @@ def decode_cisco_msg_tcp(msg):
 					logging.info('Write {} to kafka topic'.format(gpb_parser.encoding_path))
 				elif influx_msg:
 					influx_msg_parse = create_influx_message(gpb_parser.encoding_path,gpb_parser.node_id_str,row_key,row_data)
-					client.write_points([influx_msg_parse])
+					client.write_points([influx_msg_parse],time_precision = 's')
+                                        logging.info('Write {} to InfluxDB'.format(gpb_parser.encoding_path))
 				else:
 					print ('Row_key:{}\n,Row_data:{}').format(row_key,row_data)
 		elif gpb_parser.encoding_path == 'Cisco-IOS-XR-pfi-im-cmd-oper:interfaces/interface-xr/interface':
@@ -60,14 +65,15 @@ def decode_cisco_msg_tcp(msg):
 			for new_row in gpb_parser.data_gpb.row:
 				row_data.ParseFromString(new_row.content)
 				row_key.ParseFromString(new_row.keys)
-				print row_data
+				#print row_data
 				if kafka_msg:
 					kafka_msg_parse = create_kafka_message(gpb_parser.encoding_path,gpb_parser.node_id_str,row_key,row_data)
 					producer.send_messages(b'ios_xr_interface_info',kafka_msg_parse)
 					logging.info('Write {} to kafka topic'.format(gpb_parser.encoding_path))
 				elif influx_msg:
 					influx_msg_parse = create_influx_message(gpb_parser.encoding_path,gpb_parser.node_id_str,row_key,row_data)
-					client.write_points([influx_msg_parse])
+                                        client.write_points([influx_msg_parse],time_precision = 's')
+                                        logging.info('Write {} to InfluxDB'.format(gpb_parser.encoding_path))
 				else:
 					print ('Row_key:{}\n,Row_data:{}').format(row_key,row_data)
 		elif gpb_parser.encoding_path == 'Cisco-IOS-XR-snmp-agent-oper:snmp/if-indexes/if-index':
@@ -82,11 +88,13 @@ def decode_cisco_msg_tcp(msg):
 					logging.info('Write {} to kafka topic'.format(gpb_parser.encoding_path))
 				elif influx_msg:
 					influx_msg_parse = create_influx_message(gpb_parser.encoding_path,gpb_parser.node_id_str,row_key,row_data)
-					#client.write_points([influx_msg_parse])
+                                        client.write_points([influx_msg_parse],time_precision = 's')
+                                        logging.info('Write {} to InfluxDB'.format(gpb_parser.encoding_path))
 				else:
 					print ('Row_key:{}\n,Row_data:{}').format(row_key,row_data)
 		else:
 			print 'No support for this path yet'
+        '''
 	return 0
 def decode_jnp_msg_udp(msg):
 	gpb_parser = telemetry_top_pb2.TelemetryStream()
@@ -123,18 +131,24 @@ def udp_rcv_message(verbose=verbose):
 			print("ERROR: Failed to get UDP message. Attempting to reopen connection: {}".format(e))
 
 def tcp_rcv_message(verbose=verbose):
-	while True:
-		msg , address = tcp_sock.accept()
-		#print address
-		if verbose == 1:
+	#while True:
+        msg , address = tcp_sock.accept()
+	'''
+	if verbose == 1:
 			logging.info('TCP message received')
 		elif verbose == 2:
 			logging.debug('TCP message received from : %s' %address[0])
 		try:
 			while True:
-				decode_cisco_msg_tcp(msg)
+                            threading.Thread(target = decode_cisco_msg_tcp,args = (msg,)).start()
+		        #start_new_thread(decode_cisco_msg_tcp,(msg,))
 		except Exception as e:
 			print("ERROR: Failed to get TCP message. Attempting to reopen connection: {}".format(e))
+        '''
+        print 'Accepted connection from {}:{}'.format(address[0], address[1])
+        client_handle = threading.Thread(target = decode_cisco_msg_tcp,args = (msg,))
+        client_handle.daemon = True
+        client_handle.start()
 def main():
 	global tcp_sock,udp_sock
 	logging.basicConfig(format='%(asctime)s %(message)s' , level=logging.INFO)
@@ -142,7 +156,7 @@ def main():
 	#bind udp 
 	udp_sock = socket.socket(socket_type, socket.SOCK_DGRAM)
 	udp_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-	udp_sock.bind(('172.16.0.2', 5002))
+	udp_sock.bind(('77.246.57.149', 50010))
 	#udp_sock.bind((args.ip_address, args.port))
 
 	udp_thread = threading.Thread(target=udp_rcv_message)
@@ -151,8 +165,8 @@ def main():
 	#bind tcp 
 	tcp_sock = socket.socket(socket_type)
 	tcp_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-	tcp_sock.bind(('172.16.0.2', 5001))
-	tcp_sock.listen(1)
+	tcp_sock.bind(('77.246.57.149', 50010))
+	tcp_sock.listen(20)
 
 	# this will come later , static for now  
 	#udp_sock.bind((args.ip_address, args.port))

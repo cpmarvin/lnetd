@@ -22,29 +22,19 @@ def lnetd_prefixes(new_list):
     for i in new_list:
         try:
             source = i.data[137][0]['V'][0]
-            #print INDENT,'name',i.name
-            #print INDENT,'132:',i.data[132]
             for data_135 in i.data[135]:
                 for n in data_135['V']:
-                    #print 'this is the n:',n
-                    #print 'this is the nodes_names',node_names
                     ip = n['prefix']
-                    #print ('%s,%s,%s') %(source,target,metric)
                     prefixes = {"name": source,
                                 "ip": ip,
                                }
-                    #print '-----final_entry :',final_entry
                     prefixes_list.append(prefixes)
             for data_236 in i.data[236]:
                 for n in data_236['V']:
-                    #print 'this is the n:',n
-                    #print 'this is the nodes_names',node_names
                     ip = n['prefix']
-                    #print ('%s,%s,%s') %(source,target,metric)
                     prefixes_v6 = {"name": source,
                                 "ip": ip,
                                }
-                    #print '-----final_entry :',final_entry
                     prefixes_list.append(prefixes_v6)
         except Exception as e:
             print 'something wrong in prefixes list:',e
@@ -60,20 +50,15 @@ def lnetd_routers(new_list):
     for i in new_list:
         try:
             source = i.data[137][0]['V'][0]
-            #print INDENT,'name',i.name
-            #print INDENT,'132:',i.data[132]
             ip = i.data[132][0]['V'][0]
             routers = {"name": source,
                                 "ip": ip}
             routers_list.append(routers)
-            #print '-------'
         except Exception as e:
             print 'something wrong in router list',e
     if len(routers_list) > 1:
         df = pd.DataFrame(routers_list)
         df.loc[:, 'country'] = df['name'].str[0:2]
-        df['vendor'] = df.apply(lambda row: get_sysdesc(row['name']),axis=1)
-        df['version'] = 'NA' #for now
         return df 
     else:
         logger.warning('something wrong in lnetd_routers')
@@ -82,29 +67,21 @@ def lnetd_links(df):
     for i in new_list:
         try:
             source = i.data[137][0]['V'][0]
-            #print INDENT,'name',i.name
-            #print INDENT,'137:',i.data[137][0]['V'][0]
             for data_22 in i.data[22]:
                 for n in data_22['V']:
-                    #print 'this is the n:',n
-                    #print 'this is the nodes_names',node_names
                     target = get_hostname(n['lsp_id'])
                     metric = n['metric']
                     l_ip = n['l_ip']
                     r_ip = n['r_ip']
-                    #print ('%s,%s,%s') %(source,target,metric)
                     final_entry = {"source": source,
                                    "target": target,
                                    "metric": metric,
                                    "l_ip": l_ip,
                                    "r_ip": r_ip
                                }
-                    #print '-----final_entry :',final_entry
                     topology.append(final_entry)
-            #print '-------'
-        except:
-            logger.warning('something wrong in creating topology')
-    #print 'final topology :\n',topology
+        except Exception as e:
+            logger.warning('something wrong in creating topology: %s' %e)
     if len(topology) > 1:
         try:
             df = pd.DataFrame(topology)
@@ -117,17 +94,6 @@ def lnetd_links(df):
             df['l_ip_r_ip'] = df['l_ip_r_ip'].astype(str)
             logger.info('Fill NA values with 0')
             df = df.fillna(0)
-            #df['l_int'] = 34
-            df['r_int'] = -1
-            #df['util'] = random.randint(0,2000)
-            #df['capacity'] = 1000
-            #df['errors'] = random.randint(0,2000)
-            df['l_int'] = df.apply(lambda row: get_ifIndex_IP(row['source'],row['l_ip']),axis=1)
-            df['util'] = df.apply(lambda row: get_uti_ifIndex(row['source'],row['l_int'],0),axis=1)
-            df['capacity'] = df.apply(lambda row: get_capacity_ifIndex(row['source'],row['l_int']),axis=1)
-            df['errors'] = df.apply(lambda row: get_errors_ifIndex(row['source'],row['l_int'],0),axis=1)
-            #print '\npanda after the function:\n{}'.format(df)
-            #remove rows if both source and target are the same
             df = df.query("source != target")
         except Exception as e:
             print 'something went wrong on lnetd_links',e
@@ -193,36 +159,21 @@ class ThreadingISISd(object):
 lnetd_isis = ThreadingISISd()
 
 while 1:
-    time.sleep(20)
+    time.sleep(60)
     INDENT  = "    "
     new_list = []
-    #print 'new_list at begining',new_list
     new_nodes = copy.deepcopy(nodes)
     new_nodes.sort()
-    #print new_nodes
-    #pprint(new_nodes[0].data)
-    #pprint(new_nodes[1].data)
-    #print INDENT,'new_nodes:{}'.format(new_nodes)
     while len(new_nodes) != 0:
         cur_node = new_nodes[0]
-        #cur_node.data = {}
-        #print INDENT*2,'before extend data this is the data in cur_node\n'
-        #pprint(cur_node.data)
         for n in range(1, len(new_nodes)):
             if cur_node.name == new_nodes[n].name:
-                #print INDENT*3,'before extend data this is the data in new_nodes\n'
-                #pprint(new_nodes[n].data)
-                #print INDENT*3,'cur_node and next_node equal:',new_nodes[n].name
                 for key, value in new_nodes[n].data.iteritems():
                     cur_node.data.setdefault(key, []).extend(value)
         new_nodes = [value for value in new_nodes if value.name != cur_node.name]
-        #print 'whats remaining in new_nodes {}'.format(new_nodes)
-        #print INDENT*2,'\nafter this is the data in cur_node\n'
-        #pprint(cur_node.data)
         new_list.append(cur_node)
 
     node_names = {}
-    #print 'this is the list now: {}'.format(topology)
     for i in new_list:
         try:
             node_names.update({i.name:i.data[137][0]['V'][0]})
@@ -233,9 +184,9 @@ while 1:
         links = lnetd_links(new_list)
         routers = lnetd_routers(new_list)
         prefixes = lnetd_prefixes(new_list)
-        lnetd_data_sql_write(links,'Links')
-        lnetd_data_sql_write(routers,'Routers')
-        lnetd_data_sql_write(prefixes,'Prefixes')
+        lnetd_data_sql_write(links,'isisd_links')
+        lnetd_data_sql_write(routers,'isisd_routers')
+        lnetd_data_sql_write(prefixes,'isisd_prefixes')
     except Exception as e:
         print 'something wrong in writing to sql module: {}'.format(e)
 

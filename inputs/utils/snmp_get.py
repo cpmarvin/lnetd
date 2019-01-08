@@ -97,13 +97,13 @@ def get_sysdesc(hostname):
         #logger.warning('No sysDesc data for %s => replace with -1'%(hostname,interface))
         return 'NA'
     if re.match("^Cisco IOS XR Software",points[0]['last']):
-        vendor = 'cisco_xr'
+        vendor = 'cisco-xr'
     elif re.match("^Cisco IOS Software",points[0]['last']):
-        vendor = 'cisco_ios'
+        vendor = 'cisco-ios'
     elif re.search(r".Huawei",points[0]['last']):
         vendor = 'huawei'
     elif re.match("^Juniper Networks",points[0]['last']):
-        vendor = 'juniper_junos'
+        vendor = 'juniper'
     else:
         vendor = 'NA'
     return vendor

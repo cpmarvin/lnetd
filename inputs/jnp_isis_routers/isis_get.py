@@ -50,16 +50,12 @@ def main():
     df=df[df['ip'].str.contains("0.0.0.0") == False]
     #create country from hostname 
     df.loc[:, 'country'] = df['name'].str[0:2]
-    df['vendor'] = df.apply(lambda row: get_sysdesc(row['name']),axis=1)
-    df['version'] = 'NA' #for now
-    print df 
     df2 = df.fillna(0)
-
     try:
       logger.info('Write to database')
       #write to sql db
       disk_engine = create_engine('sqlite:////opt/lnetd/web_app/database.db')
-      df2.to_sql('Routers', disk_engine, if_exists='replace')
+      df2.to_sql('rpc_routers', disk_engine, if_exists='replace')
       logger.debug('all done - this is the final panda : \n %s' %df2)
     except Exception:
       logging.exception('Got error writing to sqlite3 db')

@@ -1,0 +1,339 @@
+{% extends "base_site.html" %}
+
+{% block title %} Table Dynamic {% endblock title %}
+
+{% block stylesheets %}
+  {{ super() }}
+  <link href="{{ url_for('static', filename='vendors/datatables.net-bs/css/dataTables.bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css') }}" rel="stylesheet">
+{% endblock stylesheets %}
+
+{% block content %}
+  <div class="right_col" role="main">
+    <div class="">
+      <div class="page-title">
+        <div class="title_left">
+          <h3>ISP Telecom <small>Max Util for Links</small></h3>
+        </div>
+
+        <div class="title_right">
+          <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+          </div>
+        </div>
+      </div>
+
+<!-- Modal -->
+<div class="modal fade" id="modal-top" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg " role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Plotly Graphs</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="modal-body">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End Modal -->
+
+      <div class="clearfix"></div>
+
+        <form class="form-inline well" method="POST">
+        <div class="container">
+        <div class="row">
+         <div class="form-group col-lg-2">
+                        <select class="selectpicker form-control" name="source_cc">
+                                <option selected>Source Country</option>
+                                {% for entry in countries %}
+                                <option value={{entry['anon_1']}}>{{entry['anon_1']}}</option>
+                                {% endfor %}
+                        </select>
+
+                </div>
+                <div class="form-group col-lg-2">
+                        <select class="selectpicker form-control" name="target_cc">
+                                <option selected>Target Country</option>
+                                {% for entry in countries %}
+                                <option value={{entry['anon_1']}}>{{entry['anon_1']}}</option>
+                                {% endfor %}
+                        </select>
+                </div>
+                                <div class="form-group col-lg-2">
+                                   <select class="selectpicker form-control" name="time_cc">
+                                          <option value=24>Last day</option>
+                                          <option value=128>Last week</option>
+                                          <option value=720>Last month</option>
+                                  </select>
+                                                                                                                                                                 </div>
+
+                <div class="form-group">
+                                <span class="input-group ">
+                         <button class="btn btn-primary btn-success" type="submit" name="get_max_util">Go!</button>
+                         </span>
+                </div>
+        </div>
+</div>
+</div>
+
+</form>
+
+<!-- div for gauge -->
+              <div class="col-md-4 col-sm-4 col-xs-4">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h2> Max Aggr Util</h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                      <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                      </li>
+                        </ul>
+                      </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                    <div id="chart" style="height:370px;"></div>
+                  </div>
+                </div>
+              </div>
+
+<!-- div for Graph -->
+<div class="row">
+ <div class="col-md-7 col-sm-6 col-xs-6">
+          <div class="x_panel">
+            <div class="x_title">
+              <h2>Util AVG 5m Graph on selected interval <small></small></h2>
+              <ul class="nav navbar-right panel_toolbox">
+                <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                </li>
+              </ul>
+              <div class="clearfix"></div>
+              </div>
+              <div class="x_content" id="graph_aggr" >
+             </div>
+          </div>
+        </div>
+</div>
+
+      <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <div class="x_panel">
+            <div class="x_title">
+              <h2>Links with individual Max Util on selected interval<small></small></h2>
+              <ul class="nav navbar-right panel_toolbox">
+                <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                </li>
+              </ul>
+              <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+              <table id="datatable" class="table table-striped table-bordered">
+                <thead>
+                  <tr>
+                    <th>Source</th>
+                    <th>Target</th>
+                    <th>Metric</th>
+                    <th>Local_IP</th>
+                    <th>IF_Index</th>
+                    <th>Capacity</th>
+                    <th>MaxUtil</th>
+                    <th>Graph</th>
+                  </tr>
+                </thead>
+
+
+                <tbody>
+                 {% for node in values %}
+                  <tr>
+                    <td>{{node.source}}</td>
+                    <td>{{node.target}}</td>
+                    <td>{{node.metric}}</td>
+                    <td>{{node.l_ip}}</td>
+                    <td>{{node.l_int}}</td>
+                    <td>{{node.capacity}}</td>
+                    <td>{{node.max_util}}</td>
+                    <td><button type="button" id="get_plotly" source="{{node.source}}" interface="{{node.l_int}}" capacity="{{node.capacity}}" class="graph2-btn btn btn-primary btn-rounded btn-sm my-0">24h Graph</button></td>
+                  </tr>
+                {% endfor %}
+
+                </tbody>
+              </table>
+            </div>
+           
+          </div>
+        </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+
+{% block javascripts %}
+  {{ super() }}
+  <!-- Datatables -->
+  <script src="{{ url_for('static', filename='vendors/echarts/dist/echarts.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-buttons/js/dataTables.buttons.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-buttons/js/buttons.flash.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-buttons/js/buttons.html5.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-buttons/js/buttons.print.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-keytable/js/dataTables.keyTable.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-responsive/js/dataTables.responsive.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-scroller/js/dataTables.scroller.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/jszip/dist/jszip.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/pdfmake/build/pdfmake.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/pdfmake/build/vfs_fonts.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/plotly/plotly-latest.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='custom/topology/create_graph.js') }}"></script>
+<script>
+$(window).load(function() {
+        $('.graph2-btn').on('click', function (e) {
+                var source = $(this).attr('source')
+                var interface = $(this).attr('interface')
+                var capacity = $(this).attr('capacity')
+                $('#modal-top').modal('toggle')
+                $('#modal-body').attr("id","graph2")
+                                .html(graph(source,interface,capacity))
+                                }
+                        )
+        })
+
+
+
+var capacity={{total_capacity}}
+var data = {{graph|tojson}}
+if ( data == 0 ) {
+            alert('No Links between Countries');
+}
+graph_aggr(data,capacity)
+function graph_aggr(data,capacity) { 
+
+var rawDataURL = data 
+console.log(rawDataURL)
+//// map the fields 
+var xField = 'time';
+var yField = 'bps';
+/// create selector 
+var selectorOptions = {
+    buttons: [{
+        step: 'minute',
+        stepmode: 'backward',
+        count: 30,
+        label: '30m'
+    }, {
+        step: 'hour',
+        stepmode: 'backward',
+        count: 1,
+        label: '1h'
+    }, {
+        step: 'hour',
+        stepmode: 'todate',
+        count: 3,
+        label: '3h'
+    }, {
+        step: 'hour',
+        stepmode: 'todate',
+        count: 6,
+        label: '12h'
+    }, {
+        step: 'all',
+    }],
+};
+////prepare the graph
+    var data = prepData(data);
+    var layout = {
+                showlegend: true,
+                autoresize: true,
+                width: document.getElementById('graph_aggr').clientWidth,
+                height: 371,
+                title: '{{s_c}} to {{t_c}}' + ' Capacity: ' + capacity + ' Mbps',
+        xaxis: {
+                        fixedrange: true,
+            rangeselector: selectorOptions,
+            rangeslider: {},
+                        type: 'date',
+                        title: 'Time',
+        },
+        yaxis: {
+                        fixedrange: true,
+                        autotick: true,
+                        autorange: true,
+                        tickformat: ".3s",
+                        title: 'Mbps'
+        }
+    };
+
+    Plotly.newPlot('graph_aggr', data, layout);
+////prepare the data
+function prepData(rawData) {
+    var x = [];
+    var y = [];
+
+    rawData.forEach(function(datum, i) {
+
+        x.push(new Date(datum[xField]));
+        y.push(datum[yField]);
+    });
+
+    return [{
+                mode: 'lines',
+                connectgaps: 'false',
+                fill: 'tonexty',
+                line: { width: 1 , shape: 'spline' , color: 'rgb(153, 204, 255)' },
+                name: 'Total Traffic',
+        x: x,
+        y: y
+    }];
+
+}
+}
+
+
+
+//echart
+var mychart = document.getElementById('chart');
+ gChart = echarts.init(mychart);
+ option = {
+    tooltip : {
+        formatter: "{b} : {c}",
+        option: true
+    },
+    toolbox: {
+        feature: {
+            restore: {},
+            saveAsImage: {}
+        }
+    },
+    series: [
+        {
+            name: 'Util',
+            splitNumber: 4,
+            type: 'gauge',
+            radius: '100%',
+            min: 0,
+            max: {{total_capacity}},
+            detail: {formatter:'\n\n\n{value}Mbps'},
+            data: [{value: {{max_value}}, name: 'Mbps'}]
+        }
+    ]
+};
+
+gChart.setOption(option, true);
+
+</script>
+
+{% endblock javascripts %}

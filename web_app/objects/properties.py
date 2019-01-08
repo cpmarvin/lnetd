@@ -1,9 +1,9 @@
 from collections import OrderedDict
 
 pretty_names = OrderedDict([
-    ('juniper_junos', 'Juniper'),
-    ('cisco_xr', 'Cisco'),
+    ('juniper', 'Juniper'),
+    ('cisco-xr', 'Cisco'),
     ('huawei', 'Huawei'),
-    ('cisco_ios', 'Cisco'),
-    ('NA', 'N/A'),
+    ('cisco-ios', 'Cisco'),
+    ('NA', 'noSNMP'),
     ])

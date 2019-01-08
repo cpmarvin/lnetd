@@ -18,7 +18,8 @@ function lnet_d3js(result,type){
       .force("link", d3.forceLink(links).distance(10).strength(0))
       .force("x", d3.forceX(300)) //center to x 300 , only used when dynamic 
       .force("y", d3.forceY(300)) // center to y 300, only used when dynamic 
-      .alphaTarget(1)
+      .alphaDecay(1)
+      .alphaTarget(0)
       .on("tick", ticked);
   var g = svg.append("g").attr("id","main_g")
       link = g.append("g").selectAll(".link"),
@@ -46,7 +47,7 @@ function lnet_d3js(result,type){
                   node.fx = node.x
                   node.fy = node.y
                 }).on('drag', function (node) {
-                  simulation.alphaTarget(0.7).restart()
+                  simulation.alphaTarget(1).restart()
                   node.fx = d3.event.x
                   node.fy = d3.event.y
                 }).on('end', function (node) {
@@ -120,7 +121,7 @@ const mouseOutFunction = function () {
   nodeEnter.append("circle") // enter the circle on the g
         .attr("r", 5)
         .attr('class', 'circle')
-        .attr('fill', 'red');
+        //.attr('fill', 'red');
   nodeEnter.append("image").attr("class","image")
         .attr("xlink:href", "/static/images/router.png")
         .attr("x", "-12px")
@@ -139,7 +140,7 @@ const mouseOutFunction = function () {
       node = nodeEnter.merge(node); // enter + update
 
   // Apply the general update pattern to the links.
-  link = link.data(links, function(d) { return d.source.name + "-" + d.target.name + "-" + d.l_ip; });
+  link = link.data(links, function(d) { return d.source.name + "-" + d.target.name + "-" + d.l_ip + "-" + d.util + "-" + d.metric; });
 
   // Keep the exiting links connected to the moving remaining nodes.
   link.exit().transition()
@@ -153,7 +154,7 @@ const mouseOutFunction = function () {
         .attr("id",function(d,i) { return "linkId_" + d.l_ip + i; })
         .call(function(link) { link.transition().attr("stroke-opacity", 1); })
         .style("stroke",function(d) {
-          if (type == 'traffic'){
+          if (type == 'traffic'){ console.log('do i update here?',d.l_ip,d.util);
             return get_util(d,"0")
           }
           else if (type == 'errors'){
@@ -166,7 +167,7 @@ const mouseOutFunction = function () {
         .on("click",link_click)
         .merge(link);
 
-  linktext = linktext.data(linkstext, function(d) { return d.source.name + "-" + d.target.name + "-" + d.l_ip; });
+  linktext = linktext.data(linkstext, function(d) { return d.source.name + "-" + d.target.name + "-" + d.l_ip + "-" + d.util + "-" + d.metric });
   linktext.exit().transition().remove()
   var linktextEnter = linktext.enter()
                   .append("g")
