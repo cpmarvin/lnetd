@@ -21,9 +21,7 @@ def get_demand_netflow():
         #connect to sqllite lnetd
         conn = sqlite3.connect("/opt/lnetd/web_app/pmacct.db")
         #create pandas frame
-        sql='''SELECT peer_ip_src,peer_ip_dst,bytes FROM acct_bgp where datetime(stamp_inserted) between 
-                 datetime('now','-'||10||' minutes','localtime') 
-                 and datetime('now','localtime')'''
+        sql='''SELECT peer_ip_src,peer_ip_dst,bytes FROM acct_bgp '''
         df_netflow=pd.read_sql(sql, conn)
         df_netflow['bps'] = df_netflow.apply(lambda row: row['bytes'] * 8 / 300,axis=1)
         df_netflow['source'] = df_netflow.apply(lambda row: get_hosname(row['peer_ip_src']),axis=1)

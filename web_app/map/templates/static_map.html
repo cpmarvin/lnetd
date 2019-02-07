@@ -1,0 +1,199 @@
+{% extends "base_site.html" %}
+
+{% block title %} ISP External {% endblock title %}
+
+{% block stylesheets %}
+  {{ super() }}
+  <link href="{{ url_for('static', filename='vendors/alertifyjs/css/themes/bootstrap.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendors/alertifyjs/css/alertify.css') }}" rel="stylesheet">
+{% endblock stylesheets %}
+
+{% block content %}
+  <div class="right_col" role="main">
+    <!-- top tiles -->
+    <div class="row tile_count" style="height: 10px;">
+      <div class="col-md-3 col-sm-3 col-xs-3 tile_stats_count">
+        <span class="count_top"><i class="fa fa-area-chart"></i> Total Traffic</span>
+        <div class="count">{{(total_inbound/1000000000)|round(2)}} Gbs</div>
+      </div>
+      <div class="col-md-3 col-sm-3 col-xs-3 tile_stats_count">
+        <span class="count_top"><i class="fa fa-pie-chart"></i> Total Transit</span>
+        <div class="count">{{(total_transit/1000000000)|round(2)}} Gbs</div>
+      </div>
+      <div class="col-md-3 col-sm-3 col-xs-3 tile_stats_count">
+        <span class="count_top"><i class="fa fa-thumbs-up"></i> Total Peering</span>
+        <div class="count">{{(total_peering/1000000000)|round(2)}} Gbs</div>
+      </div>
+      <div class="col-md-3 col-sm-3 col-xs-3 tile_stats_count">
+        <span class="count_top"><i class="fa fa-sitemap"></i> Total CDN</span>
+        <div class="count">{{(total_cdn/1000000000)|round(2)}} Gbs</div>
+      </div>
+    </div>
+   
+    <!-- /top tiles -->
+<!--
+    <div class="">
+       <div class="page-title">
+        <div class="title_left">
+          <h3>Morris Js</h3>
+        </div>
+        <div class="title_right">
+          <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right ">
+            </div>
+          </div>
+        </div>
+      </div>
+-->
+      <div class="clearfix"></div>
+
+      <div class="row">
+
+
+<!-- Modal -->
+<div class="modal fade" id="modal-top" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg " role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Plotly Graphs</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="modal-body">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End Modal -->
+        <!-- bar charts group -->
+
+
+        <div class="clearfix"></div>
+        <!-- /bar charts group -->
+
+        <!-- bar chart -->
+        <div class="col-md-14">
+          <div class="x_panel">
+            <div class="x_title">
+              <h2>ISP Telecom - P&T 
+              <button onclick="javascript:node_position_save();" class="btn btn-info">Save Layout</button> </h2>
+              <ul class="nav navbar-right panel_toolbox">
+                <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                </li>
+                </li>
+              </ul>
+              <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+              <div id="topology" style="width:100%; height:1120px;">
+		<!-- SPF checkbox !-->
+                <div id="legend_div"></div>
+                </div>
+		<!-- SPF checkbox End !-->
+	     </div>
+            </div>
+          </div>
+        </div>
+        <!-- /bar charts -->
+              <div class="clearfix"></div>
+
+
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock content %}
+
+{% block javascripts %}
+  {{ super() }}
+
+<script src="{{ url_for('map_blueprint.static', filename='create_legend_type.js') }}"></script> 
+<script src="{{ url_for('static', filename='vendors/plotly/plotly-latest.min.js') }}"></script>
+<script src="{{ url_for('map_blueprint.static', filename='create_graph.js') }}"></script>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="{{ url_for('static', filename='vendors/alertifyjs/alertify.min.js') }}"></script>
+<script src="{{ url_for('map_blueprint.static', filename='d3js_v5_utils.js') }}"></script>
+<script src="{{ url_for('map_blueprint.static', filename='lnet_d3js.js') }}"></script>
+<script src="{{ url_for('map_blueprint.static', filename='node_position.js') }}"></script>
+
+<script>
+function node_position_save(){
+        node_position_save = []
+        d3.selectAll(".link").data().forEach( function (d) { var entry = {'id':d.source.name,'x':d.source.x,'y':d.source.y}
+ ; node_position_save.push(entry) })
+        var demandArrStr = encodeURIComponent(JSON.stringify(node_position_save));
+        url = "http://127.0.0.1:8801/api/save_external_position?"+"arr="+demandArrStr
+
+
+        var saveData = $.ajax({
+              type: 'POST',
+              url: url,
+              dataType: "text",
+              success: function(resultData) { alertify.notify("Node Position Saved ", 'success', 5) }
+        });
+        saveData.error(function() { alertify.notify("Something went wrong",'error',5); });
+}
+        var node_position = {{node_position|tojson|safe}}
+	var graphData = JSON.parse('{{ values | tojson | safe}}');
+	var source = ''
+        var target = ''
+	$(document).ready(function() {
+		create_legend('traffic') 
+        var re_source = new RegExp (source);
+        var re_target = new RegExp (target);
+		result = data_prepare(graphData,re_source,re_target) //this returns the correct link and nodes
+		//console.log('source:',source,'target:',target)
+		//console.log(result)
+		var run_it = new lnet_d3js(result,'traffic') //run lnet_d3js
+        run_it.restart(result[1],result[0],result[0]) //draw
+
+//circle
+ $('#circle_topology').change(function() {
+        if(this.checked){
+            var circleCoord = function(node, index, num_nodes){
+		    var circumference = circle1.node().getTotalLength();
+		    var pointAtLength = function(l){return circle1.node().getPointAtLength(l)};
+		    var sectionLength = (circumference)/num_nodes;
+		    var position = sectionLength*index+sectionLength/2;
+		    return pointAtLength(circumference-position)
+			}
+
+
+			var width = 950
+			var dim = width-100
+			var circle1 = d3.select("#main_svg").select("#main_g").append("path")
+			    .attr("d", "M 40, "+(dim/2+40)+" a "+dim/2+","+dim/2+" 0 1,0 "+dim+",0 a "+dim/2+","+dim/2+" 0 1,0 "+dim*-1+",0")
+			    .style("fill", "none");
+            d3.selectAll(".node").data().forEach(function(d,i) {
+                  var coord = circleCoord(d, i, nodes.length)
+				    d.fx = coord.x
+				    d.fy = coord.y
+            })
+        }
+    });
+
+        //dynamic nodes
+	    $('#dynamic_topology').change(function() {
+        if(this.checked){
+            //console.log("dynamic checked")
+            d3.selectAll(".node").data().forEach(function(d) {
+              d.fx = d.fy = null;
+            })
+        }
+    });
+	})
+
+
+
+  </script>
+
+{% endblock javascripts %}

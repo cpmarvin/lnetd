@@ -277,3 +277,74 @@ class rpc_links(Base, UserMixin):
 
     def __repr__(self):
         return str(self.l_ip)
+
+class External_topology_temp(Base, UserMixin):
+
+    __tablename__ = 'External_topology_temp'
+
+    index = Column(Integer, primary_key=True)
+    source = Column(String(120), unique=False)     
+    node = Column(String(120), unique=False)
+    interface = Column(String(120), unique=False)
+    target = Column(String(120), unique=False)
+    direction = Column(String(120), unique=False)
+    src_icon = Column(String(120), unique=False)
+    tar_icon = Column(String(120), unique=False)
+    def __init__(self, **kwargs):
+        for property, value in kwargs.items():
+            # depending on whether value is an iterable or not, we must
+            # unpack it's value (when **kwargs is request.form, some values
+            # will be a 1-element list)
+            if hasattr(value, '__iter__') and not isinstance(value, str):
+                value ,= value
+            setattr(self, property, value)
+
+    def __repr__(self):
+        return str(self.index)
+
+class External_topology(Base, UserMixin):
+
+    __tablename__ = 'External_topology'
+
+    index = Column(Integer, primary_key=True)
+    source = Column(String(120), unique=False)     
+    node = Column(String(120), unique=False)
+    interface = Column(String(120), unique=False)
+    target = Column(String(120), unique=False)
+    direction = Column(String(120), unique=False)
+    src_icon = Column(String(120), unique=False)
+    tar_icon = Column(String(120), unique=False)
+    l_ip_r_ip = Column(String(120), unique=False)
+    util = Column(String(120), unique=False)
+    capacity = Column(String(120), unique=False)
+    def __init__(self, **kwargs):
+        for property, value in kwargs.items():
+            # depending on whether value is an iterable or not, we must
+            # unpack it's value (when **kwargs is request.form, some values
+            # will be a 1-element list)
+            if hasattr(value, '__iter__') and not isinstance(value, str):
+                value ,= value
+            setattr(self, property, value)
+
+    def __repr__(self):
+        return str(self.index)
+
+class External_position(Base, UserMixin):
+
+    __tablename__ = 'External_position'
+
+    id = Column(String(120),primary_key=True)
+    user = Column(String(120),primary_key=True)
+    x = Column(String(120), unique=False)
+    y = Column(String(120), unique=False)
+    def __init__(self, **kwargs):
+        for property, value in kwargs.items():
+            # depending on whether value is an iterable or not, we must
+            # unpack it's value (when **kwargs is request.form, some values
+            # will be a 1-element list)
+            if hasattr(value, '__iter__') and not isinstance(value, str):
+                value ,= value
+            setattr(self, property, value)
+
+    def __repr__(self):
+        return str(self.id)
