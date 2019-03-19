@@ -14,6 +14,7 @@ from model_demand import model_demand_get
 from database import db
 from objects.models import Routers,Links,Links_latency,Node_position
 from objects.models import External_topology_temp,External_position
+from objects.models import Links_time
 
 blueprint = Blueprint(
     'api_blueprint', 
@@ -132,3 +133,20 @@ def save_topology():
     print(df.to_dict(orient='records'))
     df.to_sql(name='External_topology_temp', con=db.engine, if_exists='replace' )
     return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
+
+
+@blueprint.route('/get_isis_links_time',methods=['GET'])
+@login_required
+def get_isis_links_time():
+    start_time = request.args['time']
+    df = pd.read_sql(db.session.query(Links_time).filter(Links_time.timestamp == start_time).statement,db.session.bind)
+    isis_links = df.to_dict(orient='records')
+    return jsonify(isis_links)
+
+@blueprint.route('/get_links_interval',methods=['GET'])
+@login_required
+def get_links_interval():
+    start_time = request.args['time']
+    df = pd.read_sql(db.session.query(Links_time.timestamp).filter(Links_time.timestamp >= start_time).distinct(Links_time.timestamp).limit(20).statement,db.session.bind)
+    values = df['timestamp'].astype(str).unique().tolist()
+    return jsonify(values)

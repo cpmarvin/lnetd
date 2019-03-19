@@ -184,3 +184,13 @@ def traffic_links():
         max_value = max_value/1000000
     return render_template('traffic_links.html', values=isis_links, countries=countries,max_value=int(max_value),graph=df_csv,
         total_capacity=total_capacity,s_c=source_filter[:-1],t_c=target_filter[:-1])
+
+@blueprint.route('/topology_time')
+@login_required
+def topology_time():
+    current_user = str(session['user_id'])
+    node_position = pd.read_sql(db.session.query(Node_position).filter(Node_position.user == current_user ).statement,db.session.bind)
+    node_position = node_position.to_dict(orient='records')
+    df = pd.read_sql(db.session.query(Links).filter(Links.index >=0).statement,db.session.bind)
+    isis_links = df.to_dict(orient='records')
+    return render_template('topology_time.html', values=isis_links, node_position=node_position)

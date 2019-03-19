@@ -41,6 +41,7 @@ def main():
         df.to_sql('Links', disk_engine, if_exists='replace')
         logger.info('all done')
         logger.debug('final pandas %s' %df)
+        add_to_table = disk_engine.execute(text("insert into Links_time select null,*,DATETIME('now') from Links").execution_options(autocommit=True))
 
 if __name__ == '__main__':
         main()
