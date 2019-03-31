@@ -1,0 +1,182 @@
+{% extends "base_site.html" %}
+
+{% block title %} Table Dynamic {% endblock title %}
+
+{% block stylesheets %}
+  {{ super() }}
+  <link href="{{ url_for('static', filename='vendors/datatables.net-bs/css/dataTables.bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css') }}" rel="stylesheet">
+{% endblock stylesheets %}
+
+{% block content %}
+  <div class="right_col" role="main">
+    <div class="">
+      <div class="page-title">
+        <div class="title_left">
+          <h3>ISP Telecom International PoPs<small></small></h3>
+        </div>
+
+        <div class="title_right">
+          <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+          </div>
+        </div>
+      </div>
+
+      <div class="clearfix"></div>
+<div class="row">
+ <div class="col-md-12 col-sm-12 col-xs-12">
+          <div class="x_panel">
+            <div class="x_title">
+              <h2>ISP Telecom <small></small></h2>
+              <ul class="nav navbar-right panel_toolbox">
+                <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                </li>
+              </ul>
+              <div class="clearfix"></div>
+              </div>
+              <div class="x_content" id="graph_aggr" style="width:100%; height:600px;" >
+             </div>
+          </div>
+        </div>
+</div>
+
+      <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <div class="x_panel">
+            <div class="x_title">
+              <h2>PoPs </h2>
+              <ul class="nav navbar-right panel_toolbox">
+                <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                </li>
+              </ul>
+              <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+              <table id="datatable" class="table table-striped table-bordered">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Routers</th>
+                    <th>Capacity (Gbps)</th>
+                    <th>Util IN (Gbps)</th>
+                    <th>Util OUT (Gbps)</th>
+                  </tr>
+                </thead>
+
+
+                <tbody>
+                 {% for node in values %}
+                  <tr>
+                    <td>{{node.name}}</td>
+                    <td>{{node.routers}}</td>
+                    <td>{{node.capacity}}</td>
+                    <td>{{node.util_in}}</td>
+                    <td>{{node.util_out}}</td>
+                  </tr>
+                {% endfor %}
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+
+{% block javascripts %}
+  {{ super() }}
+  <!-- Datatables -->
+  <script src="{{ url_for('static', filename='vendors/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-buttons/js/dataTables.buttons.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-buttons/js/buttons.flash.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-buttons/js/buttons.html5.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-buttons/js/buttons.print.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-keytable/js/dataTables.keyTable.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-responsive/js/dataTables.responsive.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-scroller/js/dataTables.scroller.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/jszip/dist/jszip.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/pdfmake/build/pdfmake.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/pdfmake/build/vfs_fonts.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/plotly/plotly-latest.min.js') }}"></script>
+
+  <script>
+    var east_africa = {{df_ea|tojson|safe}}
+    var south_africa = {{df_sa|tojson|safe}}
+    var europe = {{df_eu|tojson|safe}}
+    var data = [prepData(east_africa,'EA'),prepData(south_africa,'SA'),prepData(europe,'EU')];
+
+    function prepData(rawData,name) {
+    var lat = [];
+    var lon = [];
+    var size = [];
+    var text = [];
+
+    rawData.forEach(function(datum, i) {
+        lat.push(datum['lat']);
+        lon.push(datum['lon']);
+        size.push(datum['capacity']);
+        text.push(datum['text']);
+        });
+    return {
+      type: 'scattergeo',
+        name: name,
+        lat: lat,
+        lon: lon,
+    marker: {
+        "line": {
+          "color1": "rgb(40,40,40)",
+          "width": 0.5
+        },
+        "color1": "rgb(0,116,217)",
+        "size": size ,
+        "sizemode": "area"
+      },
+    text: text,
+    sizemode: 'area',
+    locationmode: "world"
+    };
+}
+
+graph_aggr(data)
+
+function graph_aggr(data) {
+
+  var layout =  {
+    "geo": {
+      "scope": "world",
+      "showland": true,
+      "showcountries": true,
+      "lonaxis": {range: [-50,70]},
+      "lataxis": {range: [-40,60]},
+      "landcolor": "rgb(217, 217, 217)",
+      "projection": {
+        "type": "mercator"
+      },
+      "countrycolor": "rgb(255, 255, 255)",
+      "countrywidth": 1,
+      "subunitcolor": "rgb(255, 255, 255)",
+      "subunitwidth": 1
+    },
+    "title": "ISP Telecom International PoPs Capacity",
+    "showlegend": true,
+  }
+
+Plotly.newPlot('graph_aggr', data, layout , {responsive: true});
+
+}
+</script>
+{% endblock javascripts %}

@@ -150,3 +150,12 @@ def get_links_interval():
     df = pd.read_sql(db.session.query(Links_time.timestamp).filter(Links_time.timestamp >= start_time).distinct(Links_time.timestamp).limit(20).statement,db.session.bind)
     values = df['timestamp'].astype(str).unique().tolist()
     return jsonify(values)
+
+@blueprint.route('/save_international_pop',methods=['POST'])
+@login_required
+def save_international_pop():
+    arr = request.args['arr']
+    df = pd.DataFrame(eval(arr))
+    df = df.drop(['','index','Action','id'], axis=1)
+    df.to_sql(name='International_PoP_temp', con=db.engine, if_exists='replace' )
+    return json.dumps({'success':True}), 200, {'ContentType':'application/json'}

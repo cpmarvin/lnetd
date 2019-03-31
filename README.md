@@ -22,6 +22,7 @@ web_app/base/static/custom/topology/create_graph.js
 web_app/base/static/custom/topology/create_graph.js   
 web_app/base/static/custom/topology/getSPF.js
 web_app/base/static/custom/topology/getSPF_latency.js
+...
 ``` 
 - run **/opt/lnetd/web_app**.
 ```
@@ -55,6 +56,20 @@ python2 to_db_prefixes.py
 python2 to_db_routers.py
 
 pmacct integration , to use netflow traffic as a demand you need pmacctd configured with sqlite3 support.
+
+example for jnp_rpc below 
+*/5 * * * *  cd /opt/lnetd/inputs/jnp_isis_prefixes && python isis_get.py
+*/5 * * * *  cd /opt/lnetd/inputs/jnp_isis_links && python isis_get.py
+*/5 * * * *  cd /opt/lnetd/inputs/jnp_isis_routers && python isis_get.py
+*/5 * * * *  cd /opt/lnetd/output && python to_db_links.py
+*/5 * * * *  cd /opt/lnetd/output && python to_db_routers.py
+*/5 * * * *  cd /opt/lnetd/output && python to_db_prefixes.py
+
+#international pop
+*/5 * * * *  cd /opt/lnetd/inputs/international_pop && python generate_pop_capacity.py
+
+#external topology
+*/5 * * * * cd /opt/lnetd/inputs/external_topology && python generate_topology.py
 
 ```
 cd to pmacct/sbin directory and run 
