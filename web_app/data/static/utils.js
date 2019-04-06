@@ -73,6 +73,7 @@ function TableActions (value, row, index) {
 //reset only demands
 function reset_demand_only() {
     console.log('reset_demand_only')
+    $('#table').bootstrapTable('resetSearch', '');
     var jsonTable = new JSONTable($("#table"))
     var new_data= jsonTable.toJSON()
     new_data.forEach( function (d) { 
