@@ -41,7 +41,10 @@ def main():
         df.to_sql('Links', disk_engine, if_exists='replace')
         logger.info('all done')
         logger.debug('final pandas %s' %df)
-        add_to_table = disk_engine.execute(text("insert into Links_time select null,*,DATETIME('now') from Links").execution_options(autocommit=True))
+        logger.info('add links to time table')
+        add_to_table = disk_engine.execute(text('''insert into Links_time select null,"index",source,target,l_ip,metric,l_int,r_ip,l_ip_r_ip,util,capacity,errors,DATETIME('now','localtime') from Links''').execution_options(autocommit=True))
+        logger.info('delete links from time table older than 7 days')
+        delete_old_values = disk_engine.execute(text('''DELETE FROM Links_time WHERE timestamp <= datetime('now','-7 days','localtime')''').execution_options(autocommit=True))
 
 if __name__ == '__main__':
         main()

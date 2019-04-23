@@ -106,6 +106,17 @@ def get_isis_links():
     isis_links = df.to_dict(orient='records')
     return jsonify(isis_links)   
 
+@blueprint.route('/get_isis_nested_links',methods=['GET'])
+@login_required
+def get_isis_nested_links():
+    df = pd.read_sql(db.session.query(Links).filter(Links.index >=0).statement,db.session.bind)
+    df['node'] = df['source']
+    df['source'] = df.apply(lambda row: row['source'][:2],axis=1)
+    df['target'] = df.apply(lambda row: row['target'][:2],axis=1)
+    df = df[df['source'] != df['target']]
+    isis_links = df.to_dict(orient='records')
+    return jsonify(isis_links)
+
 @blueprint.route('/save_external_position',methods=['POST'])
 @login_required
 def save_external_position():
@@ -140,6 +151,7 @@ def save_topology():
 def get_isis_links_time():
     start_time = request.args['time']
     df = pd.read_sql(db.session.query(Links_time).filter(Links_time.timestamp == start_time).statement,db.session.bind)
+    print(df)
     isis_links = df.to_dict(orient='records')
     return jsonify(isis_links)
 

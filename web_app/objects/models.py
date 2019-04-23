@@ -427,3 +427,48 @@ class International_PoP(Base, UserMixin):
 
     def __repr__(self):
         return str(self.index)
+
+class Inventory_cards(Base, UserMixin):
+
+    __tablename__ = 'Inventory_cards'
+    index = Column(Integer, primary_key=True)
+    card_name = Column(String(120))
+    card_slot = Column(String(120))
+    card_status = Column(String(120))
+    router_name = Column(String(120))
+
+    def __init__(self, **kwargs):
+        for property, value in kwargs.items():
+            # depending on whether value is an iterable or not, we must
+            # unpack it's value (when **kwargs is request.form, some values
+            # will be a 1-element list)
+            if hasattr(value, '__iter__') and not isinstance(value, str):
+                value ,= value
+            setattr(self, property, value)
+
+    def __repr__(self):
+        return str(self.router_name)
+
+
+
+
+class Inventory_interfaces(Base, UserMixin):
+
+    __tablename__ = 'Inventory_interfaces'
+    index = Column(Integer, primary_key=True)
+    interface_name = Column(String(120))
+    interface_status = Column(String(120))
+    interface_speed = Column(String(120))
+    router_name = Column(String(120), primary_key=True)
+
+    def __init__(self, **kwargs):
+        for property, value in kwargs.items():
+            # depending on whether value is an iterable or not, we must
+            # unpack it's value (when **kwargs is request.form, some values
+            # will be a 1-element list)
+            if hasattr(value, '__iter__') and not isinstance(value, str):
+                value ,= value
+            setattr(self, property, value)
+
+    def __repr__(self):
+        return str(self.router_name)

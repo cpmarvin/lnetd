@@ -30,6 +30,31 @@ def topology():
     isis_links = df.to_dict(orient='records')
     return render_template('topology.html', values=isis_links, node_position=node_position)
 
+@blueprint.route('/topology_region1')
+@login_required
+def topology_region1():
+    current_user = str(session['user_id'])
+    node_position = pd.read_sql(db.session.query(Node_position).filter(Node_position.user == current_user ).statement,db.session.bind)
+    node_position = node_position.to_dict(orient='records')
+    df = pd.read_sql(db.session.query(Links).filter(Links.index >=0).statement,db.session.bind)
+    isis_links = df.to_dict(orient='records')
+    return render_template('topology_region1.html', values=isis_links, node_position=node_position)
+
+@blueprint.route('/topology_nested')
+@login_required
+def topology_nested():
+    current_user = session['user_id']
+    node_position = pd.read_sql(db.session.query(Node_position).filter(Node_position.user == current_user).statement,db.session.bind)
+    node_position = node_position.to_dict(orient='records')
+    df = pd.read_sql(db.session.query(Links).filter(Links.index >=0).statement,db.session.bind)
+    df['node'] = df['source']
+    df['source'] = df.apply(lambda row: row['source'][:2],axis=1)
+    df['target'] = df.apply(lambda row: row['target'][:2],axis=1)
+    df = df[df['source'] != df['target']]
+    isis_links = df.to_dict(orient='records')
+    #print isis_links 
+    return render_template('topology_nested.html', values=isis_links,node_position=node_position)
+
 @blueprint.route('/topology_errors')
 @login_required
 def topology_errors():

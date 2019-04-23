@@ -1,0 +1,834 @@
+2019-04-22 20:37:19,511 -  nornir.core -     INFO -        run() - Running task 'napalm_get' with args {'getters': ['facts']} on 2 hosts
+2019-04-22 20:37:39,938 -  nornir.core -     INFO -        run() - Running task 'napalm_get' with args {'getters': ['facts']} on 7 hosts
+2019-04-22 20:40:49,039 -  nornir.core -     INFO -        run() - Running task 'netmiko_send_command' with args {'command_string': 'admin show platform', 'use_textfsm': True} on 2 hosts
+2019-04-22 20:40:56,007 -  nornir.core -     INFO -        run() - Running task 'get_cards_jnp' with args {} on 7 hosts
+2019-04-22 20:40:56,832 - nornir.core.task -    ERROR -      start() - Host 'ke-pe2-nbi': task 'get_cards_jnp' failed with traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 774, in execute
+    ignore_warning=ignore_warning)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 169, in wrapper
+    raise ex
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 116, in wrapper
+    rsp = function(self, *args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 1336, in _rpc_reply
+    return self._conn.rpc(rpc_cmd_e)._NCElement__doc
+  File "/usr/local/lib/python3.7/site-packages/ncclient/manager.py", line 216, in execute
+    raise_mode=self._raise_mode).request(*args, **kwds)
+  File "/usr/local/lib/python3.7/site-packages/ncclient/operations/third_party/juniper/rpc.py", line 46, in request
+    return self._request(rpc)
+  File "/usr/local/lib/python3.7/site-packages/ncclient/operations/rpc.py", line 341, in _request
+    raise self._reply.error
+ncclient.operations.rpc.RPCError: 
+the chassis-control subsystem is not responding to management requests
+
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/lnetd/inputs/nornir/mutils.py", line 71, in get_cards_jnp
+    module = ModuleTable(dev).get()
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/factory/optable.py", line 64, in get
+    self.xml = getattr(self.RPC, self.GET_RPC)(**rpc_args)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/rpcmeta.py", line 345, in _exec_rpc
+    return self._junos.execute(rpc, **dec_args)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 63, in wrapper
+    result = function(*args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 31, in wrapper
+    return function(*args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 794, in execute
+    errs=ex)
+jnpr.junos.exception.RpcError: RpcError(severity: error, bad_element: None, message: the chassis-control subsystem is not responding to management requests)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/nornir/core/task.py", line 67, in start
+    r = self.task(self, **self.params)
+  File "/opt/lnetd/inputs/nornir/mutils.py", line 86, in get_cards_jnp
+    raise Exception
+Exception
+
+2019-04-22 20:40:56,833 - nornir.core.task -    ERROR -      start() - Host 'ke-p6-nbi': task 'get_cards_jnp' failed with traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 774, in execute
+    ignore_warning=ignore_warning)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 169, in wrapper
+    raise ex
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 116, in wrapper
+    rsp = function(self, *args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 1336, in _rpc_reply
+    return self._conn.rpc(rpc_cmd_e)._NCElement__doc
+  File "/usr/local/lib/python3.7/site-packages/ncclient/manager.py", line 216, in execute
+    raise_mode=self._raise_mode).request(*args, **kwds)
+  File "/usr/local/lib/python3.7/site-packages/ncclient/operations/third_party/juniper/rpc.py", line 46, in request
+    return self._request(rpc)
+  File "/usr/local/lib/python3.7/site-packages/ncclient/operations/rpc.py", line 341, in _request
+    raise self._reply.error
+ncclient.operations.rpc.RPCError: 
+the chassis-control subsystem is not responding to management requests
+
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/lnetd/inputs/nornir/mutils.py", line 71, in get_cards_jnp
+    module = ModuleTable(dev).get()
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/factory/optable.py", line 64, in get
+    self.xml = getattr(self.RPC, self.GET_RPC)(**rpc_args)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/rpcmeta.py", line 345, in _exec_rpc
+    return self._junos.execute(rpc, **dec_args)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 63, in wrapper
+    result = function(*args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 31, in wrapper
+    return function(*args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 794, in execute
+    errs=ex)
+jnpr.junos.exception.RpcError: RpcError(severity: error, bad_element: None, message: the chassis-control subsystem is not responding to management requests)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/nornir/core/task.py", line 67, in start
+    r = self.task(self, **self.params)
+  File "/opt/lnetd/inputs/nornir/mutils.py", line 86, in get_cards_jnp
+    raise Exception
+Exception
+
+2019-04-22 20:40:56,833 - nornir.core.task -    ERROR -      start() - Host 'ke-pe3-nbi': task 'get_cards_jnp' failed with traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 774, in execute
+    ignore_warning=ignore_warning)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 169, in wrapper
+    raise ex
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 116, in wrapper
+    rsp = function(self, *args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 1336, in _rpc_reply
+    return self._conn.rpc(rpc_cmd_e)._NCElement__doc
+  File "/usr/local/lib/python3.7/site-packages/ncclient/manager.py", line 216, in execute
+    raise_mode=self._raise_mode).request(*args, **kwds)
+  File "/usr/local/lib/python3.7/site-packages/ncclient/operations/third_party/juniper/rpc.py", line 46, in request
+    return self._request(rpc)
+  File "/usr/local/lib/python3.7/site-packages/ncclient/operations/rpc.py", line 341, in _request
+    raise self._reply.error
+ncclient.operations.rpc.RPCError: 
+the chassis-control subsystem is not responding to management requests
+
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/lnetd/inputs/nornir/mutils.py", line 71, in get_cards_jnp
+    module = ModuleTable(dev).get()
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/factory/optable.py", line 64, in get
+    self.xml = getattr(self.RPC, self.GET_RPC)(**rpc_args)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/rpcmeta.py", line 345, in _exec_rpc
+    return self._junos.execute(rpc, **dec_args)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 63, in wrapper
+    result = function(*args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 31, in wrapper
+    return function(*args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 794, in execute
+    errs=ex)
+jnpr.junos.exception.RpcError: RpcError(severity: error, bad_element: None, message: the chassis-control subsystem is not responding to management requests)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/nornir/core/task.py", line 67, in start
+    r = self.task(self, **self.params)
+  File "/opt/lnetd/inputs/nornir/mutils.py", line 86, in get_cards_jnp
+    raise Exception
+Exception
+
+2019-04-22 20:40:57,101 - nornir.core.task -    ERROR -      start() - Host 'gb-p10-lon': task 'get_cards_jnp' failed with traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 774, in execute
+    ignore_warning=ignore_warning)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 169, in wrapper
+    raise ex
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 116, in wrapper
+    rsp = function(self, *args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 1336, in _rpc_reply
+    return self._conn.rpc(rpc_cmd_e)._NCElement__doc
+  File "/usr/local/lib/python3.7/site-packages/ncclient/manager.py", line 216, in execute
+    raise_mode=self._raise_mode).request(*args, **kwds)
+  File "/usr/local/lib/python3.7/site-packages/ncclient/operations/third_party/juniper/rpc.py", line 46, in request
+    return self._request(rpc)
+  File "/usr/local/lib/python3.7/site-packages/ncclient/operations/rpc.py", line 341, in _request
+    raise self._reply.error
+ncclient.operations.rpc.RPCError: 
+the chassis-control subsystem is not responding to management requests
+
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/lnetd/inputs/nornir/mutils.py", line 71, in get_cards_jnp
+    module = ModuleTable(dev).get()
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/factory/optable.py", line 64, in get
+    self.xml = getattr(self.RPC, self.GET_RPC)(**rpc_args)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/rpcmeta.py", line 345, in _exec_rpc
+    return self._junos.execute(rpc, **dec_args)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 63, in wrapper
+    result = function(*args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 31, in wrapper
+    return function(*args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 794, in execute
+    errs=ex)
+jnpr.junos.exception.RpcError: RpcError(severity: error, bad_element: None, message: the chassis-control subsystem is not responding to management requests)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/nornir/core/task.py", line 67, in start
+    r = self.task(self, **self.params)
+  File "/opt/lnetd/inputs/nornir/mutils.py", line 86, in get_cards_jnp
+    raise Exception
+Exception
+
+2019-04-22 20:40:57,148 - nornir.core.task -    ERROR -      start() - Host 'gb-pe5-lon': task 'get_cards_jnp' failed with traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 774, in execute
+    ignore_warning=ignore_warning)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 169, in wrapper
+    raise ex
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 116, in wrapper
+    rsp = function(self, *args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 1336, in _rpc_reply
+    return self._conn.rpc(rpc_cmd_e)._NCElement__doc
+  File "/usr/local/lib/python3.7/site-packages/ncclient/manager.py", line 216, in execute
+    raise_mode=self._raise_mode).request(*args, **kwds)
+  File "/usr/local/lib/python3.7/site-packages/ncclient/operations/third_party/juniper/rpc.py", line 46, in request
+    return self._request(rpc)
+  File "/usr/local/lib/python3.7/site-packages/ncclient/operations/rpc.py", line 341, in _request
+    raise self._reply.error
+ncclient.operations.rpc.RPCError: 
+the chassis-control subsystem is not responding to management requests
+
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/lnetd/inputs/nornir/mutils.py", line 71, in get_cards_jnp
+    module = ModuleTable(dev).get()
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/factory/optable.py", line 64, in get
+    self.xml = getattr(self.RPC, self.GET_RPC)(**rpc_args)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/rpcmeta.py", line 345, in _exec_rpc
+    return self._junos.execute(rpc, **dec_args)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 63, in wrapper
+    result = function(*args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 31, in wrapper
+    return function(*args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 794, in execute
+    errs=ex)
+jnpr.junos.exception.RpcError: RpcError(severity: error, bad_element: None, message: the chassis-control subsystem is not responding to management requests)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/nornir/core/task.py", line 67, in start
+    r = self.task(self, **self.params)
+  File "/opt/lnetd/inputs/nornir/mutils.py", line 86, in get_cards_jnp
+    raise Exception
+Exception
+
+2019-04-22 20:41:06,686 - nornir.core.task -    ERROR -      start() - Host 'fr-p7-mrs': task 'get_cards_jnp' failed with traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 774, in execute
+    ignore_warning=ignore_warning)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 116, in wrapper
+    rsp = function(self, *args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 1336, in _rpc_reply
+    return self._conn.rpc(rpc_cmd_e)._NCElement__doc
+  File "/usr/local/lib/python3.7/site-packages/ncclient/manager.py", line 216, in execute
+    raise_mode=self._raise_mode).request(*args, **kwds)
+  File "/usr/local/lib/python3.7/site-packages/ncclient/operations/third_party/juniper/rpc.py", line 46, in request
+    return self._request(rpc)
+  File "/usr/local/lib/python3.7/site-packages/ncclient/operations/rpc.py", line 347, in _request
+    raise TimeoutExpiredError('ncclient timed out while waiting for an rpc reply.')
+ncclient.operations.errors.TimeoutExpiredError: ncclient timed out while waiting for an rpc reply.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/lnetd/inputs/nornir/mutils.py", line 71, in get_cards_jnp
+    module = ModuleTable(dev).get()
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/factory/optable.py", line 64, in get
+    self.xml = getattr(self.RPC, self.GET_RPC)(**rpc_args)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/rpcmeta.py", line 345, in _exec_rpc
+    return self._junos.execute(rpc, **dec_args)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 63, in wrapper
+    result = function(*args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 31, in wrapper
+    return function(*args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 778, in execute
+    raise EzErrors.RpcTimeoutError(self, rpc_cmd_e.tag, self.timeout)
+jnpr.junos.exception.RpcTimeoutError: RpcTimeoutError(host: fr-p7-mrs, cmd: get-chassis-inventory, timeout: 10)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/nornir/core/task.py", line 67, in start
+    r = self.task(self, **self.params)
+  File "/opt/lnetd/inputs/nornir/mutils.py", line 86, in get_cards_jnp
+    raise Exception
+Exception
+
+2019-04-22 20:41:20,622 -  nornir.core -     INFO -        run() - Running task 'xr_multiple' with args {} on 2 hosts
+2019-04-22 20:41:28,081 -  nornir.core -     INFO -        run() - Running task 'napalm_get' with args {'getters': ['optics', 'interfaces']} on 7 hosts
+2019-04-23 10:40:08,225 -  nornir.core -     INFO -        run() - Running task 'netmiko_send_command' with args {'command_string': 'admin show platform', 'use_textfsm': True} on 2 hosts
+2019-04-23 10:40:15,641 -  nornir.core -     INFO -        run() - Running task 'get_cards_jnp' with args {} on 7 hosts
+2019-04-23 10:40:16,583 - nornir.core.task -    ERROR -      start() - Host 'ke-pe3-nbi': task 'get_cards_jnp' failed with traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 774, in execute
+    ignore_warning=ignore_warning)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 169, in wrapper
+    raise ex
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 116, in wrapper
+    rsp = function(self, *args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 1336, in _rpc_reply
+    return self._conn.rpc(rpc_cmd_e)._NCElement__doc
+  File "/usr/local/lib/python3.7/site-packages/ncclient/manager.py", line 216, in execute
+    raise_mode=self._raise_mode).request(*args, **kwds)
+  File "/usr/local/lib/python3.7/site-packages/ncclient/operations/third_party/juniper/rpc.py", line 46, in request
+    return self._request(rpc)
+  File "/usr/local/lib/python3.7/site-packages/ncclient/operations/rpc.py", line 341, in _request
+    raise self._reply.error
+ncclient.operations.rpc.RPCError: 
+the chassis-control subsystem is not responding to management requests
+
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/lnetd/inputs/nornir/mutils.py", line 71, in get_cards_jnp
+    module = ModuleTable(dev).get()
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/factory/optable.py", line 64, in get
+    self.xml = getattr(self.RPC, self.GET_RPC)(**rpc_args)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/rpcmeta.py", line 345, in _exec_rpc
+    return self._junos.execute(rpc, **dec_args)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 63, in wrapper
+    result = function(*args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 31, in wrapper
+    return function(*args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 794, in execute
+    errs=ex)
+jnpr.junos.exception.RpcError: RpcError(severity: error, bad_element: None, message: the chassis-control subsystem is not responding to management requests)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/nornir/core/task.py", line 67, in start
+    r = self.task(self, **self.params)
+  File "/opt/lnetd/inputs/nornir/mutils.py", line 86, in get_cards_jnp
+    raise Exception
+Exception
+
+2019-04-23 10:40:16,615 - nornir.core.task -    ERROR -      start() - Host 'ke-pe2-nbi': task 'get_cards_jnp' failed with traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 774, in execute
+    ignore_warning=ignore_warning)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 169, in wrapper
+    raise ex
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 116, in wrapper
+    rsp = function(self, *args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 1336, in _rpc_reply
+    return self._conn.rpc(rpc_cmd_e)._NCElement__doc
+  File "/usr/local/lib/python3.7/site-packages/ncclient/manager.py", line 216, in execute
+    raise_mode=self._raise_mode).request(*args, **kwds)
+  File "/usr/local/lib/python3.7/site-packages/ncclient/operations/third_party/juniper/rpc.py", line 46, in request
+    return self._request(rpc)
+  File "/usr/local/lib/python3.7/site-packages/ncclient/operations/rpc.py", line 341, in _request
+    raise self._reply.error
+ncclient.operations.rpc.RPCError: 
+the chassis-control subsystem is not responding to management requests
+
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/lnetd/inputs/nornir/mutils.py", line 71, in get_cards_jnp
+    module = ModuleTable(dev).get()
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/factory/optable.py", line 64, in get
+    self.xml = getattr(self.RPC, self.GET_RPC)(**rpc_args)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/rpcmeta.py", line 345, in _exec_rpc
+    return self._junos.execute(rpc, **dec_args)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 63, in wrapper
+    result = function(*args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 31, in wrapper
+    return function(*args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 794, in execute
+    errs=ex)
+jnpr.junos.exception.RpcError: RpcError(severity: error, bad_element: None, message: the chassis-control subsystem is not responding to management requests)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/nornir/core/task.py", line 67, in start
+    r = self.task(self, **self.params)
+  File "/opt/lnetd/inputs/nornir/mutils.py", line 86, in get_cards_jnp
+    raise Exception
+Exception
+
+2019-04-23 10:40:16,860 - nornir.core.task -    ERROR -      start() - Host 'ke-p6-nbi': task 'get_cards_jnp' failed with traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 774, in execute
+    ignore_warning=ignore_warning)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 169, in wrapper
+    raise ex
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 116, in wrapper
+    rsp = function(self, *args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 1336, in _rpc_reply
+    return self._conn.rpc(rpc_cmd_e)._NCElement__doc
+  File "/usr/local/lib/python3.7/site-packages/ncclient/manager.py", line 216, in execute
+    raise_mode=self._raise_mode).request(*args, **kwds)
+  File "/usr/local/lib/python3.7/site-packages/ncclient/operations/third_party/juniper/rpc.py", line 46, in request
+    return self._request(rpc)
+  File "/usr/local/lib/python3.7/site-packages/ncclient/operations/rpc.py", line 341, in _request
+    raise self._reply.error
+ncclient.operations.rpc.RPCError: 
+the chassis-control subsystem is not responding to management requests
+
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/lnetd/inputs/nornir/mutils.py", line 71, in get_cards_jnp
+    module = ModuleTable(dev).get()
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/factory/optable.py", line 64, in get
+    self.xml = getattr(self.RPC, self.GET_RPC)(**rpc_args)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/rpcmeta.py", line 345, in _exec_rpc
+    return self._junos.execute(rpc, **dec_args)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 63, in wrapper
+    result = function(*args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 31, in wrapper
+    return function(*args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 794, in execute
+    errs=ex)
+jnpr.junos.exception.RpcError: RpcError(severity: error, bad_element: None, message: the chassis-control subsystem is not responding to management requests)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/nornir/core/task.py", line 67, in start
+    r = self.task(self, **self.params)
+  File "/opt/lnetd/inputs/nornir/mutils.py", line 86, in get_cards_jnp
+    raise Exception
+Exception
+
+2019-04-23 10:40:17,033 - nornir.core.task -    ERROR -      start() - Host 'gb-p10-lon': task 'get_cards_jnp' failed with traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 774, in execute
+    ignore_warning=ignore_warning)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 169, in wrapper
+    raise ex
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 116, in wrapper
+    rsp = function(self, *args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 1336, in _rpc_reply
+    return self._conn.rpc(rpc_cmd_e)._NCElement__doc
+  File "/usr/local/lib/python3.7/site-packages/ncclient/manager.py", line 216, in execute
+    raise_mode=self._raise_mode).request(*args, **kwds)
+  File "/usr/local/lib/python3.7/site-packages/ncclient/operations/third_party/juniper/rpc.py", line 46, in request
+    return self._request(rpc)
+  File "/usr/local/lib/python3.7/site-packages/ncclient/operations/rpc.py", line 341, in _request
+    raise self._reply.error
+ncclient.operations.rpc.RPCError: 
+the chassis-control subsystem is not responding to management requests
+
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/lnetd/inputs/nornir/mutils.py", line 71, in get_cards_jnp
+    module = ModuleTable(dev).get()
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/factory/optable.py", line 64, in get
+    self.xml = getattr(self.RPC, self.GET_RPC)(**rpc_args)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/rpcmeta.py", line 345, in _exec_rpc
+    return self._junos.execute(rpc, **dec_args)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 63, in wrapper
+    result = function(*args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 31, in wrapper
+    return function(*args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 794, in execute
+    errs=ex)
+jnpr.junos.exception.RpcError: RpcError(severity: error, bad_element: None, message: the chassis-control subsystem is not responding to management requests)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/nornir/core/task.py", line 67, in start
+    r = self.task(self, **self.params)
+  File "/opt/lnetd/inputs/nornir/mutils.py", line 86, in get_cards_jnp
+    raise Exception
+Exception
+
+2019-04-23 10:40:17,068 - nornir.core.task -    ERROR -      start() - Host 'gb-pe5-lon': task 'get_cards_jnp' failed with traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 774, in execute
+    ignore_warning=ignore_warning)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 169, in wrapper
+    raise ex
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 116, in wrapper
+    rsp = function(self, *args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 1336, in _rpc_reply
+    return self._conn.rpc(rpc_cmd_e)._NCElement__doc
+  File "/usr/local/lib/python3.7/site-packages/ncclient/manager.py", line 216, in execute
+    raise_mode=self._raise_mode).request(*args, **kwds)
+  File "/usr/local/lib/python3.7/site-packages/ncclient/operations/third_party/juniper/rpc.py", line 46, in request
+    return self._request(rpc)
+  File "/usr/local/lib/python3.7/site-packages/ncclient/operations/rpc.py", line 341, in _request
+    raise self._reply.error
+ncclient.operations.rpc.RPCError: 
+the chassis-control subsystem is not responding to management requests
+
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/lnetd/inputs/nornir/mutils.py", line 71, in get_cards_jnp
+    module = ModuleTable(dev).get()
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/factory/optable.py", line 64, in get
+    self.xml = getattr(self.RPC, self.GET_RPC)(**rpc_args)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/rpcmeta.py", line 345, in _exec_rpc
+    return self._junos.execute(rpc, **dec_args)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 63, in wrapper
+    result = function(*args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 31, in wrapper
+    return function(*args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 794, in execute
+    errs=ex)
+jnpr.junos.exception.RpcError: RpcError(severity: error, bad_element: None, message: the chassis-control subsystem is not responding to management requests)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/nornir/core/task.py", line 67, in start
+    r = self.task(self, **self.params)
+  File "/opt/lnetd/inputs/nornir/mutils.py", line 86, in get_cards_jnp
+    raise Exception
+Exception
+
+2019-04-23 10:40:26,732 - nornir.core.task -    ERROR -      start() - Host 'fr-p7-mrs': task 'get_cards_jnp' failed with traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 774, in execute
+    ignore_warning=ignore_warning)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 116, in wrapper
+    rsp = function(self, *args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 1336, in _rpc_reply
+    return self._conn.rpc(rpc_cmd_e)._NCElement__doc
+  File "/usr/local/lib/python3.7/site-packages/ncclient/manager.py", line 216, in execute
+    raise_mode=self._raise_mode).request(*args, **kwds)
+  File "/usr/local/lib/python3.7/site-packages/ncclient/operations/third_party/juniper/rpc.py", line 46, in request
+    return self._request(rpc)
+  File "/usr/local/lib/python3.7/site-packages/ncclient/operations/rpc.py", line 347, in _request
+    raise TimeoutExpiredError('ncclient timed out while waiting for an rpc reply.')
+ncclient.operations.errors.TimeoutExpiredError: ncclient timed out while waiting for an rpc reply.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/lnetd/inputs/nornir/mutils.py", line 71, in get_cards_jnp
+    module = ModuleTable(dev).get()
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/factory/optable.py", line 64, in get
+    self.xml = getattr(self.RPC, self.GET_RPC)(**rpc_args)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/rpcmeta.py", line 345, in _exec_rpc
+    return self._junos.execute(rpc, **dec_args)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 63, in wrapper
+    result = function(*args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 31, in wrapper
+    return function(*args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 778, in execute
+    raise EzErrors.RpcTimeoutError(self, rpc_cmd_e.tag, self.timeout)
+jnpr.junos.exception.RpcTimeoutError: RpcTimeoutError(host: fr-p7-mrs, cmd: get-chassis-inventory, timeout: 10)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/nornir/core/task.py", line 67, in start
+    r = self.task(self, **self.params)
+  File "/opt/lnetd/inputs/nornir/mutils.py", line 86, in get_cards_jnp
+    raise Exception
+Exception
+
+2019-04-23 10:40:34,547 -  nornir.core -     INFO -        run() - Running task 'napalm_get' with args {'getters': ['facts']} on 2 hosts
+2019-04-23 10:40:52,118 -  nornir.core -     INFO -        run() - Running task 'napalm_get' with args {'getters': ['facts']} on 7 hosts
+2019-04-23 10:43:33,347 -  nornir.core -     INFO -        run() - Running task 'napalm_get' with args {'getters': ['facts']} on 2 hosts
+2019-04-23 10:43:50,955 -  nornir.core -     INFO -        run() - Running task 'napalm_get' with args {'getters': ['facts']} on 7 hosts
+2019-04-23 10:46:39,016 -  nornir.core -     INFO -        run() - Running task 'netmiko_send_command' with args {'command_string': 'admin show platform', 'use_textfsm': True} on 2 hosts
+2019-04-23 10:46:46,086 -  nornir.core -     INFO -        run() - Running task 'get_cards_jnp' with args {} on 7 hosts
+2019-04-23 10:46:47,099 - nornir.core.task -    ERROR -      start() - Host 'ke-pe3-nbi': task 'get_cards_jnp' failed with traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 774, in execute
+    ignore_warning=ignore_warning)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 169, in wrapper
+    raise ex
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 116, in wrapper
+    rsp = function(self, *args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 1336, in _rpc_reply
+    return self._conn.rpc(rpc_cmd_e)._NCElement__doc
+  File "/usr/local/lib/python3.7/site-packages/ncclient/manager.py", line 216, in execute
+    raise_mode=self._raise_mode).request(*args, **kwds)
+  File "/usr/local/lib/python3.7/site-packages/ncclient/operations/third_party/juniper/rpc.py", line 46, in request
+    return self._request(rpc)
+  File "/usr/local/lib/python3.7/site-packages/ncclient/operations/rpc.py", line 341, in _request
+    raise self._reply.error
+ncclient.operations.rpc.RPCError: 
+the chassis-control subsystem is not responding to management requests
+
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/lnetd/inputs/nornir/mutils.py", line 71, in get_cards_jnp
+    module = ModuleTable(dev).get()
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/factory/optable.py", line 64, in get
+    self.xml = getattr(self.RPC, self.GET_RPC)(**rpc_args)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/rpcmeta.py", line 345, in _exec_rpc
+    return self._junos.execute(rpc, **dec_args)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 63, in wrapper
+    result = function(*args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 31, in wrapper
+    return function(*args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 794, in execute
+    errs=ex)
+jnpr.junos.exception.RpcError: RpcError(severity: error, bad_element: None, message: the chassis-control subsystem is not responding to management requests)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/nornir/core/task.py", line 67, in start
+    r = self.task(self, **self.params)
+  File "/opt/lnetd/inputs/nornir/mutils.py", line 86, in get_cards_jnp
+    raise Exception
+Exception
+
+2019-04-23 10:46:47,298 - nornir.core.task -    ERROR -      start() - Host 'ke-pe2-nbi': task 'get_cards_jnp' failed with traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 774, in execute
+    ignore_warning=ignore_warning)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 169, in wrapper
+    raise ex
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 116, in wrapper
+    rsp = function(self, *args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 1336, in _rpc_reply
+    return self._conn.rpc(rpc_cmd_e)._NCElement__doc
+  File "/usr/local/lib/python3.7/site-packages/ncclient/manager.py", line 216, in execute
+    raise_mode=self._raise_mode).request(*args, **kwds)
+  File "/usr/local/lib/python3.7/site-packages/ncclient/operations/third_party/juniper/rpc.py", line 46, in request
+    return self._request(rpc)
+  File "/usr/local/lib/python3.7/site-packages/ncclient/operations/rpc.py", line 341, in _request
+    raise self._reply.error
+ncclient.operations.rpc.RPCError: 
+the chassis-control subsystem is not responding to management requests
+
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/lnetd/inputs/nornir/mutils.py", line 71, in get_cards_jnp
+    module = ModuleTable(dev).get()
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/factory/optable.py", line 64, in get
+    self.xml = getattr(self.RPC, self.GET_RPC)(**rpc_args)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/rpcmeta.py", line 345, in _exec_rpc
+    return self._junos.execute(rpc, **dec_args)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 63, in wrapper
+    result = function(*args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 31, in wrapper
+    return function(*args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 794, in execute
+    errs=ex)
+jnpr.junos.exception.RpcError: RpcError(severity: error, bad_element: None, message: the chassis-control subsystem is not responding to management requests)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/nornir/core/task.py", line 67, in start
+    r = self.task(self, **self.params)
+  File "/opt/lnetd/inputs/nornir/mutils.py", line 86, in get_cards_jnp
+    raise Exception
+Exception
+
+2019-04-23 10:46:48,082 - nornir.core.task -    ERROR -      start() - Host 'gb-p10-lon': task 'get_cards_jnp' failed with traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 774, in execute
+    ignore_warning=ignore_warning)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 169, in wrapper
+    raise ex
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 116, in wrapper
+    rsp = function(self, *args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 1336, in _rpc_reply
+    return self._conn.rpc(rpc_cmd_e)._NCElement__doc
+  File "/usr/local/lib/python3.7/site-packages/ncclient/manager.py", line 216, in execute
+    raise_mode=self._raise_mode).request(*args, **kwds)
+  File "/usr/local/lib/python3.7/site-packages/ncclient/operations/third_party/juniper/rpc.py", line 46, in request
+    return self._request(rpc)
+  File "/usr/local/lib/python3.7/site-packages/ncclient/operations/rpc.py", line 341, in _request
+    raise self._reply.error
+ncclient.operations.rpc.RPCError: 
+the chassis-control subsystem is not responding to management requests
+
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/lnetd/inputs/nornir/mutils.py", line 71, in get_cards_jnp
+    module = ModuleTable(dev).get()
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/factory/optable.py", line 64, in get
+    self.xml = getattr(self.RPC, self.GET_RPC)(**rpc_args)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/rpcmeta.py", line 345, in _exec_rpc
+    return self._junos.execute(rpc, **dec_args)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 63, in wrapper
+    result = function(*args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 31, in wrapper
+    return function(*args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 794, in execute
+    errs=ex)
+jnpr.junos.exception.RpcError: RpcError(severity: error, bad_element: None, message: the chassis-control subsystem is not responding to management requests)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/nornir/core/task.py", line 67, in start
+    r = self.task(self, **self.params)
+  File "/opt/lnetd/inputs/nornir/mutils.py", line 86, in get_cards_jnp
+    raise Exception
+Exception
+
+2019-04-23 10:46:48,183 - nornir.core.task -    ERROR -      start() - Host 'ke-p6-nbi': task 'get_cards_jnp' failed with traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 774, in execute
+    ignore_warning=ignore_warning)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 169, in wrapper
+    raise ex
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 116, in wrapper
+    rsp = function(self, *args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 1336, in _rpc_reply
+    return self._conn.rpc(rpc_cmd_e)._NCElement__doc
+  File "/usr/local/lib/python3.7/site-packages/ncclient/manager.py", line 216, in execute
+    raise_mode=self._raise_mode).request(*args, **kwds)
+  File "/usr/local/lib/python3.7/site-packages/ncclient/operations/third_party/juniper/rpc.py", line 46, in request
+    return self._request(rpc)
+  File "/usr/local/lib/python3.7/site-packages/ncclient/operations/rpc.py", line 341, in _request
+    raise self._reply.error
+ncclient.operations.rpc.RPCError: 
+the chassis-control subsystem is not responding to management requests
+
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/lnetd/inputs/nornir/mutils.py", line 71, in get_cards_jnp
+    module = ModuleTable(dev).get()
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/factory/optable.py", line 64, in get
+    self.xml = getattr(self.RPC, self.GET_RPC)(**rpc_args)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/rpcmeta.py", line 345, in _exec_rpc
+    return self._junos.execute(rpc, **dec_args)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 63, in wrapper
+    result = function(*args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 31, in wrapper
+    return function(*args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 794, in execute
+    errs=ex)
+jnpr.junos.exception.RpcError: RpcError(severity: error, bad_element: None, message: the chassis-control subsystem is not responding to management requests)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/nornir/core/task.py", line 67, in start
+    r = self.task(self, **self.params)
+  File "/opt/lnetd/inputs/nornir/mutils.py", line 86, in get_cards_jnp
+    raise Exception
+Exception
+
+2019-04-23 10:46:48,598 - nornir.core.task -    ERROR -      start() - Host 'gb-pe5-lon': task 'get_cards_jnp' failed with traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 774, in execute
+    ignore_warning=ignore_warning)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 169, in wrapper
+    raise ex
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 116, in wrapper
+    rsp = function(self, *args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 1336, in _rpc_reply
+    return self._conn.rpc(rpc_cmd_e)._NCElement__doc
+  File "/usr/local/lib/python3.7/site-packages/ncclient/manager.py", line 216, in execute
+    raise_mode=self._raise_mode).request(*args, **kwds)
+  File "/usr/local/lib/python3.7/site-packages/ncclient/operations/third_party/juniper/rpc.py", line 46, in request
+    return self._request(rpc)
+  File "/usr/local/lib/python3.7/site-packages/ncclient/operations/rpc.py", line 341, in _request
+    raise self._reply.error
+ncclient.operations.rpc.RPCError: 
+the chassis-control subsystem is not responding to management requests
+
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/lnetd/inputs/nornir/mutils.py", line 71, in get_cards_jnp
+    module = ModuleTable(dev).get()
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/factory/optable.py", line 64, in get
+    self.xml = getattr(self.RPC, self.GET_RPC)(**rpc_args)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/rpcmeta.py", line 345, in _exec_rpc
+    return self._junos.execute(rpc, **dec_args)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 63, in wrapper
+    result = function(*args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 31, in wrapper
+    return function(*args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 794, in execute
+    errs=ex)
+jnpr.junos.exception.RpcError: RpcError(severity: error, bad_element: None, message: the chassis-control subsystem is not responding to management requests)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/nornir/core/task.py", line 67, in start
+    r = self.task(self, **self.params)
+  File "/opt/lnetd/inputs/nornir/mutils.py", line 86, in get_cards_jnp
+    raise Exception
+Exception
+
+2019-04-23 10:46:58,023 - nornir.core.task -    ERROR -      start() - Host 'fr-p7-mrs': task 'get_cards_jnp' failed with traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 774, in execute
+    ignore_warning=ignore_warning)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 116, in wrapper
+    rsp = function(self, *args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 1336, in _rpc_reply
+    return self._conn.rpc(rpc_cmd_e)._NCElement__doc
+  File "/usr/local/lib/python3.7/site-packages/ncclient/manager.py", line 216, in execute
+    raise_mode=self._raise_mode).request(*args, **kwds)
+  File "/usr/local/lib/python3.7/site-packages/ncclient/operations/third_party/juniper/rpc.py", line 46, in request
+    return self._request(rpc)
+  File "/usr/local/lib/python3.7/site-packages/ncclient/operations/rpc.py", line 347, in _request
+    raise TimeoutExpiredError('ncclient timed out while waiting for an rpc reply.')
+ncclient.operations.errors.TimeoutExpiredError: ncclient timed out while waiting for an rpc reply.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/lnetd/inputs/nornir/mutils.py", line 71, in get_cards_jnp
+    module = ModuleTable(dev).get()
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/factory/optable.py", line 64, in get
+    self.xml = getattr(self.RPC, self.GET_RPC)(**rpc_args)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/rpcmeta.py", line 345, in _exec_rpc
+    return self._junos.execute(rpc, **dec_args)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 63, in wrapper
+    result = function(*args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/decorators.py", line 31, in wrapper
+    return function(*args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/jnpr/junos/device.py", line 778, in execute
+    raise EzErrors.RpcTimeoutError(self, rpc_cmd_e.tag, self.timeout)
+jnpr.junos.exception.RpcTimeoutError: RpcTimeoutError(host: fr-p7-mrs, cmd: get-chassis-inventory, timeout: 10)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/nornir/core/task.py", line 67, in start
+    r = self.task(self, **self.params)
+  File "/opt/lnetd/inputs/nornir/mutils.py", line 86, in get_cards_jnp
+    raise Exception
+Exception
+
+2019-04-23 12:44:19,115 -  nornir.core -     INFO -        run() - Running task 'napalm_get' with args {'getters': ['facts']} on 2 hosts
+2019-04-23 12:44:38,247 -  nornir.core -     INFO -        run() - Running task 'napalm_get' with args {'getters': ['facts']} on 7 hosts
+2019-04-23 12:46:25,564 -  nornir.core -     INFO -        run() - Running task 'xr_multiple' with args {} on 2 hosts
+2019-04-23 12:46:32,312 -  nornir.core -     INFO -        run() - Running task 'napalm_get' with args {'getters': ['optics', 'interfaces']} on 7 hosts

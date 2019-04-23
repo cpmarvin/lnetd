@@ -29,7 +29,7 @@ function graph(source,interface,capacity) {
             step: 'hour',
             stepmode: 'todate',
             count: 6,
-            label: '12h'
+            label: '6h'
         }, {
             step: 'all',
         }],

@@ -1,0 +1,34 @@
+---
+xr_tacacs:
+  username: cpetrescu
+  password: lab123
+
+jnp_tacacs:
+  username: lab
+  password: lab123
+
+cisco-xr:
+  platform: iosxr
+  data:
+    type: cisco-xr
+
+juniper:
+  platform: junos
+  data:
+    type: juniper
+
+gb:
+  data:
+    site: gb
+ke:
+  data:
+    site: ke
+nl:
+  data:
+    site: nl
+fr:
+  data:
+    site: fr
+peering:
+  data:
+    role: peering

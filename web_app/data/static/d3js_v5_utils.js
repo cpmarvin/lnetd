@@ -160,15 +160,23 @@ function getData(url){
   return customAjaxResponse.promise();
   }
 
-function link_click(d) {
+function link_click(d,type) {
   //console.log("link_click_d",d)
   if (d.l_int == -1 || d.util == -1 ) {
     alert("NO SNMP DATA")
     return
   }
   $('#modal-top').modal('toggle')
+  //$('#modal-body').attr("id","graph2")
+  //console.log('link_click_type:',d,type)
+  if(type == 'cloud'){
+  $('#modal-body').attr("id","graph2")
+  .html(graph(d.node,d.l_int,d.capacity)) 
+  }
+  else {
   $('#modal-body').attr("id","graph2")
   .html(graph(d.source.name,d.l_int,d.capacity))
+  }
 }
 
 function node_click(d) {

@@ -1,0 +1,64 @@
+---
+nl-p7-ams:
+    hostname: 10.13.13.13
+    port: 22
+    groups:
+        - cisco-xr
+        - nl
+        - xr_tacacs
+ke-pe3-nbi:
+    hostname: 10.3.3.3
+    port: 22
+    groups:
+        - juniper
+        - ke
+        - jnp_tacacs
+ke-p6-nbi:
+    hostname: 10.6.6.6
+    port: 22
+    groups:
+        - juniper
+        - ke
+        - jnp_tacacs
+ke-pe2-nbi:
+    hostname: 10.2.2.2
+    port: 22
+    groups:
+        - juniper
+        - ke
+        - jnp_tacacs
+gb-pe8-lon:
+    hostname: 10.8.8.8
+    port: 22
+    groups:
+        - juniper
+        - gb
+        - jnp_tacacs
+gb-pe5-lon:
+    hostname: 10.5.5.5
+    port: 22
+    groups:
+        - juniper
+        - gb
+        - jnp_tacacs
+gb-pe11-lon:
+    hostname: 10.11.11.11
+    port: 22
+    groups:
+        - cisco-xr
+        - gb
+        - xr_tacacs
+gb-p10-lon:
+    hostname: 10.10.10.10
+    port: 22
+    groups:
+        - juniper
+        - gb
+        - jnp_tacacs
+fr-p7-mrs:
+    hostname: 10.7.7.7
+    port: 22
+    groups:
+        - juniper
+        - fr
+        - jnp_tacacs

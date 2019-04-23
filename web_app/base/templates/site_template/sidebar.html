@@ -1,6 +1,6 @@
 <div class="left_col scroll-view">
   <div class="navbar nav_title" style="border: 0;">
-    <a href="" class="site_title"><i class="fa fa-spinner"></i> <span>LnetD v0.4</span></a>
+    <a href="" class="site_title"><i class="fa fa-spinner"></i> <span>LnetD v0.5</span></a>
   </div>
 
   <div class="clearfix"></div>
@@ -41,7 +41,9 @@
 
         <li><a><i class="fa fa-bar-chart-o"></i> Data Presentation <span class="fa fa-chevron-down"></span></a>
           <ul class="nav child_menu">
-	    <li><a href="/data/topology">Topology</a></li>
+            <li><a href="/data/topology">Topology</a></li>
+	    <li><a href="/data/topology_nested">Topology Nested</a></li>
+            <li><a href="/data/topology_region1">Topology Region 1</a></li>
             <li><a href="/data/topology_time">Time Topology</a></li>
             <li><a href="/data/topology_errors">Topology Errors </a></li>
             <li><a href="/data/topology_latency">Topology Latency </a></li>
@@ -51,7 +53,13 @@
 	    <li><a href="/data/filter_topology">Filter Topology</a></li>
           </ul>
         </li>
-
+        <li><a><i class="fa fa-table"></i> Inventory <span class="fa fa-chevron-down"></span></a>
+          <ul class="nav child_menu">
+            <li><a href="/inventory/inventory_device">Device Inventory</a></li>
+            <li><a href="/inventory/inventory_interface">All Interfaces Inventory</a></li>
+            <li><a href="/inventory/inventory_cards">All Cards Inventory</a></li>
+          </ul>
+        </li>
         <li><a><i class="fa fa-bar-chart-o"></i> Static Maps <span class="fa fa-chevron-down"></span></a>
            <ul class="nav child_menu">
             <li><a href="/map/static_map">Transit/Peering Map</a></li>

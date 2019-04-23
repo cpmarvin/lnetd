@@ -164,7 +164,7 @@ const mouseOutFunction = function () {
             return 'black'
           }
         })
-        .on("click",link_click)
+        .on("click",function(d) { return link_click(d,'topo')} )
         .merge(link);
 
   linktext = linktext.data(linkstext, function(d) { return d.source.name + "-" + d.target.name + "-" + d.l_ip + "-" + d.util + "-" + d.metric });

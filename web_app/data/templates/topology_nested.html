@@ -1,0 +1,176 @@
+{% extends "base_site.html" %}
+
+{% block title %} ISIS Topology {% endblock title %}
+
+{% block stylesheets %}
+  {{ super() }}
+  <!-- bootsrap table -->
+  <!--alertify -->
+  <link href="{{ url_for('static', filename='vendors/alertifyjs/css/themes/bootstrap.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendors/alertifyjs/css/alertify.css') }}" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js-bootstrap-css/1.2.1/typeaheadjs.min.css" rel="stylesheet">
+
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="right_col" role="main">
+	<div class="">
+		<div class="page-title">
+
+<div class="title_right">
+	<div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right ">
+	</div>
+</div>
+</div>
+</div>
+
+<div class="clearfix"></div>
+
+<div class="row">
+	<!-- Modal used for graphs-->
+	<div class="modal fade" id="modal-top" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-lg " role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Plotly based Graphs</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body" id="modal-body">
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End Modal -->
+
+	<div class="clearfix"></div>
+
+	<!-- bar chart -->
+	<div class="col-md-14">
+		<div class="x_panel">
+			<div class="x_title">
+				<h2>ISP Telecom <small>ISIS topology</small></h2>
+				<ul class="nav navbar-right panel_toolbox">
+					<li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+					</li>
+				</li>
+			</ul>
+			<div class="clearfix"></div>
+		</div>
+				<div class="row">
+					<div class="col-md-12 col-sm-12 col-xs-12">
+						<div class="x_panel">
+							<div class="x_title">
+								<h3>Topology <button onclick="javascript:node_position_save();" class="btn btn-info">Save Layout</button> </h3>
+								<div class="x_content">
+									<!-- Div for d3js topology -->
+									<div id="topology" style="width:100%; height:100%;">
+										<!-- Div for legend -->
+										<div class="x_content" id="legend_div"></div>
+										<!-- SPF div and checkbox !-->
+										<div class="checkbox" id="spf_div">
+                                              <form>
+                                                <label class="checkbox-inline">
+                                                  <input type="checkbox" id="spf_check" value="">Activate SPF 
+                                                </label>
+                                                <label class="checkbox-inline">
+                                                  <input type="checkbox" id="dynamic_topology" value="">Dynamic Topology
+                                                </label>
+                                              </form>
+										</div>
+										<!-- Div for SPF results -->
+										<div class="spf_results x_content" id="sfp_div1"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+	</div>
+</div>
+<!-- /bar charts -->
+<div class="clearfix"></div>
+</div>
+</div>
+
+{% endblock content %}
+
+{% block javascripts %}
+  {{ super() }}
+<script src="{{ url_for('static', filename='vendors/plotly/plotly-latest.min.js') }}"></script>
+<script src="{{ url_for('static', filename='custom/topology/create_graph.js') }}"></script>
+<script src="{{ url_for('static', filename='custom/topology/getSPF.js') }}"></script>
+<script src="{{ url_for('static', filename='custom/topology/create_legend.js') }}"></script>
+<script src="{{ url_for('static', filename='vendors/alertifyjs/alertify.min.js') }}"></script>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="{{ url_for('data_blueprint.static', filename='d3js_v5_utils.js') }}"></script>
+<script src="{{ url_for('data_blueprint.static', filename='lnet_nested_d3js.js') }}"></script>
+
+
+<script>
+var node_position = {{node_position | tojson | safe}}
+var graphData = JSON.parse('{{ values | tojson | safe}}');
+
+//save node position
+function node_position_save(){
+	node_postion_save =[]
+	d3.selectAll(".link").data().forEach( function (d) { var entry = {'id':d.source.name,'x':d.source.x,'y':d.source.y} ; node_postion_save.push(entry) })
+	var demandArrStr = encodeURIComponent(JSON.stringify(node_postion_save));
+	url = "http://127.0.0.1:8801/api/save_node_position?"+"arr="+demandArrStr
+
+
+	var saveData = $.ajax({
+	      type: 'POST',
+	      url: url,
+	      dataType: "text",
+	      success: function(resultData) { alertify.notify("Node Position Saved ", 'success', 5) }
+	});
+	saveData.error(function() { alertify.notify("Something went wrong",'error',5); });
+}
+
+
+$(document).ready(function() {
+
+    create_legend('traffic')
+    var source = "" // filter source target if neede
+    var target = source 
+    var re_source = new RegExp (source);
+    var re_target = re_source
+    result = data_prepare(graphData,re_source,re_target) //this returns the correct link and nodes
+    var run_it = new lnet_nested_d3js(result,'traffic') //run lnet_nested_d3js
+    run_it.restart(result[1],result[0],result[0]) //draw
+
+    //dynamic nodes
+    $('#dynamic_topology').change(function() {
+        if(this.checked){
+            console.log("dynamic checked")
+            d3.selectAll(".node").data().forEach(function(d) {
+              d.fx = d.fy = null;
+            })
+        }
+    });
+
+    d3.interval(function() {
+      //console.log('d3.interval run')
+        url = "http://127.0.0.1:8801/api/get_isis_nested_links"
+        var graphData1 = getData(url)
+        graphData1.then(function (data) {
+          result = data_prepare(data,re_source,re_target)
+            nodes = result[1]
+            links = result[0]
+            linkstext = result[0]
+            //console.log('nodes:',nodes)
+            //linkedByIndex = result[2]
+            run_it.restart(nodes,links,linkstext);
+        })
+    }, 60000); //60sec 
+
+})
+
+</script>
+
+{% endblock javascripts %}
