@@ -14,7 +14,8 @@ logger = get_module_logger(__name__,'DEBUG')
 
 def remove_ns(xml_string):
     '''Remove namespace from xml string'''
-    parser = etree.XMLParser(remove_blank_text=True)
+    xml_string = xml_string.encode('utf-8')
+    parser = etree.XMLParser(remove_blank_text=True,encoding='utf-8')
     tree = etree.fromstring(xml_string, parser)
     root = tree.getroottree()
 

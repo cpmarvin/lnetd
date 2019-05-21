@@ -6,7 +6,7 @@ class User(Base, UserMixin):
     
     __tablename__ = 'User'
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True,autoincrement=True)
     username = Column(String(120), unique=True)
     email = Column(String(120), unique=True)
     password = Column(String(30))

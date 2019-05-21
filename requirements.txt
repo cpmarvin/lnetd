@@ -7,3 +7,5 @@ flask_cors
 influxdb
 networkx
 junos-eznc
+numpy
+nornir

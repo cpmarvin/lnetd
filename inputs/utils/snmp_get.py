@@ -53,7 +53,6 @@ def get_capacity_ifIndex(hostname,interface):
         return -1
     client = InfluxDBClient(INFLUXDB_HOST,'8086','','',INFLUXDB_NAME)
     queryurl = "SELECT last(ifHighSpeed) from interface_statistics where hostname =~ /%s/ and  ifIndex = '%s'" %(hostname,interface)
-    #print queryurl
     result = client.query(queryurl)
     points = list(result.get_points(measurement='interface_statistics'))
     if not points:
@@ -89,10 +88,8 @@ def get_sysdesc(hostname):
     #logger.debug('Get sysDesc from influxdb based on %s with %s'%(hostname))
     timestamp = datetime.datetime.utcnow().isoformat()
     queryurl = '''SELECT last(sysDesc) from snmp where hostname =~ /%s/''' %(hostname)
-    print queryurl
     result = client.query(queryurl)
     points = list(result.get_points(measurement='snmp'))
-    print points
     if not points:
         #logger.warning('No sysDesc data for %s => replace with -1'%(hostname,interface))
         return 'NA'

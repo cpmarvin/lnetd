@@ -81,3 +81,181 @@ function reset_demand_only() {
     $('#table').bootstrapTable("load", new_data);
 }
 
+//forcast function 
+function forecast_data(df_bps, df_bps_lower, df_bps_upper) {
+    // create selector
+    var selectorOptions = {
+        buttons: [
+	{
+            step: 'all',
+        }],
+    };
+    // //prepare the graph
+
+    var data = [prepData_bps(df_bps), prepData_bps_lower(df_bps_lower), prepData_bps_upper(df_bps_upper)];
+
+    var layout = {
+        showlegend: true,
+        autoresize: true,
+        width: document.getElementById('graph_forecast').clientWidth,
+        height: 371,
+        title: 'Traffic Forecast',
+        xaxis: {
+            fixedrange: true,
+            rangeselector: selectorOptions,
+            rangeslider: {},
+            type: 'date',
+            title: 'Time',
+        },
+        yaxis: {
+            fixedrange: true,
+            autotick: true,
+            autorange: true,
+            tickformat: ".3s",
+            title: 'Mbps'
+        }
+    };
+
+    Plotly.newPlot('graph_forecast', data, layout);
+
+    // //prepare the data
+    function prepData_bps(rawData) {
+        xField = 'ds'
+        yField = 'bps'
+        var x = [];
+        var y = [];
+
+        rawData.forEach(function(datum, i) {
+
+            x.push(new Date(datum[xField]));
+            y.push(datum[yField]); });
+
+        return {
+            mode: 'lines',
+            connectgaps: 'false',
+            marker: {color: 'red'},
+            name: 'Trend',
+            x: x,
+            y: y
+        }; }
+    function prepData_bps_lower(rawData) {
+        xField = 'ds'
+        yField = 'bps_lower'
+        var x = [];
+        var y = [];
+
+        rawData.forEach(function(datum, i) {
+
+            x.push(new Date(datum[xField]));
+            y.push(datum[yField]); });
+
+        return {
+            mode: 'lines',
+            connectgaps: 'false',
+            line: {width: 1, color: '#1705ff'},
+            name: 'lower band',
+            x: x,
+            y: y
+        }; }
+    function prepData_bps_upper(rawData) {
+        xField = 'ds'
+        yField = 'bps_upper'
+        var x = [];
+        var y = [];
+
+        rawData.forEach(function(datum, i) {
+
+            x.push(new Date(datum[xField]));
+            y.push(datum[yField]); });
+
+        return {
+            mode: 'lines',
+            connectgaps: 'false',
+            fill: 'tonexty',
+            line: {color: '#57b88f'},
+            name: 'upper band',
+            x: x,
+            y: y
+        }; }
+}
+
+function graph_aggr_year(data,capacity,graph_id,source_cc,target_cc) {
+
+    var rawDataURL = data
+    console.log(rawDataURL)
+    // // map the fields
+    var xField = 'time';
+    var yField = 'bps';
+    // / create selector
+    var selectorOptions = {
+        buttons: [{
+            step: 'hour',
+            stepmode: 'backward',
+            count: 24,
+            label: '24h'
+        }, {
+            step: 'day',
+            stepmode: 'backward',
+            count: 14,
+            label: '2weeks'
+        }, {
+            step: 'month',
+            stepmode: 'backward',
+            count: 1,
+            label: '1month'
+        }, {
+            step: 'month',
+            stepmode: 'backward',
+            count: 6,
+            label: '6months'
+        }, {
+            step: 'all',
+            label: '1year'
+        }],
+    };
+    // //prepare the graph
+    var data = prepData(data);
+    var layout = {
+        showlegend: true,
+        autoresize: true,
+        width: document.getElementById(graph_id).clientWidth,
+        height: 371,
+        title: source_cc + ' to ' + target_cc + ' Capacity: ' + capacity + ' Mbps',
+        xaxis: {
+            fixedrange: true,
+            rangeselector: selectorOptions,
+            rangeslider: {},
+            type: 'date',
+            title: 'Time',
+        },
+        yaxis: {
+            fixedrange: true,
+            autotick: true,
+            autorange: true,
+            tickformat: ".3s",
+            title: 'Mbps'
+        }
+    };
+
+    Plotly.newPlot(graph_id, data, layout);
+
+    // //prepare the data
+    function prepData(rawData) {
+        var x = [];
+        var y = [];
+
+        rawData.forEach(function(datum, i) {
+
+            x.push(new Date(datum[xField]));
+            y.push(datum[yField]); });
+
+        return [{
+            mode: 'lines',
+            connectgaps: 'false',
+            fill: 'tonexty',
+            line: {width: 1, shape: 'spline', color: 'rgb(153, 204, 255)'},
+            name: 'Total Traffic',
+            x: x,
+            y: y
+        }]; }
+}

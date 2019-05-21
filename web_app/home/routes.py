@@ -19,7 +19,7 @@ blueprint = Blueprint(
 def index():
     counters = {
     'routers': len(Routers.query.all()),
-    'links': len(Links.query.all())/2,
+    'links': int(len(Links.query.all())/2),
     'prefixes': len(Prefixes.query.all()),
     'users': len(User.query.all())
     }

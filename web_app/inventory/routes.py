@@ -32,15 +32,16 @@ def inventory_interface():
 @login_required
 def inventory_device():
     device_cc = request.form.get('device_cc')
-    print device_cc
     if (device_cc == None):
         device_cc = 'gb-pe8-lon'
     # get router model
+    #print('what is the device_cc',device_cc)
     qry = db.session.query(Routers).filter(and_(Routers.name.like(device_cc))).statement
     df = pd.read_sql(qry, db.session.bind)
+    #print(df)
     router_model = str(df['model'][0])
     router_model_js = router_model.replace("-", "_")
-    print(router_model)
+    #print(router_model)
     # get all interface from device
     qry = db.session.query(Inventory_interfaces).filter(and_(Inventory_interfaces.router_name.like(device_cc))).statement
     df = pd.read_sql(qry, db.session.bind)
@@ -50,22 +51,22 @@ def inventory_device():
     df = pd.read_sql(qry, db.session.bind)
     cards = df.to_dict(orient='records')
     cards_inv = df['card_slot'].values.tolist()
-    print(cards_inv)
+    #print(cards_inv)
     #test new interfaces
     qry = db.session.query(Inventory_interfaces.interface_speed,func.count(Inventory_interfaces.interface_status)).filter(
                         and_(Inventory_interfaces.router_name.like(device_cc),
                              Inventory_interfaces.interface_status.like('Up%'))).group_by(
                         Inventory_interfaces.interface_speed).statement
     df_up = pd.read_sql(qry, db.session.bind)
-    print('up\n')
-    print(df_up.to_dict(orient='records'))
+    #print('up\n')
+    #print(df_up.to_dict(orient='records'))
     qry = db.session.query(Inventory_interfaces.interface_speed,func.count(Inventory_interfaces.interface_status)).filter(
                         and_(Inventory_interfaces.router_name.like(device_cc),
                              Inventory_interfaces.interface_status.like('Down%'))).group_by(     
                         Inventory_interfaces.interface_speed).statement
     df_down = pd.read_sql(qry, db.session.bind)
-    print('down:\n')
-    print(df_down.to_dict(orient='records'))
+    #print('down:\n')
+    #print(df_down.to_dict(orient='records'))
     #merge the two df 
     df_final = df_up.merge(df_down,on='interface_speed', how='outer')
     #add correct columns
@@ -78,7 +79,6 @@ def inventory_device():
     # get list of routers from inventory
     df_countries = pd.read_sql(db.session.query(Inventory_cards.router_name.distinct()).statement, db.session.bind)
     router_name = df_countries.sort_values(by='anon_1').to_dict(orient='records')
-    # print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! %s" %router_name
     return render_template('inventory_device.html', router_name=router_name, device_cc=device_cc,
                            cards=cards, values=interface,
                            router_model=router_model, router_model_js=router_model_js,

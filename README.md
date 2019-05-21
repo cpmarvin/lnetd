@@ -1,7 +1,10 @@
 # lnetd
+demo site : demo.lnetd.co.uk
 
-more info at : http://cpmarvin.blogspot.co.uk/ 
-   
+#slack channel
+https://networktocode.slack.com #lnetd
+
+- you need python3.6 
 - clone lnetd (or download as a zip archive from github) most of the paths are hardcoded so use /opt/lnetd/
 ```
 cd /opt/
@@ -9,7 +12,8 @@ git clone https://github.com/cpmarvin/lnetd.git
 pip install -r requirements.txt
 ```
 
-- change webserver if not run local
+- change webserver if not run local, replace 127.0.0.1 to your ip address. 
+
 ```
 lab@cpe:/opt/lnetd/web_app$ grep -R ":8801" *           
 web_app/data/templates/topology.html   
@@ -27,13 +31,13 @@ web_app/base/static/custom/topology/getSPF_latency.js
 - run **/opt/lnetd/web_app**.
 ```
 cd /opt/lnetd/web_app
-python2 app.py
+python3 app.py
 ```
 - go to webserver port 8801 , username is lab password is lab123
 
 For input you can use either isisd or rpc scripts.
 
-For ISISd.
+For ISISd ( Legacy not supported anymore ).
 ```
 cd /opt/lnetd/inputs/isisd
 sudo python lnetd.py
@@ -45,15 +49,15 @@ cd /opt/lnetd/inputs/
 jnp_isis_links
 jnp_isis_prefixes
 jnp_isis_routers
-python2 isis_get.py
+python3 isis_get.py
 ```
 
 Once you have the input info to move the info from input database to web app database run below . there is config.ini that you select the input
 ```
 cd /opt/lnetd/output
-python2 to_db_links.py
-python2 to_db_prefixes.py
-python2 to_db_routers.py
+python3 to_db_links.py
+python3 to_db_prefixes.py
+python3 to_db_routers.py
 
 pmacct integration , to use netflow traffic as a demand you need pmacctd configured with sqlite3 support.
 
@@ -70,6 +74,9 @@ example for jnp_rpc below
 
 #external topology
 */5 * * * * cd /opt/lnetd/inputs/external_topology && python generate_topology.py
+
+#aggregate 1h 
+0 * * * * cd /opt/lnetd/output/h_aggregated/ && python h_aggregate_influxdb.py
 
 ```
 cd to pmacct/sbin directory and run 

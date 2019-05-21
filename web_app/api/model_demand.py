@@ -1,7 +1,7 @@
 import sqlite3
 import pandas as pd
 from sqlalchemy import create_engine
-from deploy_demand import deploy_demand
+from .deploy_demand import deploy_demand
 import logging
 
 def model_demand_get(df_links,demand):

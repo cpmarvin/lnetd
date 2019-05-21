@@ -1,4 +1,4 @@
-from mutils import *
+from .mutils import *
 
 def generate_data(name,router_ip,ifindex):
     try:

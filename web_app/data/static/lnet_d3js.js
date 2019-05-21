@@ -11,8 +11,11 @@ function lnet_d3js(result,type){
   var svg = d3.select("#topology").append("svg")
                     .call(zoom)
                     .attr("id","main_svg")
-                    .attr("width", width)
-                    .attr("height", height)
+                    //.attr("width", width)
+                    //.attr("height", height)
+		    .attr("preserveAspectRatio", "xMinYMin meet")
+		    .attr("viewBox", "0 0 1900 1001")
+
   var simulation = d3.forceSimulation(nodes)
       .force("charge", d3.forceManyBody().strength(-800))
       .force("link", d3.forceLink(links).distance(10).strength(0))
@@ -157,6 +160,9 @@ const mouseOutFunction = function () {
           if (type == 'traffic'){ console.log('do i update here?',d.l_ip,d.util);
             return get_util(d,"0")
           }
+	  else if (type == 'demand'){
+	    return get_util(d,"0")
+          }
           else if (type == 'errors'){
             return get_errors(d,"0")
           }
@@ -186,6 +192,10 @@ const mouseOutFunction = function () {
                     if (type == 'traffic'){
                       return "cost:"  + d.metric + "/IP:"+ d.l_ip
                     }
+		    else if ( type == 'demand'){
+		      return "cost:"  + d.metric + "/IP:"+ d.l_ip + "/load:" 
+				+ (d.util*100)/(d.capacity*1000000)+"%"
+		    }
                     else if (type == 'errors'){
                       return "errors:"  +parseFloat(d.errors)
                     }

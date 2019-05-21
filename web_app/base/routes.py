@@ -41,7 +41,6 @@ def route_errors(error):
     return render_template('errors/page_{}.html'.format(error))
 
 ## Login & Registration
-
 @blueprint.route('/login', methods=['GET', 'POST'])
 def login():
     login_form = LoginForm(request.form)
@@ -70,7 +69,7 @@ def logout():
 
 @login_manager.unauthorized_handler
 def unauthorized_handler():
-    return render_template('errors/page_403.html')
+    return redirect(url_for('base_blueprint.login'))
 
 @blueprint.errorhandler(403)
 def not_found_error(error):

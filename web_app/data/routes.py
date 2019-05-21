@@ -4,13 +4,15 @@ from objects.models import Routers,Links,Links_latency,Node_position
 from database import db
 from collections import Counter,OrderedDict
 import pandas as pd
-from get_demand_netflow import *
+from .get_demand_netflow import *
 import json 
 from influxdb import InfluxDBClient
 from sqlalchemy import or_,and_
-from snmp_influx import get_max_util
-
+from .snmp_influx import get_max_util
+from .mutils import *
 import collections
+
+from functools import reduce
 
 blueprint = Blueprint(
     'data_blueprint', 
@@ -46,14 +48,36 @@ def topology_nested():
     current_user = session['user_id']
     node_position = pd.read_sql(db.session.query(Node_position).filter(Node_position.user == current_user).statement,db.session.bind)
     node_position = node_position.to_dict(orient='records')
-    df = pd.read_sql(db.session.query(Links).filter(Links.index >=0).statement,db.session.bind)
-    df['node'] = df['source']
-    df['source'] = df.apply(lambda row: row['source'][:2],axis=1)
-    df['target'] = df.apply(lambda row: row['target'][:2],axis=1)
-    df = df[df['source'] != df['target']]
-    isis_links = df.to_dict(orient='records')
+    try:
+        df = pd.read_sql(db.session.query(Links).filter(Links.index >=0).statement,db.session.bind)
+        df['node'] = df['source']
+        df['source'] = df.apply(lambda row: row['source'][:2],axis=1)
+        df['target'] = df.apply(lambda row: row['target'][:2],axis=1)
+        df = df[df['source'] != df['target']]
+        isis_links = df.to_dict(orient='records')
+    except Exception as e:
+        isis_links = []
     #print isis_links 
     return render_template('topology_nested.html', values=isis_links,node_position=node_position)
+
+@blueprint.route('/topology_nested_aggregated')
+@login_required
+def topology_nested_aggregated():
+    current_user = session['user_id']
+    node_position = pd.read_sql(db.session.query(Node_position).filter(Node_position.user == current_user).statement,db.session.bind)
+    node_position = node_position.to_dict(orient='records')
+    try:
+        df = pd.read_sql(db.session.query(Links).filter(Links.index >=0).statement,db.session.bind)
+        df = df[df['source'] != df['target']]
+        df['source'] = df.apply(lambda row: row['source'][:2],axis=1)
+        df['target'] = df.apply(lambda row: row['target'][:2],axis=1)
+        df_aggregate = df.groupby(['source','target']).agg({'util':'sum','capacity':'sum'}).reset_index()
+        df_aggregate.loc[:, 'l_ip_r_ip'] = pd.Series([tuple(sorted(each)) for each in list(zip(df_aggregate.source.values.tolist(), df_aggregate.target.values.tolist()))])
+        isis_links = df_aggregate.to_dict(orient='records')
+    except Exception as e:
+        isis_links = []
+    #print isis_links 
+    return render_template('topology_nested_aggregated.html', values=isis_links,node_position=node_position)
 
 @blueprint.route('/topology_errors')
 @login_required
@@ -182,7 +206,8 @@ def traffic_links():
     if len(isis_links) == 0:
         max_value = 0
         total_capacity = 0
-        df_csv =0
+        df_csv = 0
+        df_year = 0
     else:
     #create a dict for each link
         df_dict=df.to_dict(orient='records')
@@ -207,8 +232,13 @@ def traffic_links():
     #df_csv=df_merged.reindex(columns=["time","bps"]).to_csv(index=False)
         max_value = df_merged['bps'].max()
         max_value = max_value/1000000
-    return render_template('traffic_links.html', values=isis_links, countries=countries,max_value=int(max_value),graph=df_csv,
-        total_capacity=total_capacity,s_c=source_filter[:-1],t_c=target_filter[:-1])
+        df_year = generate_year_graph(source_filter[:-1],target_filter[:-1])
+        df_year = df_year.to_dict(orient='records')
+    return render_template('traffic_links.html', values=isis_links, 
+		countries=countries,max_value=int(max_value),graph=df_csv,
+        	total_capacity=total_capacity,s_c=source_filter[:-1],t_c=target_filter[:-1],
+		df_year = df_year
+		)
 
 @blueprint.route('/topology_time')
 @login_required

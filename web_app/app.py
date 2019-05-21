@@ -21,7 +21,18 @@ path_source = os.path.dirname(os.path.abspath(__file__))
 from database import db, create_database
 from base.routes import login_manager
 from base.models import User
+'''
+#auth 
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+from flask_dance.contrib.azure import make_azure_blueprint, azure
+#auth 
 
+def register_azure_extention(app):
+    blueprint = make_azure_blueprint(
+    client_id="--",
+    client_secret="--")
+    app.register_blueprint(blueprint,url_prefix="/login_azure")
+'''
 def register_extensions(app):
     db.init_app(app)
     login_manager.init_app(app)
@@ -61,7 +72,7 @@ def create_app(config='config'):
     
     register_extensions(app)
     register_blueprints(app)
-    
+    #register_azure_extention(app)
     from base.models import User
     configure_login_manager(app, User)
     

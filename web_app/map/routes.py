@@ -8,7 +8,7 @@ from database import db
 from objects.models import Routers,Links,Links_latency,Node_position
 from objects.models import External_topology_temp,External_topology,External_position
 from objects.models import International_PoP,International_PoP_temp
-from generate_data import generate_data
+from .generate_data import generate_data
 
 blueprint = Blueprint(
     'map_blueprint', 

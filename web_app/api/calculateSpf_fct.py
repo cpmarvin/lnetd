@@ -21,8 +21,7 @@ def calculateSpf(arr,source,target):
 				if d['metric'] == min_weight:
 					d3js_links.append(d)
 			u=v
-	print d3js_links
-        return d3js_links
+	return d3js_links
 
 
 

@@ -173,6 +173,10 @@ function link_click(d,type) {
   $('#modal-body').attr("id","graph2")
   .html(graph(d.node,d.l_int,d.capacity)) 
   }
+  else if(type =='cloud_aggregate'){
+  $('#modal-body').attr("id","graph2")
+  .html(graph(d.source.name,d.target.name,d.capacity))
+  }
   else {
   $('#modal-body').attr("id","graph2")
   .html(graph(d.source.name,d.l_int,d.capacity))

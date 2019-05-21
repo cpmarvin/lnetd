@@ -29,7 +29,7 @@ def main():
       isis_table = isisTable(dev).get()
       logger.info('Data %s received from device: %s' %(isis_table,devices))
       dev.close()
-    except Exception,e:
+    except Exception as e:
       logging.exception('Got exception while trying to connect')
 
   if len(isis_table) >=1:

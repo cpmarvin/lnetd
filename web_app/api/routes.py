@@ -5,16 +5,19 @@ import pandas as pd
 import json
 from flask import Flask, redirect, request, jsonify
 from flask_cors import CORS, cross_origin
-from get_graph_fct_ifindex import get_graph_ifindex
-from get_interface_ifName_fct import get_interface_ifName
-from get_graph_fct_ifname import get_graph_ifname
-from calculateSpf_fct import calculateSpf
-from calculateSpf_latency_fct import calculateSpf_latency
-from model_demand import model_demand_get
+from .get_graph_fct_ifindex import get_graph_ifindex
+from .get_interface_ifName_fct import get_interface_ifName
+from .get_graph_fct_ifname import get_graph_ifname
+from .get_graph_fct_aggregated import get_graph_aggregated
+from .calculateSpf_fct import calculateSpf
+from .calculateSpf_latency_fct import calculateSpf_latency
+from .model_demand import model_demand_get
 from database import db
 from objects.models import Routers,Links,Links_latency,Node_position
 from objects.models import External_topology_temp,External_position
 from objects.models import Links_time
+
+from api.mutils import *
 
 blueprint = Blueprint(
     'api_blueprint', 
@@ -49,6 +52,14 @@ def graph_ifname():
     results = get_graph_ifname(host,interface,direction)
     return results
 
+@blueprint.route('/graph_aggregated')
+@login_required
+def graph_aggregated():
+    source = request.args['source']
+    target = request.args['target']
+    results = get_graph_aggregated(source,target)
+    return results
+
 @blueprint.route('/spf')
 @login_required
 def spf():
@@ -65,10 +76,8 @@ def model_demand():
     arr = request.args['arr']
     df_links = pd.DataFrame(eval(arr))
     #df_links = df_links.replace({'\t': ''}, regex=True)
-    print('arr:\n {},demand_request: \n {}').format(df_links,demand_request)
     results = model_demand_get(df_links,demand_request)
     results_final = results.to_dict(orient='records')
-    print "results: %s" %jsonify(results_final)
     return jsonify(results_final)
 
 
@@ -78,7 +87,6 @@ def spf_and_latency():
     target = request.args['target']
     arr = request.args['arr']
     results = calculateSpf_latency(arr,source,target)
-    print "results: %s" %jsonify(results)
     return jsonify(results)
 
 @blueprint.route('/save_node_position',methods=['POST'])
@@ -89,7 +97,6 @@ def save_node_position():
     df_node_position = pd.DataFrame(eval(arr))
     df_node_position=df_node_position.drop_duplicates()
     df_node_position['user'] = current_user
-    #print "after duplicates {}".format(df_node_position)
     df_node_position.to_sql(name='Node_position_temp', con=db.engine, index=False, if_exists='replace')
     #hack due to panda limitation ; no if_exists='update'
     replace_sql = db.engine.connect()
@@ -135,7 +142,6 @@ def save_topology():
     arr = request.args['arr']
     print(arr)
     df = pd.DataFrame(eval(arr))
-    print df.columns
     df = df.drop(['','index','Action','id'], axis=1)
     print(df.dtypes,df.columns)
     #df = df.reset_index()
@@ -171,3 +177,15 @@ def save_international_pop():
     df = df.drop(['','index','Action','id'], axis=1)
     df.to_sql(name='International_PoP_temp', con=db.engine, if_exists='replace' )
     return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
+
+@blueprint.route('/get_forecast',methods=['GET'])
+@login_required
+def get_forecast():
+    '''
+    Get forcast by source and destination
+    for next 30 days
+    '''
+    source = request.args['source']
+    target = request.args['target']
+    df = generate_forecast(source, target)
+    return jsonify(df)

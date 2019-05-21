@@ -313,7 +313,7 @@ function createresult() {
   //updateData(grapheDatas,source) //run d3js topology 
   result = data_prepare(graphData,re_source,re_target) //this returns the correct link and nodes
   console.log('results:',result)
-  var run_it = new lnet_d3js(result,'traffic') //run lnet_d3js
+  var run_it = new lnet_d3js(result,'demand') //run lnet_d3js
   run_it.restart(result[1],result[0],result[0]) //draw
 }
 

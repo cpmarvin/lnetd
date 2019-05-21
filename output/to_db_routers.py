@@ -1,5 +1,5 @@
 import sqlite3
-import ConfigParser
+import configparser
 import pandas as pd
 import re
 from sqlalchemy import create_engine,text
@@ -9,7 +9,7 @@ sys.path.append('../inputs/utils/')
 
 import snmp_get
 
-config = ConfigParser.ConfigParser()
+config = configparser.ConfigParser()
 config.read("config.ini")
 
 from lnetd_log import get_module_logger

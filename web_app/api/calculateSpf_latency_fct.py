@@ -23,8 +23,6 @@ def calculateSpf_latency(arr,source,target):
                             min_latency.append(int(d['latency']))
                     min_latency1 = max(min_latency)
                     min_latency = []
-                    print "path min metric:%s" %min_weight
-                    print "max latency: %s" %min_latency
                     values_g=(g[u][v].values())
                     items_g=g[u][v].items()
                     for d in values_g:
@@ -35,6 +33,5 @@ def calculateSpf_latency(arr,source,target):
                                 min_latency_link = 1
                     u=v
             return_total_metric.append(total_metric)
-    print d3js_links
     return d3js_links,max(return_total_metric)
 
