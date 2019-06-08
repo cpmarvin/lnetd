@@ -130,6 +130,7 @@
 <script>
 var node_position = {{node_position | tojson | safe}}
 var graphData = JSON.parse('{{ values | tojson | safe}}');
+var web_ip = {{app_config|tojson|safe}}
 
 //datepicker 
 $('#datetimepicker1').datetimepicker({
@@ -142,7 +143,8 @@ $('#datetimepicker1').datetimepicker({
 //slider
 function update_slider(selected_date){
 //get the values from api
-url = 'http://127.0.0.1:8801/api/get_links_interval?'+'time='+selected_date
+url = {{ url_for('api_blueprint.get_links_interval')|tojson }}+'?time='+selected_date
+console.log(url)
 values = getData(url)
 values.then(function (data) { 
         //update slider data 
@@ -201,7 +203,7 @@ $("#time_slider").ionRangeSlider({
     var re_source = new RegExp (source);
     var re_target = re_source
     result = data_prepare(graphData,re_source,re_target) //this returns the correct link and nodes
-    var run_it = new lnet_d3js(result,'traffic') //run lnet_d3js
+    var run_it = new lnet_d3js(web_ip,result,'traffic') //run lnet_d3js
     run_it.restart(result[1],result[0],result[0]) //draw
 
     //dynamic nodes
@@ -217,7 +219,7 @@ $("#time_slider").ionRangeSlider({
     //update data 
         function updateData(time) {
         console.log('updateData run with time',time)
-        url = "http://127.0.0.1:8801/api/get_isis_links_time?"+"time="+time
+        url = {{ url_for('api_blueprint.get_isis_links_time')|tojson }}+'?time='+time
         var graphData1 = getData(url)
         graphData1.then(function (data) {
           result = data_prepare(data,re_source,re_target)

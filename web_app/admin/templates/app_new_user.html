@@ -1,0 +1,122 @@
+{% extends "base_site.html" %}
+
+{% block title %} Basic App Config {% endblock title %}
+
+{% block stylesheets %}
+  {{ super() }}
+  <link href="{{ url_for('static', filename='vendors/datatables.net-bs/css/dataTables.bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css') }}" rel="stylesheet">
+  <!-- bootsrap table -->
+  <link href="{{ url_for('static', filename='vendors/bootstrap-table/bootstrap-table.css') }}" rel="stylesheet">  
+  <!-- x-editable -->
+  <link href="{{ url_for('static', filename='vendors/x-editable/bootstrap3-editable/css/bootstrap-editable.css') }}" rel="stylesheet">
+  <!--alertify -->
+  <link href="{{ url_for('static', filename='vendors/alertifyjs/css/themes/bootstrap.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendors/alertifyjs/css/alertify.css') }}" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js-bootstrap-css/1.2.1/typeaheadjs.min.css" rel="stylesheet">
+
+{% endblock stylesheets %}
+
+{% block content %}
+<div>  
+  <div class="right_col" role="main">
+    <div class="row"> 
+      <div class="col-md-16 col-sm-16 col-xs-16 col-lg-16">
+        <div class="x_panel">
+          <div class="x_title">
+            <div class="page-title">
+              <div class="title_left">
+                <h3>LnetD Add user</h3>
+              </div>
+            </div>
+          </div>
+
+ <div class="row">
+            <div class="animate form col-md-4 col-sm-4 col-xs-4 col-lg-4">
+                <form id="app-config-form">
+                    <div class="form-group float-label-control">
+                        <label for="">User Name</label>
+                        <input type="text" name='username' class="form-control required">
+                    </div>
+                    <div class="form-group float-label-control">
+                        <label for="">Email</label>
+                        <input type="text" name='email' class="form-control required" >
+                    </div>
+                    <div class="form-group float-label-control">
+                        <label for="">Password</label>  
+                        <input type="password" name='password' class="form-control required" >
+                    </div>
+                    <div class="form-group float-label-control">
+                        <label for="">Role</label> 
+                              <select class="form-control" name="role">
+                                    <option>admin</option>
+                                    <option>user</option>
+                              </select>
+                    </div>
+                </form>
+              <button type="button" class="btn btn-info" onclick="app_add_user()">Add User</button>
+            </div>
+            </div>
+
+            </div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+  {{ super() }}
+  <!-- <script src="{{ url_for('static', filename='vendors/d3.js/d3.min.js') }}"></script> -->
+  <script src="{{ url_for('static', filename='custom/topology/create_legend.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/plotly/plotly-latest.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='custom/topology/create_graph.js') }}"></script>
+  <script src="{{ url_for('static', filename='custom/topology/getSPF.js') }}"></script>
+  <script src="{{ url_for('static', filename='custom/topology/jsontables.js') }}"></script>
+  <!-- Bootsrap table -->
+  <script src="{{ url_for('static', filename='vendors/bootstrap-table/bootstrap-table.js') }}"></script>
+  <!-- Bootstrap editable extension -->
+  <script src="{{ url_for('static', filename='vendors/bootstrap-table/extensions/editable/bootstrap-table-editable.js') }}"></script>
+  <!-- x-editable externsion --> 
+  <script src="{{ url_for('static', filename='vendors/x-editable/bootstrap3-editable/js/bootstrap-editable.min.js') }}"></script>
+  <!-- alertifyjs -->
+  <script src="{{ url_for('static', filename='vendors/alertifyjs/alertify.min.js') }}"></script>
+  <!-- Datatables 
+  <script src="{{ url_for('static', filename='vendors/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-buttons/js/dataTables.buttons.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-buttons/js/buttons.flash.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-buttons/js/buttons.html5.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-buttons/js/buttons.print.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-keytable/js/dataTables.keyTable.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-responsive/js/dataTables.responsive.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-scroller/js/dataTables.scroller.min.js') }}"></script>
+  <!-- Just to test -->
+  <script src="https://gitcdn.link/repo/xcash/bootstrap-autocomplete/master/dist/latest/bootstrap-autocomplete.min.js"></script>
+
+<script>
+function app_add_user() {
+  if ($('app-config-form')) {
+    $.ajax({
+      type: 'POST',
+      url: '/admin/app_add_user',
+      dataType: 'json',
+      data: $('#app-config-form').serialize(),
+      error: function(result) { alertify.notify('error', 'error', 5);},   
+      success: function(result) { alertify.notify('User added', 'success', 5);}
+    });
+  }
+}
+</script>
+
+{% endblock javascripts %}

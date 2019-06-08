@@ -179,6 +179,7 @@
 <script>
  //node position
  var node_position = {{node_position|tojson|safe}}
+ var web_ip = {{app_config|tojson|safe}}
  //console.log(node_position)
  //autocomplete 
  var router_name = {{router_name|tojson}}
@@ -261,7 +262,7 @@ function reset_demand() {
         //pass the table array and the demand array to api and save the results
         console.log('demand_array',demandArrStr)
         console.log('jsontable',arrStr)
-        url = "http://127.0.0.1:8801/api/model_demand?"+"arr="+arrStr+"&"+"demand="+demandArrStr
+        url = {{ url_for('api_blueprint.model_demand')|tojson }}+'?arr='+arrStr+'&'+'demand='+demandArrStr
         var initAjax = function (){
           var customAjaxResponse = $.ajax({
                                            type: 'GET',
@@ -312,7 +313,7 @@ function createresult() {
   //updateData(grapheDatas,source) //run d3js topology 
   result = data_prepare(graphData,re_source,re_target) //this returns the correct link and nodes
   console.log('results:',result)
-  var run_it = new lnet_d3js(result,'demand') //run lnet_d3js
+  var run_it = new lnet_d3js(web_ip,result,'demand') //run lnet_d3js
   run_it.restart(result[1],result[0],result[0]) //draw
 }
 

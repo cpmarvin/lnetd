@@ -5,9 +5,11 @@ from importlib import import_module
 from inspect import stack
 from logging import Formatter, FileHandler
 from os.path import abspath, dirname, join
+from objects.models import App_config
 import logging
 import os
 import sys
+
 
 # prevent python from writing *.pyc files / __pycache__ folders
 sys.dont_write_bytecode = True
@@ -21,6 +23,8 @@ path_source = os.path.dirname(os.path.abspath(__file__))
 from database import db, create_database
 from base.routes import login_manager
 from base.models import User
+
+
 '''
 #auth 
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
@@ -38,7 +42,7 @@ def register_extensions(app):
     login_manager.init_app(app)
 
 def register_blueprints(app):
-    for module_name in ('api','objects','home', 'data', 'base', 'map','inventory'):
+    for module_name in ('api','objects','home', 'data', 'base', 'map','inventory','bgp','admin'):
         module = import_module('{}.routes'.format(module_name))
         app.register_blueprint(module.blueprint)
 
@@ -75,13 +79,17 @@ def create_app(config='config'):
     #register_azure_extention(app)
     from base.models import User
     configure_login_manager(app, User)
-    
     configure_database(app)
     configure_logs(app)
 
     return app
 
 app = create_app()
+
+@app.context_processor
+def get_app_config():
+    app_config = App_config.query.all()
+    return dict(app_config=app_config[0].web_ip)
 
 if __name__ == '__main__':
     app.run(

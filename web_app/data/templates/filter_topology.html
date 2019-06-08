@@ -117,6 +117,7 @@
     var node_position = {{node_position|tojson|safe}}
 	var graphData = JSON.parse('{{ values | tojson | safe}}');
 	var source = '{{source_filter}}'
+        var web_ip = {{app_config|tojson|safe}}
     var target = '{{target_filter}}'
 	$(document).ready(function() {
 		create_legend('traffic') 
@@ -125,7 +126,7 @@
 		result = data_prepare(graphData,re_source,re_target) //this returns the correct link and nodes
 		console.log('source:',source,'target:',target)
 		console.log(result)
-		var run_it = new lnet_d3js(result,'traffic') //run lnet_d3js
+		var run_it = new lnet_d3js(web_ip,result,'traffic') //run lnet_d3js
         run_it.restart(result[1],result[0],result[0]) //draw
 
         //dynamic nodes

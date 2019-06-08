@@ -1,6 +1,6 @@
 <div class="left_col scroll-view">
   <div class="navbar nav_title" style="border: 0;">
-    <a href="" class="site_title"><i class="fa fa-spinner"></i> <span>LnetD v0.6</span></a>
+    <a href="" class="site_title"><i class="fa fa-spinner"></i> <span>LnetD v0.7</span></a>
   </div>
 
   <div class="clearfix"></div>
@@ -30,12 +30,27 @@
           </ul>
         </li>
 
+        <li><a><i class="fa fa-lock"></i> Admin <span class="fa fa-chevron-down"></span></a>
+          <ul class="nav child_menu">
+            <li><a href="/admin/app_config">Configuration</a></li>
+            <li><a href="/admin/app_new_user">New user</a></li>
+            <li><a href="/admin/app_external_netflow">Edit Netflow External</a></li>
+          </ul>
+        </li>
 
         <li><a><i class="fa fa-table"></i> ISP ISIS Info <span class="fa fa-chevron-down"></span></a>
           <ul class="nav child_menu">
             <li><a href="/objects/isis_routers">ISP ISIS Routers</a></li>
             <li><a href="/objects/isis_links">ISP ISIS Links</a></li>
 	    <li><a href="/objects/isis_prefixes">ISP ISIS Prefixes</a></li>
+          </ul>
+        </li>
+
+        <li><a><i class="fa fa-table"></i> ISP BGP Info <span class="fa fa-chevron-down"></span></a>
+          <ul class="nav child_menu">
+            <li><a href="/bgp/bgp_customers">ISP BGP CST</a></li>
+            <li><a href="/bgp/bgp_peers">ISP BGP PEERS</a></li>
+            <li><a href="/bgp/edit_peering_points">Edit Peeering Points</a></li>
           </ul>
         </li>
 

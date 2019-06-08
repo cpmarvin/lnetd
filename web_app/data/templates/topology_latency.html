@@ -89,6 +89,7 @@
         var node_position = {{node_position | tojson | safe}}
 	var grapheDatas = JSON.parse('{{ values | tojson | safe}}');
 	var grapheDatas1 = grapheDatas
+        var web_ip = {{app_config|tojson|safe}}
 	$(document).ready(function() {
 		updateData()
 		create_legend('latency') 
@@ -295,15 +296,6 @@
 					.attr("class", "link")
 					.style("stroke",function(d) { return get_util(d,"0"); })
 					.attr("id",function(d,i) { return "linkId_" + i; })
-					.on("click", function(d) {
-						if (d.l_int == -1 || d.util == -1 ) {
-							alert("NO SNMP DATA") 
-							return
-						}
-						$('#modal-top').modal('toggle')
-						$('#modal-body').attr("id","graph2")
-						.html(graph(d.source.name,d.l_int,d.capacity))
-					})
 
 
 
@@ -422,7 +414,7 @@
 				var spf_div_1 = document.getElementById('sfp_div1');
 				spf_div_1.innerHTML =""
 				spf_div_1.innerHTML += 'SPF between '+ 'Source: ' +selectedNodes[0]+'  Target: '+selectedNodes[1];
-				spf_results = getSPF(selectedNodes[0],selectedNodes[1])
+				spf_results = getSPF(web_ip,selectedNodes[0],selectedNodes[1])
 				total_metric = Object.values(spf_results)[0][1]
 				spf_results = spf_results["spf_results"][0]
 				spf_div_1.innerHTML += '<br>Calculated MAX Latency between all paths :' + total_metric;

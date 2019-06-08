@@ -26,11 +26,13 @@ def main():
     df[['bps_out','time']] = df.apply(
                 lambda row: pd.Series(snmp_get.get_util_ifIndex(row['source'],row['l_int'],0)), 
                 axis=1)
+    print(df)
+    df = df.dropna()
     df['time'] = pd.to_datetime(df['time'])
     df = df.set_index('time')
     df['bps_out'] = df['bps_out'].astype(int)
     tags = { 'source': df[['source']], 'target': df[['target']], 'l_int':df[['l_int']]  }
-    #print(df)
+    print(df)
     write_influx(df,tags)
 
 if __name__ == '__main__':

@@ -160,8 +160,8 @@ function getData(url){
   return customAjaxResponse.promise();
   }
 
-function link_click(d,type) {
-  //console.log("link_click_d",d)
+function link_click(web_ip,d,type) {
+  console.log('this is the web_ip inside link_click',web_ip)
   if (d.l_int == -1 || d.util == -1 ) {
     alert("NO SNMP DATA")
     return
@@ -171,21 +171,21 @@ function link_click(d,type) {
   //console.log('link_click_type:',d,type)
   if(type == 'cloud'){
   $('#modal-body').attr("id","graph2")
-  .html(graph(d.node,d.l_int,d.capacity)) 
+  .html(graph(web_ip,d.node,d.l_int,d.capacity)) 
   }
   else if(type =='cloud_aggregate'){
   $('#modal-body').attr("id","graph2")
-  .html(graph(d.source.name,d.target.name,d.capacity))
+  .html(graph(web_ip,d.source.name,d.target.name,d.capacity))
   }
   else {
   $('#modal-body').attr("id","graph2")
-  .html(graph(d.source.name,d.l_int,d.capacity))
+  .html(graph(web_ip,d.source.name,d.l_int,d.capacity))
   }
 }
 
-function node_click(d) {
+function node_click(web_ip,d) {
   if ($('#spf_check').is(':checked')){
-    { return on_node_click(d);console.log("clicked") }
+    { return on_node_click(web_ip,d);console.log("clicked") }
   }
   else {
      console.log("click but not if") 
@@ -193,7 +193,7 @@ function node_click(d) {
 }
 
 selectedNodes = []
-function on_node_click(d) {
+function on_node_click(web_ip,d) {
   if (selectedNodes.length <2) {
     d3.selectAll(".link").attr("stroke-width",1)
     d3.selectAll(".link").attr("stroke-dasharray",null)
@@ -206,7 +206,7 @@ function on_node_click(d) {
     var spf_div_1 = document.getElementById('sfp_div1');
     spf_div_1.innerHTML =""
     spf_div_1.innerHTML += 'SPF between '+ 'Source: ' +selectedNodes[0]+'  Target: '+selectedNodes[1];
-    spf_results = getSPF(selectedNodes[0],selectedNodes[1])
+    spf_results = getSPF(web_ip,selectedNodes[0],selectedNodes[1])
     spf_results = Object.values(spf_results)
     d3.selectAll(".link")
       .style("stroke", function(d) { if (check_link(d.l_ip) == d.l_ip || check_link(d.r_ip) == d.r_ip ) { return "black" } else { return get_util(d,0) } })

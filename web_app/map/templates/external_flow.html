@@ -33,7 +33,9 @@
         <div class="row">
         <div class="form-group col-lg-2">
                         <select class="selectpicker form-control" name="peer">
-                                 <option value=AMSIX>AMSIX</option>
+				{% for node in app_netflow_config %}
+				 <option value={{node.name}}>{{node.name}}</option>
+                                {% endfor %}
                         </select>
 
                 </div>

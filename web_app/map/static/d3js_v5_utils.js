@@ -164,7 +164,7 @@ function getData(url){
   return customAjaxResponse.promise();
   }
 
-function link_click(d) {
+function link_click(web_ip,d) {
   //console.log("link_click_d",d)
   if (d.l_int == -1 || d.util == -1 ) {
     alert("NO SNMP DATA")
@@ -172,7 +172,7 @@ function link_click(d) {
   }
   $('#modal-top').modal('toggle')
   $('#modal-body').attr("id","graph2")
-  .html(graph(d.node,d.interface,d.capacity,d.direction))
+  .html(graph(web_ip,d.node,d.interface,d.capacity,d.direction))
 }
 
 function node_click(d) {

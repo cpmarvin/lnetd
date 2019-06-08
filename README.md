@@ -1,9 +1,13 @@
 # lnetd
-demo site : demo.lnetd.co.uk
+demo site : http://demo.lnetd.co.uk
 
-#slack channel
+#slack channel , contact me if you need support 
 https://networktocode.slack.com #lnetd
 
+#if you are are using LnetD in your network and are willing to share that contact me:
+cpmarvin at gmail.com or slack ( cpmarvin )
+
+#How to 
 - you need python3.6 
 - clone lnetd (or download as a zip archive from github) most of the paths are hardcoded so use /opt/lnetd/
 ```
@@ -11,22 +15,14 @@ cd /opt/
 git clone https://github.com/cpmarvin/lnetd.git
 pip install -r requirements.txt
 ```
-
-- change webserver if not run local, replace 127.0.0.1 to your ip address. 
-
+- forecast module requires more dependencies,if you can't install fbprophet disable the forecast function.
 ```
-lab@cpe:/opt/lnetd/web_app$ grep -R ":8801" *           
-web_app/data/templates/topology.html   
-web_app/data/templates/topology.html       
-web_app/data/templates/model_edit.html        
-web_app/data/templates/topology_errors.html   
-web_app/data/templates/topology_errors.html        
-web_app/data/templates/model_demand.html        
-web_app/base/static/custom/topology/create_graph.js    
-web_app/base/static/custom/topology/create_graph.js   
-web_app/base/static/custom/topology/getSPF.js
-web_app/base/static/custom/topology/getSPF_latency.js
-...
+cd /opt/
+pip install -r requirements_forecast.txt
+```
+
+- change the ip address of the WEB server in the admin module. 
+
 ``` 
 - run **/opt/lnetd/web_app**.
 ```
@@ -59,9 +55,8 @@ python3 to_db_links.py
 python3 to_db_prefixes.py
 python3 to_db_routers.py
 
-pmacct integration , to use netflow traffic as a demand you need pmacctd configured with sqlite3 support.
+example for jnp_rpc below , see crontab_example.txt for all 
 
-example for jnp_rpc below 
 */5 * * * *  cd /opt/lnetd/inputs/jnp_isis_prefixes && python isis_get.py
 */5 * * * *  cd /opt/lnetd/inputs/jnp_isis_links && python isis_get.py
 */5 * * * *  cd /opt/lnetd/inputs/jnp_isis_routers && python isis_get.py
@@ -78,6 +73,7 @@ example for jnp_rpc below
 #aggregate 1h 
 0 * * * * cd /opt/lnetd/output/h_aggregated/ && python h_aggregate_influxdb.py
 
+- pmacct integration , to use netflow traffic as a demand you need pmacctd configured with sqlite3 support.
 ```
 cd to pmacct/sbin directory and run 
 ./nfacctd -f /opt/lnetd/pmacct/etc/netflow.conf
@@ -94,45 +90,20 @@ def model_demand():
 
 To deploy traffic goto webapp > Data Presentation > What if Demand > make sure "Use Netflow Demands as well" is checked and click Deploy Demand. You can also deploy without Netflow using the input box for source/target/demand.
 
-
 The database is formed of the following tables. 
 ```
 sqlite> .tables
-Links               Prefixes            isisd_prefixes      rpc_routers
-Links_latency       Routers             isisd_routers
-Node_position       User                rpc_links
-Node_position_temp  isisd_links         rpc_prefixes
+App_config              International_PoP_temp  Routers               
+App_external_flows      Inventory_cards         Script_run            
+Bgp_customers           Inventory_interfaces    User                  
+Bgp_peering_points      Links                   isisd_links           
+Bgp_peers               Links_latency           isisd_prefixes        
+External_position       Links_time              isisd_routers         
+External_topology       Node_position           rpc_links             
+External_topology_temp  Node_position_temp      rpc_prefixes          
+International_PoP       Prefixes                rpc_routers
 ```
 
 The input module will write to either isisd_ or rpc_ while the output module will read from isisd_|rpc_ and write to Links,Prefixes or Routers
 
-Links:
-sqlite> select * from isisd_links limit 1;
-index|l_ip|metric|r_ip|source|target|l_ip_r_ip
-
-sqlite> select * from rpc_links limit 1;
-index|source|target|metric|l_ip|r_ip|l_ip_r_ip
-
-sqlite> select * from Links limit 1;
-index|l_ip|metric|r_ip|source|target|l_ip_r_ip|l_int|util|capacity|errors
-
-Prefixes:
-sqlite> select * from isisd_prefixes limit 1;
-index|ip|name|country
-
-sqlite> select * from rpc_prefixes limit 1;
-index|name|ip|country
-
-sqlite> select * from Prefixes limit 1;
-index|ip|name|country|version
-
-Routers:
-sqlite> select * from isisd_routers limit 1;
-index|ip|name|country
-
-sqlite> select * from rpc_routers limit 1;
-index|name|ip|country
-
-sqlite> select * from Routers limit 1;
-index|ip|name|country|vendor|model|version
 

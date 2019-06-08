@@ -1,0 +1,256 @@
+{% extends "base_site.html" %}
+
+{% block title %} App Admin Exteral Netflow {% endblock title %}
+
+{% block stylesheets %}
+  {{ super() }}
+  <link href="{{ url_for('static', filename='vendors/datatables.net-bs/css/dataTables.bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css') }}" rel="stylesheet">
+  <!-- bootsrap table -->
+  <link href="{{ url_for('static', filename='vendors/bootstrap-table/bootstrap-table.css') }}" rel="stylesheet">  
+  <!-- x-editable -->
+  <link href="{{ url_for('static', filename='vendors/x-editable/bootstrap3-editable/css/bootstrap-editable.css') }}" rel="stylesheet">
+  <!--alertify -->
+  <link href="{{ url_for('static', filename='vendors/alertifyjs/css/themes/bootstrap.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendors/alertifyjs/css/alertify.css') }}" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js-bootstrap-css/1.2.1/typeaheadjs.min.css" rel="stylesheet">
+
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="right_col" role="main">
+        <div class="row"> 
+                <div class="col-md-16 col-sm-16 col-xs-16 col-lg-16">
+                        <div class="x_panel">
+                                <div class="x_title">
+                                </div>
+
+<!--Edit links -->
+<div id="add-link" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true></span>
+        </button>
+        <h4 class="modal-title" id="title">Add Netflow Interfaces </h4>
+      </div>
+      <form id="add-link-form" data-parsley-validate class="form-horizontal form-label-left" method="post">
+        <div class="modal-body">
+          <div class="form-group" style="height: 350px">
+                        <label class="control-label col-md-4 col-sm-4 col-xs-12">Name:</label>
+                        <div class="col-md-6">
+                            <input class="form-control validate" id="name_add" name="name_add" placeholder="Name" required autofocus>
+                            <div class="help-block with-errors"></div>
+                        </div>
+                        <label class="control-label col-md-4 col-sm-4 col-xs-12">Router:</label>
+                        <div class="col-md-6">
+                            <input class="form-control validate" id="router_add" name="router_add" placeholder="Router" required autofocus>
+                            <div class="help-block with-errors"></div>
+                        </div>
+                        <label class="control-label col-md-4 col-sm-4 col-xs-12">IfIndex</label>
+                        <div class="col-md-6">
+                            <input class="form-control validate" id="if_index_add" name="if_index_add" placeholder="IfIndex" required autofocus>
+                            <div class="help-block with-errors"></div>
+                        </div>
+        </div>
+</div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-success" onclick="editObject()">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- End Links --> 
+
+
+
+
+                        <div class="row">
+                                <div class="col-md-12 col-sm-12 col-xs-12">
+                                        <div class="x_panel">
+                                                <div class="x_title">
+                                                        <h2>Edit App Netflow Interfaces </h2>
+                                                        <ul class="nav navbar-right panel_toolbox">
+                                                                <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                                                                </li>
+                                                        </ul>
+                                                        <div class="clearfix"></div>
+                                                </div>
+
+                                                <form class="form-inline" onsubmit="save_topology();return false;">
+                                                        <div class="form-group input-group"></div>
+                                                        <div class="form-group mx-sm-3 input-group">
+                                                                <span class="input-group-btn">
+                                                                        <button class="btn btn-primary btn-success" type="submit" name="run_model">Save Links</button>
+                                                                </span>
+                                                        </div>
+                                                        <div class="form-group mx-sm-3 input-group">
+                                                                <span class="input-group-btn">
+<button type="button" class="btn btn-primary btn-success" data-toggle="modal" data-target="#add-link">Add Links</button> 
+                                                                </span>
+                                                        </div>
+                                                        <div class="form-group mx-sm-3 input-group">
+                                                                <span class="input-group-btn">
+<button type="button" class="btn btn-warning" onclick="reset_changes()">Cancel changes</button>
+</span>
+</div>
+                                                </form>
+
+                                                <div class="clearfix"></div>
+                                                <div class="x_content">
+                                                        <table id="table" data-toggle="false"
+                                                        data-search= "true"
+                                                        data-show-columes="true"
+                                                        data-pagination="false"
+                                                        data-click-to-select="true"
+                                                        class="table table-striped table-bordered table-condensed table-responsive">
+                                                        </table>
+                                                </div>
+                                                </div>
+
+                                                                        </div>
+                                                                </div>
+                                                        </div>
+                                                </div>
+                                        </div>
+                                </div>
+                        </div>
+                </div>
+        </div>
+</div>
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+  {{ super() }}
+  <script src="{{ url_for('static', filename='custom/topology/jsontables.js') }}"></script>
+  <!-- Bootsrap table -->
+  <script src="{{ url_for('static', filename='vendors/bootstrap-table/bootstrap-table.js') }}"></script>
+  <!-- Bootstrap editable extension -->
+  <script src="{{ url_for('static', filename='vendors/bootstrap-table/extensions/editable/bootstrap-table-editable.js') }}"></script>
+  <!-- x-editable externsion --> 
+  <script src="{{ url_for('static', filename='vendors/x-editable/bootstrap3-editable/js/bootstrap-editable.min.js') }}"></script>
+  <!-- alertifyjs -->
+  <script src="{{ url_for('static', filename='vendors/alertifyjs/alertify.min.js') }}"></script>
+  <!-- Datatables -->
+  <script src="{{ url_for('static', filename='vendors/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-buttons/js/dataTables.buttons.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-buttons/js/buttons.flash.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-buttons/js/buttons.html5.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-buttons/js/buttons.print.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-keytable/js/dataTables.keyTable.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-responsive/js/dataTables.responsive.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendors/datatables.net-scroller/js/dataTables.scroller.min.js') }}"></script>
+
+  <!-- Just to test -->
+  <script src="https://gitcdn.link/repo/xcash/bootstrap-autocomplete/master/dist/latest/bootstrap-autocomplete.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/corejs-typeahead/1.2.1/typeahead.bundle.js"></script>
+<script>
+
+function save_topology(){
+        $('#table').bootstrapTable('resetSearch', '');
+        var jsonTable = new JSONTable($("#table"))
+        var new_data= jsonTable.toJSON()
+        var new_data = encodeURIComponent(JSON.stringify(new_data));
+        url = {{ url_for('admin_blueprint.app_external_netflow_save')|tojson }}+'?arr='+new_data
+        var saveData = $.ajax({
+              type: 'POST',
+              url: url,
+              dataType: "text",
+              success: function(resultData) { alertify.notify("Netflow Interfaces Saved ", 'success', 5) }
+        });
+        saveData.error(function() { alertify.notify("Something went wrong",'error',5); });
+}
+
+//delete row if button with .ibtnDel click
+$("#table").on("click", ".ibtnDel", function (e, value, row, index) {
+        //$(this).closest("tr").remove();
+        alertify.notify("Link removed ..... ", 'error', 5)
+
+            var $table = $('#table')
+            var ids = $.map($table.bootstrapTable('getSelections'), function (row) {
+                return row.id;
+            });
+
+            $('#table').bootstrapTable('remove', {
+                field: 'id',
+                values: ids
+            });
+
+
+
+})
+
+//function to add another row ( add both the form and reverse ) 
+function editObject() {
+        if ($('#add-link-form').parsley().validate() ) {
+        var entry = $('#add-link-form').serializeArray()
+        var newRow = $("<tr>");
+        var cols = "";
+        cols += '<td>' + Math.floor(Math.random() * 900) + '</td>';
+        cols += '<td>' + Math.floor(Math.random() * 900) + '</td>';
+        cols += '<td>' + Math.floor(Math.random() * 900) + '</td>';
+        cols += '<td>' + entry[0].value + '</td>'; //Name
+        cols += '<td>' + entry[1].value + '</td>'; //Routers
+        cols += '<td>' + entry[2].value + '</td>'; //IfIndex
+        cols += '<td><input type="button" class="ibtnDel btn btn-sm btn-danger "  value="Delete"></td>';
+        cols += '</tr>'
+        newRow.append(cols);
+        console.log('new row',newRow)
+        $("#table").append(newRow);
+
+//reload data into the table to allow modify of the metric
+        var jsonTable = new JSONTable($("#table"))
+        var new_data= jsonTable.toJSON()
+                        $('#table').bootstrapTable("load", new_data);
+        alertify.notify("Link added ..... ", 'success', 5)
+
+}
+}
+
+
+  // bootstrap table from flask variables
+   $(window).load(function() {
+    var data = {{values|tojson}};
+    console.log(data)
+    var columns = {{columns|tojson}};
+   $(function() {
+     $('#table').bootstrapTable ({
+        data: data,
+        columns: columns,
+                });
+           });
+        });
+
+//insert delete button for all rows
+function TableActions (value, row, index) {
+            return [
+                '<input type="button" class=" ibtnDel btn btn-sm btn-danger "  value="Delete">'
+            ].join('');
+        }
+
+
+   // reset table and remove existing demand or metric change
+   function reset_changes() {
+     var data = {{values|tojson}};
+     //console.log('-----data is : ' , data.length)
+     if ( data.length == null) {
+          $('#table').bootstrapTable('removeAll')
+     }
+     else {
+     $('#table').bootstrapTable("load", data);
+     }
+   }
+</script>
+
+{% endblock javascripts %}

@@ -200,7 +200,7 @@ function save_topology(){
 	var jsonTable = new JSONTable($("#table"))
 	var new_data= jsonTable.toJSON()
 	var new_data = encodeURIComponent(JSON.stringify(new_data));
-	url = "http://127.0.0.1:8801/api/save_topology?"+"arr="+new_data
+        url = {{ url_for('api_blueprint.save_topology')|tojson }}+'?arr='+new_data
 	var saveData = $.ajax({
 	      type: 'POST',
 	      url: url,

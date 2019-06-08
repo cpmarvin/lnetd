@@ -126,13 +126,14 @@
 <script src="{{ url_for('map_blueprint.static', filename='node_position.js') }}"></script>
 
 <script>
+var web_ip = {{app_config|tojson|safe}}
+
 function node_position_save(){
         node_position_save = []
         d3.selectAll(".link").data().forEach( function (d) { var entry = {'id':d.source.name,'x':d.source.x,'y':d.source.y}
  ; node_position_save.push(entry) })
         var demandArrStr = encodeURIComponent(JSON.stringify(node_position_save));
-        url = "http://127.0.0.1:8801/api/save_external_position?"+"arr="+demandArrStr
-
+        url = {{ url_for('api_blueprint.save_external_position')|tojson }}+'?arr='+demandArrStr
 
         var saveData = $.ajax({
               type: 'POST',
@@ -153,7 +154,7 @@ function node_position_save(){
 		result = data_prepare(graphData,re_source,re_target) //this returns the correct link and nodes
 		//console.log('source:',source,'target:',target)
 		//console.log(result)
-		var run_it = new lnet_d3js(result,'traffic') //run lnet_d3js
+		var run_it = new lnet_d3js(web_ip,result,'traffic') //run lnet_d3js
         run_it.restart(result[1],result[0],result[0]) //draw
 
 //circle

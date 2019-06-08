@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, redirect, request, url_for
+
 from flask_login import (
     current_user,
     LoginManager,
@@ -6,6 +7,7 @@ from flask_login import (
     login_user,
     logout_user
     )
+
 from .forms import LoginForm
 
 # start the login system
@@ -40,6 +42,10 @@ def route_fixed_template(template):
 def route_errors(error):
     return render_template('errors/page_{}.html'.format(error))
 
+@blueprint.route('/no_admin')
+def no_admin():
+    return render_template('errors/page_403.html')
+
 ## Login & Registration
 @blueprint.route('/login', methods=['GET', 'POST'])
 def login():
@@ -66,7 +72,6 @@ def logout():
     return redirect(url_for('base_blueprint.login'))
 
 ## Errors
-
 @login_manager.unauthorized_handler
 def unauthorized_handler():
     return redirect(url_for('base_blueprint.login'))

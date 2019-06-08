@@ -8,6 +8,8 @@ from database import db
 from objects.models import Routers,Links,Links_latency,Node_position
 from objects.models import External_topology_temp,External_topology,External_position
 from objects.models import International_PoP,International_PoP_temp
+from objects.models import App_external_flows
+
 from .generate_data import generate_data
 
 blueprint = Blueprint(
@@ -70,23 +72,23 @@ def edit_static_map():
 @blueprint.route('/external_flow',methods=['GET', 'POST'])
 @login_required
 def external_flow():
-    transit = {
-         'AMSIX':{'router_ip':'10.3.3.3','interface':'68'},
-        }
     peer = request.form.get('peer')
     if peer:
-        name = peer
-        router_ip = transit[peer]['router_ip']
-        ifindex = transit[peer]['interface']
-        print('found a peer',peer,name,router_ip,ifindex)
+        df = pd.read_sql(db.session.query(App_external_flows).filter(App_external_flows.name == peer).statement,db.session.bind)
+        transit = df.to_dict(orient='records')
+        name = transit[0]['name']
+        router_ip = transit[0]['router']
+        ifindex = transit[0]['if_index']
+        #print('found a peer------------------------',peer,name,router_ip,ifindex)
     else:
         peer = 'AMSIX'
         name = 'AMSIX'
         router_ip = '10.3.3.3'
         ifindex = '68'
-        print(peer,name,router_ip,ifindex)
+        #print(peer,name,router_ip,ifindex)
     diagram = generate_data(name,router_ip,ifindex)
-    return render_template('external_flow.html', values=diagram,peer=peer)
+    app_netflow_config = App_external_flows.query.all()
+    return render_template('external_flow.html', values=diagram,peer=peer,app_netflow_config=app_netflow_config)
 
 
 @blueprint.route('/edit_international_pop',methods=['GET', 'POST'])

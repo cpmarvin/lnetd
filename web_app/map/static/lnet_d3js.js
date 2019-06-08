@@ -1,4 +1,4 @@
-function lnet_d3js(result,type){
+function lnet_d3js(web_ip,result,type){
   nodes = result[1] 
   links = result[0]
   linkstext = result[0]
@@ -168,7 +168,7 @@ const mouseOutFunction = function () {
             return 'black'
           }
         })
-        .on("click",link_click)
+        .on("click",function(d) { return link_click(web_ip,d)} )
         .merge(link);
 
   linktext = linktext.data(linkstext, function(d) { return d.source.name + "-" + d.target.name + "-" + d.l_ip; });

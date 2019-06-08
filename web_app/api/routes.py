@@ -189,3 +189,12 @@ def get_forecast():
     target = request.args['target']
     df = generate_forecast(source, target)
     return jsonify(df)
+
+@blueprint.route('/save_bgp_peering',methods=['POST'])
+@login_required
+def save_bgp_peering():
+    arr = request.args['arr']
+    df = pd.DataFrame(eval(arr))
+    df = df.drop(['','index','Action','id'], axis=1)
+    df.to_sql(name='Bgp_peering_points', con=db.engine, if_exists='replace' )
+    return json.dumps({'success':True}), 200, {'ContentType':'application/json'}

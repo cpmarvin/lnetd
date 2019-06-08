@@ -1,9 +1,12 @@
-function graph(source,interface,capacity) {
+function graph(web_ip,source,interface,capacity) {
+    console.log('this is the web_ip inside graph function',web_ip)
     Plotly.purge(graph2)
-    var url = "http://127.0.0.1:8801/api/ifName?"+"ip="+interface+"&"+"host="+source
+    var url = 'http://'+web_ip+':8801/api/ifName?'+'ip='+interface+'&'+'host='+source
+    //var url1 = {{ url_for('api_blueprint.get_forecast')|tojson }}
+    //console.log('this is the url1 inside graph',url1)
     var interface_name = $.ajax({type: "GET", url: url, async: false, dataType:'json'}).responseText;
     //console.log(url)
-    var rawDataURL = "http://127.0.0.1:8801/api/graph_ifindex?"+"ip="+interface+"&"+"host="+source
+    var rawDataURL = 'http://'+web_ip+':8801/api/graph_ifindex?'+'ip='+interface+'&'+'host='+source
     //console.log(rawDataURL)
     //// map the fields 
     var xField = 'time';

@@ -1,4 +1,4 @@
-function lnet_nested_d3js(result,type){
+function lnet_nested_d3js(web_ip,result,type){
   nodes = result[1] 
   links = result[0]
   linkstext = result[0]
@@ -132,7 +132,7 @@ const mouseOutFunction = function () {
         .attr("height", "110px")
         .on('mouseover', mouseOverFunction)
         .on('mouseout', mouseOutFunction)
-        .on('click',node_click)
+        .on('click', function(d) { return node_click(web_ip,d) } )
   nodeEnter.append("text") // enter the text on the g
         .attr("dy", ".35em")
         .attr("x", 12)
@@ -167,7 +167,7 @@ const mouseOutFunction = function () {
           }
         })
         .style("stroke-width", function(d) { return Math.sqrt(d.capacity/100)})
-        .on("click",function(d) { return link_click(d,'cloud_aggregate')} )
+        .on("click",function(d) { return link_click(web_ip,d,'cloud_aggregate')} )
         .merge(link);
 
   linktext = linktext.data(linkstext, function(d) { return d.source.name + "-" + d.target.name + "-" + d.l_ip + "-" + d.util + "-" + d.metric });

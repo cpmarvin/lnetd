@@ -393,7 +393,7 @@ gChart.setOption(option, true);
 $('#forecast_btn').on('click', function() {
   var $this = $(this);
   $this.button('loading');
-  url = 'http://127.0.0.1:8801/api/get_forecast?'+'source='+source_cc+'&target='+target_cc
+  url = {{ url_for('api_blueprint.get_forecast')|tojson }}+'?source='+source_cc+'&target='+target_cc
   console.log(url)
   var forecast = getData(url);
   forecast.then(function (data) {

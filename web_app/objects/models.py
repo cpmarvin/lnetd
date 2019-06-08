@@ -472,3 +472,127 @@ class Inventory_interfaces(Base, UserMixin):
 
     def __repr__(self):
         return str(self.router_name)
+
+class Script_run(Base):
+
+    __tablename__ = 'Script_run'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(120), unique=False)
+    timestamp = Column(DateTime,nullable=False,default=func.now())
+    def __init__(self, **kwargs):
+        for property, value in kwargs.items():
+            # depending on whether value is an iterable or not, we must
+            # unpack it's value (when **kwargs is request.form, some values
+            # will be a 1-element list)
+            if hasattr(value, '__iter__') and not isinstance(value, str):
+                value ,= value
+            setattr(self, property, value)
+
+    def __repr__(self):
+        return str(self.name)
+
+class Bgp_peers(Base):
+
+    __tablename__ = 'Bgp_peers'
+
+    index = Column(Integer, primary_key=True)
+    router = Column(String(120), unique=False)
+    neighbour = Column(String(120), unique=False)
+    neighbour_ip = Column(String(120), unique=False)
+    remote_as = Column(String(120), unique=False)
+    is_up = Column(String(120), unique=False)
+    type = Column(String(120), unique=False)
+    accepted_prefixes = Column(String(120), unique=False)
+    ix_name = Column(String(120), unique=False)
+    uptime = Column(String(120), unique=False)
+
+    def __init__(self, **kwargs):
+        for property, value in kwargs.items():
+            # depending on whether value is an iterable or not, we must
+            # unpack it's value (when **kwargs is request.form, some values
+            # will be a 1-element list)
+            if hasattr(value, '__iter__') and not isinstance(value, str):
+                value ,= value
+            setattr(self, property, value)
+
+    def __repr__(self):
+        return str(self.index)
+
+class Bgp_customers(Base):
+
+    __tablename__ = 'Bgp_customers'
+
+    index = Column(Integer, primary_key=True)
+    prefix = Column(String(300), unique=True)
+    asn = Column(String(120), unique=True)
+
+    def __init__(self, **kwargs):
+        for property, value in kwargs.items():
+            # depending on whether value is an iterable or not, we must
+            # unpack it's value (when **kwargs is request.form, some values
+            # will be a 1-element list)
+            if hasattr(value, '__iter__') and not isinstance(value, str):
+                value ,= value
+            setattr(self, property, value)
+
+    def __repr__(self):
+        return str(self.name)
+
+class Bgp_peering_points(Base):
+
+    __tablename__ = 'Bgp_peering_points'
+
+    index = Column(Integer, primary_key=True)
+    name = Column(String(300), unique=True)
+    ipv4 = Column(String(120), unique=True)
+    ipv6 = Column(String(120), unique=True)
+
+    def __init__(self, **kwargs):
+        for property, value in kwargs.items():
+            # depending on whether value is an iterable or not, we must
+            # unpack it's value (when **kwargs is request.form, some values
+            # will be a 1-element list)
+            if hasattr(value, '__iter__') and not isinstance(value, str):
+                value ,= value
+            setattr(self, property, value)
+
+    def __repr__(self):
+        return str(self.name)
+
+class App_config(Base):
+
+    __tablename__ = 'App_config'
+
+    asn = Column(String(300), primary_key=True)
+    web_ip = Column(String(120), unique=True)
+    influx_ip = Column(String(120), unique=True)
+
+    def __init__(self, **kwargs):
+        for property, value in kwargs.items():
+            # depending on whether value is an iterable or not, we must
+            # unpack it's value (when **kwargs is request.form, some values
+            # will be a 1-element list)
+            if hasattr(value, '__iter__') and not isinstance(value, str):
+                value ,= value
+            setattr(self, property, value)
+
+    def __repr__(self):
+        return str(self.asn)
+
+class App_external_flows(Base):
+    __tablename__ = 'App_external_flows'
+    index = Column(Integer, primary_key=True)
+    name = Column(String(300), unique=True)
+    router = Column(String(120), unique=False)
+    if_index = Column(String(120), unique=False)
+    def __init__(self, **kwargs):
+        for property, value in kwargs.items():
+            # depending on whether value is an iterable or not, we must
+            # unpack it's value (when **kwargs is request.form, some values
+            # will be a 1-element list)
+            if hasattr(value, '__iter__') and not isinstance(value, str):
+                value ,= value
+            setattr(self, property, value)
+    def __repr__(self):
+        return str(self.name)

@@ -10,6 +10,7 @@ class User(Base, UserMixin):
     username = Column(String(120), unique=True)
     email = Column(String(120), unique=True)
     password = Column(String(30))
+    role = Column(String(30),default='user')
 
     def __init__(self, **kwargs):
         for property, value in kwargs.items():
@@ -19,6 +20,8 @@ class User(Base, UserMixin):
             if hasattr(value, '__iter__') and not isinstance(value, str):
                 value ,= value
             setattr(self, property, value)
+    def get_current_user_role(self):
+        return self.role
         
     def __repr__(self):
         return str(self.username)

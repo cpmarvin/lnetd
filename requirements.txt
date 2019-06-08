@@ -1,6 +1,7 @@
 flask
 flask_migrate
 flask_login
+flask_user
 flask_wtf
 pandas
 flask_cors

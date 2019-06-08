@@ -1,6 +1,7 @@
 import sqlite3
 import re
 import pandas as pd
+from netaddr import IPNetwork, IPAddress
 
 def insert_routers(table,index,name,ip,country,vendor,model,version):
     try:
@@ -148,3 +149,25 @@ def get_cards_huawei(display_version):
   except Exception as e:
     print(e)
 
+
+def get_type(asn,ipt_cst):
+    if asn in ipt_cst:
+        return 'customer'
+    else:
+        return 'peering'
+
+def get_ix_name(ip,version,ix_lans):
+    default = {'name': 'n/a', 'ipv4': 'n/a', 'ipv6': 'n/a'}
+    try:
+        for i in ix_lans:
+            if version == 4:
+                if IPAddress(ip) in IPNetwork(i['ipv4']):
+                    return i
+            elif version == 6:
+                if IPAddress(ip) in IPNetwork(i['ipv6']):
+                    return i
+        else:
+            return default
+    except Exception as e:
+        print('error',e)
+        return default

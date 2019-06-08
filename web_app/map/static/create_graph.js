@@ -1,9 +1,7 @@
-function graph(source,interface,capacity,direction) {
+function graph(web_ip,source,interface,capacity,direction) {
     Plotly.purge(graph2)
-    //var url = "http://127.0.0.1:8801/api/ifName?"+"ip="+interface+"&"+"host="+source
     var interface_name = interface 
-    //$.ajax({type: "GET", url: url, async: false, dataType:'json'}).responseText;
-    var rawDataURL = "http://127.0.0.1:8801/api/graph_ifname?"+"interface="+interface+"&"+"host="+source+"&"+"direction="+direction
+    var rawDataURL = 'http://'+web_ip+':8801/api/graph_ifname?'+'interface='+interface+'&'+'host='+source+'&'+'direction='+direction
     //// map the fields 
     var xField = 'time';
     var yField = 'bps';

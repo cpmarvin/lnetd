@@ -13,6 +13,7 @@ ke-pe3-nbi:
         - juniper
         - ke
         - jnp_tacacs
+        - peering
 ke-p6-nbi:
     hostname: 10.6.6.6
     port: 22

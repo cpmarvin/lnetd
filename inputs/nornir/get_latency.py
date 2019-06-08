@@ -19,10 +19,12 @@ def write_sql(df):
     try:
         disk_engine = create_engine('sqlite:////opt/lnetd/web_app/database.db')
         df.to_sql('Links_latency', disk_engine, if_exists='replace')
+        '''
         add_to_table = disk_engine.execute(text("insert into Links_latency_time select null,*,DATETIME('now') from Links_latency").
                                            execution_options(autocommit=True))
         delete_old_values = disk_engine.execute(text("DELETE FROM Links_latency_time WHERE timestamp <= date('now','-12 day')").
                                                 execution_options(autocommit=True))
+        '''
     except Exception as e:
         print(e)
 

@@ -114,13 +114,14 @@
 <script>
 var node_position = {{node_position | tojson | safe}}
 var graphData = JSON.parse('{{ values | tojson | safe}}');
+var web_ip = {{app_config|tojson|safe}}
 
 //save node position
 function node_position_save(){
 	node_postion_save =[]
 	d3.selectAll(".link").data().forEach( function (d) { var entry = {'id':d.source.name,'x':d.source.x,'y':d.source.y} ; node_postion_save.push(entry) })
 	var demandArrStr = encodeURIComponent(JSON.stringify(node_postion_save));
-	url = "http://127.0.0.1:8801/api/save_node_position?"+"arr="+demandArrStr
+        url = {{ url_for('api_blueprint.save_node_position')|tojson }}+'?arr='+demandArrStr
 
 
 	var saveData = $.ajax({
@@ -141,7 +142,7 @@ $(document).ready(function() {
     var re_source = new RegExp (source);
     var re_target = re_source
     result = data_prepare(graphData,re_source,re_target) //this returns the correct link and nodes
-    var run_it = new lnet_d3js(result,'traffic') //run lnet_d3js
+    var run_it = new lnet_d3js(web_ip,result,'traffic') //run lnet_d3js
     run_it.restart(result[1],result[0],result[0]) //draw
 
     //dynamic nodes
@@ -156,7 +157,7 @@ $(document).ready(function() {
 
     d3.interval(function() {
       //console.log('d3.interval run')
-        url = "http://127.0.0.1:8801/api/get_isis_links"
+        url = {{ url_for('api_blueprint.get_isis_links')|tojson }}
         var graphData1 = getData(url)
         graphData1.then(function (data) {
           result = data_prepare(data,re_source,re_target)
