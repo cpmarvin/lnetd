@@ -1,6 +1,7 @@
 from flask_login import UserMixin
 from sqlalchemy import Column, Integer, String
 from database import Base
+from passlib.hash import argon2
 
 class User(Base, UserMixin):
     
@@ -17,9 +18,14 @@ class User(Base, UserMixin):
             # depending on whether value is an iterable or not, we must
             # unpack it's value (when **kwargs is request.form, some values
             # will be a 1-element list)
+            print('this is the value',value)
+            print('this is the property',property)
             if hasattr(value, '__iter__') and not isinstance(value, str):
                 value ,= value
-            setattr(self, property, value)
+            if property == 'password':
+                setattr(self,property, argon2.hash(value))
+            else:
+                setattr(self, property, value)
     def get_current_user_role(self):
         return self.role
         

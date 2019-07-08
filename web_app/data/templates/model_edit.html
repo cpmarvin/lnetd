@@ -29,6 +29,12 @@
   {% include 'modal_netflow.html' %}
   <!-- Include modal for topology -->
   {% include 'modal_topology.html' %}
+  <!-- Include modal for save model -->
+  {% include 'modal_save_model.html' %}
+  <!-- Include modal for load model -->
+  {% include 'modal_load_model.html' %}
+  <!-- Include modal for add_demands model -->
+  {% include 'modal_add_demands.html' %}
 <div>  
   <div class="right_col" role="main">
     <div class="row"> 
@@ -71,6 +77,15 @@
                     <span class="input-group-btn">
                       <button type="button" class="btn btn-primary btn-warning btn-sm" data-toggle="modal" data-target="#netflow_modal">
                       Show existing Netflow Demands</button>
+                    </span>
+                  </div>
+                  <div class="checkbox" class="form-control input" id="deploy_netflow_demands">
+                    <label>
+                      <input type="checkbox" id="add_demands" value="">Use Demand Table only
+                    </label>
+                    <span class="input-group-btn">
+                      <button type="button" class="btn btn-primary btn-warning btn-sm" data-toggle="modal" data-target="#add_demands_modal">
+                      Show Demand Table</button>
                       <button class="btn btn-primary btn-warning btn-sm" type="submit" name="deploy">Reset all</button>
                     </span>
                   </div>
@@ -93,7 +108,7 @@
                 <div class="clearfix"></div>
               </div>
               <!-- Form -->
-              <form class="form-inline" onsubmit="createresult();return false;">
+              <form class="form-inline form-horizontal" onsubmit="createresult();return false;">
                 <div class="form-group input-group"></div>
                 <div class="form-group mx-sm-3 input-group">
                   <span class="input-group-btn">
@@ -109,10 +124,13 @@
                   <span class="input-group-btn">
                     <button type="button" class="btn btn-warning" onclick="reset_demand_only()">Reset demand only</button>
                   </span>
-                  <span>
-                    <!-- Not yet <button type="button" class="btn btn-success" data-toggle="modal" data-target="#save-model">Save Model</button> -->
-                  </span>
                 </div>
+		<div class="form-group mx-sm-3 input-group">
+                  <span class="input-group-btn">
+                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#save-model">Save Model</button> 
+		    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#load-model">Load Model</button>
+                  </span>
+		</div>
               </form>
               <!-- End Form -->
               <!-- Table -->
@@ -144,10 +162,13 @@
   <script src="{{ url_for('static', filename='custom/topology/jsontables.js') }}"></script>
   <!-- Bootsrap table -->
   <script src="{{ url_for('static', filename='vendors/bootstrap-table/bootstrap-table.js') }}"></script>
-  <!-- Bootstrap editable extension -->
+
+  <!-- Bootstrap editable extension need both -->
   <script src="{{ url_for('static', filename='vendors/bootstrap-table/extensions/editable/bootstrap-table-editable.js') }}"></script>
-  <!-- x-editable externsion --> 
-  <script src="{{ url_for('static', filename='vendors/x-editable/bootstrap3-editable/js/bootstrap-editable.min.js') }}"></script>
+
+  <!-- x-editable externsion need both -->
+  <script src="{{ url_for('static', filename='vendors/x-editable/bootstrap3-editable/js/bootstrap-editable.min.js') }}"></script> 
+  
   <!-- alertifyjs -->
   <script src="{{ url_for('static', filename='vendors/alertifyjs/alertify.min.js') }}"></script>
   <!-- Datatables 
@@ -180,6 +201,60 @@
  //node position
  var node_position = {{node_position|tojson|safe}}
  var web_ip = {{app_config|tojson|safe}}
+
+
+//function to load model
+function loadModel() {
+  model_name = document.getElementById('model_name_load').value
+  console.log('this is the selected model',model_name)
+  url = {{ url_for('api_blueprint.get_isis_links_model')|tojson }} + '?model_name='+model_name
+  console.log('url',url)
+  var graphData1 = getData(url)
+  graphData1.then(function (data) {
+        $('#table').bootstrapTable('load', data)
+        }
+  )
+}
+
+//function to save model
+function saveModel(){
+   model_name = document.getElementById('model_name').value
+   console.log('run sve Model with name' , model_name)
+   if ($('#save-model-form').parsley().validate() ) {
+          var jsonTable = new JSONTable($("#table"))
+          var graphData = jsonTable.toJSON()
+          console.log('graphData',graphData)
+   var demandArrStr = encodeURIComponent(JSON.stringify(graphData));
+    url = {{ url_for('api_blueprint.save_links_model')|tojson }} +'?arr='+demandArrStr+'&model_name='+model_name
+    console.log(url)
+    var saveData = $.ajax({
+          type: 'POST',
+          url: url,
+          dataType: "text",
+          success: function(resultData) { alertify.notify("Model Saved ", 'success', 5) }
+    });
+    saveData.error(function() { alertify.notify("Something went wrong",'error',5); });
+
+        }
+}
+
+//save node position
+function node_position_save(){
+    node_postion_save =[]
+    d3.selectAll(".link").data().forEach( function (d) { var entry = {'id':d.source.name,'x':d.source.x,'y':d.source.y} ; node_postion_save.push(entry) })
+    var demandArrStr = encodeURIComponent(JSON.stringify(node_postion_save));
+        url = {{ url_for('api_blueprint.save_node_position')|tojson }}+'?arr='+demandArrStr
+
+
+    var saveData = $.ajax({
+          type: 'POST',
+          url: url,
+          dataType: "text",
+          success: function(resultData) { alertify.notify("Node Position Saved ", 'success', 5) }
+    });
+    saveData.error(function() { alertify.notify("Something went wrong",'error',5); });
+}
+
  //console.log(node_position)
  //autocomplete 
  var router_name = {{router_name|tojson}}
@@ -200,6 +275,22 @@ $('.typeahead').typeahead({
     source: router_name
   }
 ); 
+
+//table add demands
+// bootstrap table from flask variables
+$(window).load(function() {
+
+$.fn.editable.defaults.mode = 'inline';
+var columns = {{columns_demands|tojson}};
+
+$('#demands_table').bootstrapTable({
+    data: [],
+    columns: columns,
+    sortable: true,
+    editable: true
+	});
+
+});
 
 // bootstrap table from flask variables
 $(window).load(function() {
@@ -239,8 +330,26 @@ function reset_demand() {
     var demand = document.getElementById("demand").value * 1000000
     demandarr.push({'source':source,'target':target,'demand':demand})
     console.log("click and checked")
+    console.log('demandarr in netflow',demandarr)
     demand_deploy_inside(demandarr)
     }
+  else if ($('#add_demands').is(':checked') )
+   {
+   console.log('add demands checked')
+   var jsonTable = new JSONTable($("#demands_table"))
+   var new_demands= jsonTable.toJSON()
+   for(var i = 0; i < new_demands.length; i++) {
+    delete new_demands[i][''];
+    delete new_demands[i]['Action'];
+    delete new_demands[i]['id'];
+    delete new_demands[i]['index'];
+    new_demands[i]['demand'] = parseInt(new_demands[i]['demand']) * 1000000
+      }
+   console.log(new_demands)
+   demandarr_demands = new_demands
+   console.log('demandarr in add_demands',demandarr_demands)
+   demand_deploy_inside(demandarr_demands)
+   }
   else
     { 
     demandarr =[]
@@ -310,7 +419,10 @@ function createresult() {
   var target = source 
   var re_source = new RegExp (source);
   var re_target = re_source
-  //updateData(grapheDatas,source) //run d3js topology 
+  //updateData(grapheDatas,source) //run d3js topology
+  model_name = document.getElementById('model_name_load').value
+  //function filterByModelName(item) { if (item.model_name == model_name ) {return true;} return false }
+  //node_position = node_position_global.filter(filterByModelName)
   result = data_prepare(graphData,re_source,re_target) //this returns the correct link and nodes
   console.log('results:',result)
   var run_it = new lnet_d3js(web_ip,result,'demand') //run lnet_d3js

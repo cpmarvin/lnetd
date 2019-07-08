@@ -15,7 +15,7 @@ from .model_demand import model_demand_get
 from database import db
 from objects.models import Routers,Links,Links_latency,Node_position
 from objects.models import External_topology_temp,External_position
-from objects.models import Links_time
+from objects.models import Links_time,Links_Model
 
 from api.mutils import *
 
@@ -161,6 +161,16 @@ def get_isis_links_time():
     isis_links = df.to_dict(orient='records')
     return jsonify(isis_links)
 
+@blueprint.route('/get_isis_links_model',methods=['GET'])
+@login_required
+def get_isis_links_model():
+    model_name = request.args['model_name']
+    df = pd.read_sql(db.session.query(Links_Model).filter(Links_Model.model_name == model_name).statement,db.session.bind)
+    df['id'] = df.index
+    print(df)
+    isis_links = df.to_dict(orient='records')
+    return jsonify(isis_links)
+
 @blueprint.route('/get_links_interval',methods=['GET'])
 @login_required
 def get_links_interval():
@@ -197,4 +207,38 @@ def save_bgp_peering():
     df = pd.DataFrame(eval(arr))
     df = df.drop(['','index','Action','id'], axis=1)
     df.to_sql(name='Bgp_peering_points', con=db.engine, if_exists='replace' )
+    return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
+
+#save model 
+@blueprint.route('/save_links_model',methods=['POST'])
+@login_required
+def save_links_model():
+    print('this is the request',request)
+    current_user = str(session['user_id'])
+    model_name = str(request.args['model_name'])
+    arr = request.args['arr']
+    df = pd.DataFrame(eval(arr))
+    df = df.drop(['','index','Action','id'], axis=1)
+    df['user_id'] = current_user
+    df['model_name'] = model_name
+    # delete old entries matching model_name and username
+    replace_sql = db.engine.connect()
+    trans = replace_sql.begin()
+    sql_query = 'DELETE from Links_Model where user_id = "%s" and model_name = "%s" ' %(current_user,model_name)
+    replace_sql.execute(sql_query)
+    trans.commit()
+    # update with new values 
+    #df.to_sql(name='Links_Model', con=db.engine, if_exists='fail' )
+    def SQL_INSERT_STATEMENT_FROM_DATAFRAME(SOURCE, TARGET):
+        sql_texts = []
+        for index, row in SOURCE.iterrows():       
+            sql_texts.append('INSERT INTO '+TARGET+' ('+ str(', '.join(SOURCE.columns))+ ') VALUES '+ str(tuple(row.values)))        
+        print('\n\n'.join(sql_texts))
+        print(sql_texts)
+        return sql_texts
+    sql_inserts = SQL_INSERT_STATEMENT_FROM_DATAFRAME(df,'Links_Model')
+    trans = replace_sql.begin()
+    for i in sql_inserts:
+        replace_sql.execute(i)
+    trans.commit()
     return json.dumps({'success':True}), 200, {'ContentType':'application/json'}

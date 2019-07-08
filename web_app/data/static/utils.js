@@ -12,6 +12,43 @@ $("#table").on("click", ".ibtnDel", function (e, value, row, index) {
     });
 })
 
+//functio to add another row in demands_table
+function add_row_demands(){
+	var newRow = $("<tr>");
+        var cols = "";
+            cols += '<td>' + Math.floor(Math.random() * 900) + '</td>'; //status
+            cols += '<td>' + Math.floor(Math.random() * 900) + '</td>'; //id
+            cols += '<td>' + Math.floor(Math.random() * 900) + '</td>'; //index
+            cols += '<td>' + 'source-edit-me' + '</td>'; //source
+            cols += '<td>' + 'target-edit-me' + '</td>'; //target
+            cols += '<td>' + 'demand-edit-me' + '</td>'; //demand
+            cols += '<td><input type="button" class="ibtnDel btn btn-sm btn-danger "  value="Delete"></td>'; //action
+            cols += '</tr>'
+        newRow.append(cols);
+        console.log(newRow)
+        console.log(cols)
+        $("#demands_table").append(newRow);
+        var jsonTable = new JSONTable($("#demands_table"))
+        var new_data= jsonTable.toJSON()
+        $('#demands_table').bootstrapTable("load", new_data);
+}
+
+$('#add_row_demands').click(function() { add_row_demands() })
+// delete row for demands ( lame repeat of code , fix me !!! ) 
+//delete row if button with .ibtnDel click
+$("#demands_table").on("click", ".ibtnDel", function (e, value, row, index) {
+    //$(this).closest("tr").remove();
+    alertify.notify("Demand removed ..... ", 'error', 5)
+    var $table = $('#demands_table')
+    var ids = $.map($table.bootstrapTable('getSelections'), function (row) {
+        return row.id;
+    });
+    $('#demands_table').bootstrapTable('remove', {
+        field: 'id',
+        values: ids
+    });
+})
+//
 //function to add another row ( add both the form and reverse ) 
 function editObject() {
     if ($('#add-link-form').parsley().validate() ) {

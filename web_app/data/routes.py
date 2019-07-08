@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request ,session 
 from flask_login import login_required
-from objects.models import Routers,Links,Links_latency,Node_position
+from objects.models import Routers,Links,Links_latency,Node_position,Links_Model
 from database import db
 from collections import Counter,OrderedDict
 import pandas as pd
@@ -169,8 +169,18 @@ def model_edit():
             { "field": "capacity","title":"capacity","sortable":False,"editable":True},
 	    { "field": "Action","title":"Action","formatter":"TableActions"},
             ]
+    columns_demands = [
+            { "field": "state","checkbox":True,},
+            { "field": "id","title":"id","sortable":False},
+            { "field": "index","title":"index","sortable":False,},
+            { "field": "source","title":"source","sortable":True,"editable":True},
+            { "field": "target","title":"target","sortable":True,"editable":True},
+            { "field": "demand","title":"demand","sortable":False,"editable":True},
+            { "field": "Action","title":"Action","formatter":"TableActions"},
+            ]
+    model_name = Links_Model.query.with_entities(Links_Model.model_name).distinct()
     return render_template('model_edit.html',values=isis_links,columns=columns,router_name=router_name,netflow_demands=netflow_demands,
-                           node_position=node_position)  
+                           node_position=node_position, model_name=model_name , columns_demands=columns_demands)  
 
 @blueprint.route('/traffic_links',methods=['GET', 'POST'])
 @login_required

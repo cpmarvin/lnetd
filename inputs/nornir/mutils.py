@@ -65,7 +65,7 @@ chassisView:
   model_number: model-number
 '''
     globals().update(FactoryLoader().load(yaml.load(yml)))
-    dev = Device(host=hostname, user=username, password=password, port='22', gather_facts=False)
+    dev = Device(host=hostname, user=username, password=password, port='830', gather_facts=False)
     try:
       dev.open()
       dev.timeout = 10
@@ -74,6 +74,8 @@ chassisView:
       for slot in module:
         module = slot.jname
         module_type = slot.type
+        if module is None:
+            continue
         if re.search(r"FPC|Routing|PIC",module):
           modules.append((module,module_type))
           #print (module,module_type)

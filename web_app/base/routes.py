@@ -10,6 +10,8 @@ from flask_login import (
 
 from .forms import LoginForm
 
+from passlib.hash import argon2
+
 # start the login system
 login_manager = LoginManager()
 
@@ -54,7 +56,7 @@ def login():
         username = str(request.form['username'])
         password = str(request.form['password'])
         user = db.session.query(User).filter_by(username=username).first()
-        if user and password == user.password:
+        if user and argon2.verify(password , user.password):
             login_user(user)
             return redirect(url_for('base_blueprint.route_default'))
         return render_template('errors/page_403.html')
