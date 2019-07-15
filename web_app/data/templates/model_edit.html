@@ -134,13 +134,14 @@
               </form>
               <!-- End Form -->
               <!-- Table -->
-              <div class="x_content">
+              <div class="x_content clusterize-scroll" id="scrollArea">
                 <table id="table" data-toggle="false"
                 data-search= "true"
                 data-show-columes="true"
-                data-pagination="false"
+                data-pagination="true"
                 data-click-to-select="true"
                 class="table table-striped table-bordered">
+      		  </tbody>
               </table>
             </div>
             <!-- End Table -->  
@@ -193,6 +194,7 @@
   <script src="{{ url_for('data_blueprint.static', filename='d3js_utils.js') }}"></script>
   -->
   <script src="https://d3js.org/d3.v4.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/clusterize.js/0.18.0/clusterize.min.js"></script>
   <script src="{{ url_for('data_blueprint.static', filename='d3js_v5_utils.js') }}"></script>
   <script src="{{ url_for('data_blueprint.static', filename='lnet_d3js.js') }}"></script>
   <script src="{{ url_for('data_blueprint.static', filename='utils.js') }}"></script>
@@ -221,8 +223,10 @@ function saveModel(){
    model_name = document.getElementById('model_name').value
    console.log('run sve Model with name' , model_name)
    if ($('#save-model-form').parsley().validate() ) {
-          var jsonTable = new JSONTable($("#table"))
-          var graphData = jsonTable.toJSON()
+          //var jsonTable = new JSONTable($("#table"))
+          //var graphData = jsonTable.toJSON()
+          var table = $('#table')
+          graphData = table.bootstrapTable('getData');
           console.log('graphData',graphData)
    var demandArrStr = encodeURIComponent(JSON.stringify(graphData));
     url = {{ url_for('api_blueprint.save_links_model')|tojson }} +'?arr='+demandArrStr+'&model_name='+model_name
@@ -294,12 +298,11 @@ $('#demands_table').bootstrapTable({
 
 // bootstrap table from flask variables
 $(window).load(function() {
-  var data = {{values|tojson}};
-  console.log(data)
+  var data_flask = {{values|tojson}};
   var columns = {{columns|tojson}};
   $(function() {
     $('#table').bootstrapTable ({
-      data: data,
+      data: data_flask,
       columns: columns,
     });
   });
@@ -313,7 +316,7 @@ function reset_demand() {
         $('#table').bootstrapTable('removeAll')
     }
     else {
-        $('#table').bootstrapTable("load", data);
+        $('#table').bootstrapTable("load", data_flask);
     }
 }
 
@@ -365,12 +368,23 @@ function reset_demand() {
         console.log(demandarr)
         var demandArrStr = encodeURIComponent(JSON.stringify(demandarr));
         // create an array with values from table ( as it might been updated (ie: change isis metric) )
+        /*
         var jsonTable = new JSONTable($("#table"))
         var arr= jsonTable.toJSON()
+        */
+        var table = $('#table')
+        arr = table.bootstrapTable('getData');
+        for(var i = 0; i < arr.length; i++) {
+            delete arr[i]['model_name'];
+            delete arr[i]['user_id'];
+            //delete arr[i]['id'];
+            delete arr[i]['state'];
+        }
+        console.log('this is the array',arr)
         var arrStr = encodeURIComponent(JSON.stringify(arr));
         //pass the table array and the demand array to api and save the results
-        console.log('demand_array',demandArrStr)
-        console.log('jsontable',arrStr)
+        //console.log('demand_array',demandArrStr)
+        //console.log('jsontable------------',arrStr)
         url = {{ url_for('api_blueprint.model_demand')|tojson }}+'?arr='+arrStr+'&'+'demand='+demandArrStr
         var initAjax = function (){
           var customAjaxResponse = $.ajax({
@@ -401,6 +415,7 @@ function reset_demand() {
     }
 }
 function createresult() {
+  console.log('createresult funtion run')
   //reset search
   $('#table').bootstrapTable('resetSearch', '');
   alertify.notify("Model Run",'success',5)
@@ -413,18 +428,27 @@ function createresult() {
   d3.select("#main_svg").remove();
   create_legend('traffic') //create legend 
   // create d3js topology
+
+/*
   var jsonTable = new JSONTable($("#table")) //save table 
   var graphData = jsonTable.toJSON() // save table as json 
+*/
+//try new option 
+  var table = $('#table')
+  console.log('---start--- with table',table.data)
+  graphData_bs = table.bootstrapTable('getData',false);
+  console.log('this is the table',graphData_bs)
+//end new option 
   var source = '.' //define regexp for topology 
   var target = source 
   var re_source = new RegExp (source);
   var re_target = re_source
-  //updateData(grapheDatas,source) //run d3js topology
   model_name = document.getElementById('model_name_load').value
-  //function filterByModelName(item) { if (item.model_name == model_name ) {return true;} return false }
-  //node_position = node_position_global.filter(filterByModelName)
+  //clone the object first
+  graphData = JSON.parse(JSON.stringify(graphData_bs))
   result = data_prepare(graphData,re_source,re_target) //this returns the correct link and nodes
-  console.log('results:',result)
+  //console.log('results:',result)
+  console.log('graphData_bs',graphData_bs)
   var run_it = new lnet_d3js(web_ip,result,'demand') //run lnet_d3js
   run_it.restart(result[1],result[0],result[0]) //draw
 }

@@ -74,9 +74,13 @@ def spf():
 def model_demand():
     demand_request = request.args['demand']
     arr = request.args['arr']
+    print('this is the array',arr)
     df_links = pd.DataFrame(eval(arr))
     #df_links = df_links.replace({'\t': ''}, regex=True)
+    from datetime import datetime
+    print('start_time',datetime.now())
     results = model_demand_get(df_links,demand_request)
+    print('end_time',datetime.now())
     results_final = results.to_dict(orient='records')
     return jsonify(results_final)
 
@@ -218,7 +222,11 @@ def save_links_model():
     model_name = str(request.args['model_name'])
     arr = request.args['arr']
     df = pd.DataFrame(eval(arr))
-    df = df.drop(['','index','Action','id'], axis=1)
+    try:
+        df = df.drop(['errors'], axis=1)
+    except:
+        print('no errrors')
+    df = df.drop(['Action','index','id'], axis=1)
     df['user_id'] = current_user
     df['model_name'] = model_name
     # delete old entries matching model_name and username

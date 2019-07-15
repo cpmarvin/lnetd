@@ -1,5 +1,5 @@
 //delete row if button with .ibtnDel click
-$("#table").on("click", ".ibtnDel", function (e, value, row, index) {
+$("#table").on("click", ".ibtnDel_topology", function (e, value, row, index) {
     //$(this).closest("tr").remove();
     alertify.notify("Link removed ..... ", 'error', 5)
     var $table = $('#table')
@@ -53,48 +53,74 @@ $("#demands_table").on("click", ".ibtnDel", function (e, value, row, index) {
 function editObject() {
     if ($('#add-link-form').parsley().validate() ) {
         var entry = $('#add-link-form').serializeArray()
-        var newRow = $("<tr>");
-        var cols = "";
-            cols += '<td>' + Math.floor(Math.random() * 900) + '</td>'; //status
-            cols += '<td>' + Math.floor(Math.random() * 900) + '</td>'; //id
-            cols += '<td>' + Math.floor(Math.random() * 900) + '</td>'; //index
-            cols += '<td>' + entry[0].value + '</td>'; //source
-            cols += '<td>' + entry[1].value + '</td>'; //target
-            cols += '<td>' + entry[2].value + '</td>'; //l_ip
-            cols += '<td>' + entry[4].value + '</td>'; //metric
-            cols += '<td>' + Math.floor(Math.random() * 100) + '</td>'; //l_int
-            cols += '<td>' + entry[3].value + '</td>'; //r_ip
-            cols += '<td>'+'('+  entry[2].value + ',' + entry[3].value + ')'+'</td>'; //lip_rip_pair
-            cols += '<td>' + 0 + '</td>';  //util
-            cols += '<td>' + entry[5].value + '</td>'; //capacity
-            cols += '<td><input type="button" class="ibtnDel btn btn-sm btn-danger "  value="Delete"></td>';
-            cols += '</tr>'
-        newRow.append(cols);
-        console.log(newRow)
-        $("#table").append(newRow);
+        newRow = []
+        newRow[0] = Math.floor(Math.random() * 900)
+        newRow[1] = Math.floor(Math.random() * 900)
+        newRow[2] = Math.floor(Math.random() * 900)
+        newRow[3] = entry[0].value
+        newRow[4] = entry[1].value
+        newRow[5] = entry[2].value
+        newRow[6] = entry[4].value
+        newRow[7] = Math.floor(Math.random() * 100)
+        newRow[8] = entry[3].value
+        newRow[9] = '(\'' +  entry[2].value + '\',\'' + entry[3].value + '\')'
+        newRow[10] = 0
+        newRow[11] = entry[5].value
+        newRow[12] = ''
+
+$(table).bootstrapTable('insertRow',{
+            index: '',
+            row: {
+                state: newRow[0],
+                id: newRow[1],
+                index: newRow[2],
+                source: newRow[3],
+                target: newRow[4],
+                l_ip: newRow[5],
+                metric: newRow[6],
+                l_int: newRow[7],
+                r_ip: newRow[8],
+                l_ip_r_ip: newRow[9],
+                util: newRow[10],
+                capacity: newRow[11],
+                Action: '',
+            }
+         });
+
         //reverse
-        var newRow_rev = $("<tr>");
-        var cols_rev = "";
-            cols_rev += '<td>' + Math.floor(Math.random() * 900) + '</td>'; //status
-            cols_rev += '<td>' + Math.floor(Math.random() * 900) + '</td>'; //id
-            cols_rev += '<td>' + Math.floor(Math.random() * 900) + '</td>'; //index
-            cols_rev += '<td>' + entry[1].value + '</td>'; //source
-            cols_rev += '<td>' + entry[0].value + '</td>'; //target
-            cols_rev += '<td>' + entry[3].value + '</td>'; //l_ip
-            cols_rev += '<td>' + entry[4].value + '</td>'; //metric
-            cols_rev += '<td>' + Math.floor(Math.random() * 100) + '</td>'; //l_int
-            cols_rev += '<td>' + entry[2].value + '</td>'; //r_ip
-            cols_rev += '<td>'+'('+  entry[2].value + ',' + entry[3].value + ')'+'</td>'; //lip_rip_pair
-            cols_rev += '<td>' + 0 + '</td>'; //util
-            cols_rev += '<td>' + entry[5].value + '</td>'; //capacity
-            cols_rev += '<td><input type="button" class="ibtnDel btn btn-sm btn-danger "  value="Delete"></td>';
-        console.log(cols_rev)
-        newRow_rev.append(cols_rev);
-        $("#table").append(newRow_rev);
-        //reload data into the table to allow modify of the metric
-        var jsonTable = new JSONTable($("#table"))
-        var new_data= jsonTable.toJSON()
-        $('#table').bootstrapTable("load", new_data);
+        newRow_rev = []
+        newRow_rev[0] = Math.floor(Math.random() * 900)
+        newRow_rev[1] = Math.floor(Math.random() * 900)
+        newRow_rev[2] = Math.floor(Math.random() * 900)
+        newRow_rev[3] = entry[1].value
+        newRow_rev[4] = entry[0].value
+        newRow_rev[5] = entry[3].value
+        newRow_rev[6] = entry[4].value
+        newRow_rev[7] = Math.floor(Math.random() * 100)
+        newRow_rev[8] = entry[2].value
+        newRow_rev[9] = '(\'' +  entry[2].value + '\',\'' + entry[3].value + '\')'
+        newRow_rev[10] = 0
+        newRow_rev[11] = entry[5].value
+        newRow_rev[12] = ''
+
+$(table).bootstrapTable('insertRow',{
+            index: '',
+            row: {
+                state: newRow_rev[0],
+                id: newRow_rev[1],
+                index: newRow_rev[2],
+                source: newRow_rev[3],
+                target: newRow_rev[4],
+                l_ip: newRow_rev[5],
+                metric: newRow_rev[6],
+                l_int: newRow_rev[7],
+                r_ip: newRow_rev[8],
+                l_ip_r_ip: newRow_rev[9],
+                util: newRow_rev[10],
+                capacity: newRow_rev[11],
+                Action: '',
+            }
+         });
         alertify.notify("Link added ..... ", 'success', 5)
 
     }
@@ -103,7 +129,7 @@ function editObject() {
 //insert delete button for all rows
 function TableActions (value, row, index) {
     return [
-        '<input type="button" class="ibtnDel btn btn-sm btn-danger "  value="Delete">'
+        '<input type="button" class="ibtnDel_topology btn btn-sm btn-danger "  value="Delete">'
     ].join('');
 }
 
@@ -111,8 +137,13 @@ function TableActions (value, row, index) {
 function reset_demand_only() {
     console.log('reset_demand_only')
     $('#table').bootstrapTable('resetSearch', '');
-    var jsonTable = new JSONTable($("#table"))
-    var new_data= jsonTable.toJSON()
+
+    //var jsonTable = new JSONTable($("#table"))
+    //var new_data= jsonTable.toJSON()
+
+    var table = $('#table')
+    table_data = table.bootstrapTable('getData',false);
+    new_data = JSON.parse(JSON.stringify(table_data))
     new_data.forEach( function (d) { 
         d.util =0 })
     $('#table').bootstrapTable("load", new_data);

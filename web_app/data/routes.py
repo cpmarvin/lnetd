@@ -141,8 +141,17 @@ def model_demand():
             { "field": "capacity","title":"capacity","sortable":False,"editable":True},
             { "field": "Action","title":"Action","formatter":"TableActions"},
             ]
+    columns_demands = [
+            { "field": "state","checkbox":True,},
+            { "field": "id","title":"id","sortable":False},
+            { "field": "index","title":"index","sortable":False,},
+            { "field": "source","title":"source","sortable":True,"editable":True},
+            { "field": "target","title":"target","sortable":True,"editable":True},
+            { "field": "demand","title":"demand","sortable":False,"editable":True},
+            { "field": "Action","title":"Action","formatter":"TableActions"},
+            ]
     return render_template('model_demand.html',values=isis_links,columns=columns,router_name=router_name,netflow_demands=netflow_demands,
-                           node_position=node_position)
+                           node_position=node_position, columns_demands=columns_demands)
 
 @blueprint.route('/model_edit')
 @login_required

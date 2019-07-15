@@ -29,12 +29,6 @@
   {% include 'modal_netflow.html' %}
   <!-- Include modal for topology -->
   {% include 'modal_topology.html' %}
-  <!-- Include modal for save model -->
-  {% include 'modal_save_model.html' %}
-  <!-- Include modal for load model -->
-  {% include 'modal_load_model.html' %}
-  <!-- Include modal for add_demands model -->
-  {% include 'modal_add_demands.html' %}
 <div>  
   <div class="right_col" role="main">
     <div class="row"> 
@@ -77,15 +71,6 @@
                     <span class="input-group-btn">
                       <button type="button" class="btn btn-primary btn-warning btn-sm" data-toggle="modal" data-target="#netflow_modal">
                       Show existing Netflow Demands</button>
-                    </span>
-                  </div>
-                  <div class="checkbox" class="form-control input" id="deploy_netflow_demands">
-                    <label>
-                      <input type="checkbox" id="add_demands" value="">Use Demand Table only
-                    </label>
-                    <span class="input-group-btn">
-                      <button type="button" class="btn btn-primary btn-warning btn-sm" data-toggle="modal" data-target="#add_demands_modal">
-                      Show Demand Table</button>
                       <button class="btn btn-primary btn-warning btn-sm" type="submit" name="deploy">Reset all</button>
                     </span>
                   </div>
@@ -108,7 +93,7 @@
                 <div class="clearfix"></div>
               </div>
               <!-- Form -->
-              <form class="form-inline form-horizontal" onsubmit="createresult();return false;">
+              <form class="form-inline" onsubmit="createresult();return false;">
                 <div class="form-group input-group"></div>
                 <div class="form-group mx-sm-3 input-group">
                   <span class="input-group-btn">
@@ -124,24 +109,20 @@
                   <span class="input-group-btn">
                     <button type="button" class="btn btn-warning" onclick="reset_demand_only()">Reset demand only</button>
                   </span>
-                </div>
-		<div class="form-group mx-sm-3 input-group">
-                  <span class="input-group-btn">
-                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#save-model">Save Model</button> 
-		    <!-- <button type="button" class="btn btn-info" data-toggle="modal" data-target="#load-model">Load Model</button> -->
+                  <span>
+                    <!-- Not yet <button type="button" class="btn btn-success" data-toggle="modal" data-target="#save-model">Save Model</button> -->
                   </span>
-		</div>
+                </div>
               </form>
               <!-- End Form -->
               <!-- Table -->
-              <div class="x_content clusterize-scroll" id="scrollArea">
+              <div class="x_content">
                 <table id="table" data-toggle="false"
                 data-search= "true"
                 data-show-columes="true"
-                data-pagination="true"
+                data-pagination="false"
                 data-click-to-select="true"
                 class="table table-striped table-bordered">
-      		  </tbody>
               </table>
             </div>
             <!-- End Table -->  
@@ -163,13 +144,10 @@
   <script src="{{ url_for('static', filename='custom/topology/jsontables.js') }}"></script>
   <!-- Bootsrap table -->
   <script src="{{ url_for('static', filename='vendors/bootstrap-table/bootstrap-table.js') }}"></script>
-
-  <!-- Bootstrap editable extension need both -->
+  <!-- Bootstrap editable extension -->
   <script src="{{ url_for('static', filename='vendors/bootstrap-table/extensions/editable/bootstrap-table-editable.js') }}"></script>
-
-  <!-- x-editable externsion need both -->
-  <script src="{{ url_for('static', filename='vendors/x-editable/bootstrap3-editable/js/bootstrap-editable.min.js') }}"></script> 
-  
+  <!-- x-editable externsion --> 
+  <script src="{{ url_for('static', filename='vendors/x-editable/bootstrap3-editable/js/bootstrap-editable.min.js') }}"></script>
   <!-- alertifyjs -->
   <script src="{{ url_for('static', filename='vendors/alertifyjs/alertify.min.js') }}"></script>
   <!-- Datatables 
@@ -194,7 +172,6 @@
   <script src="{{ url_for('data_blueprint.static', filename='d3js_utils.js') }}"></script>
   -->
   <script src="https://d3js.org/d3.v4.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/clusterize.js/0.18.0/clusterize.min.js"></script>
   <script src="{{ url_for('data_blueprint.static', filename='d3js_v5_utils.js') }}"></script>
   <script src="{{ url_for('data_blueprint.static', filename='lnet_d3js.js') }}"></script>
   <script src="{{ url_for('data_blueprint.static', filename='utils.js') }}"></script>
@@ -203,62 +180,6 @@
  //node position
  var node_position = {{node_position|tojson|safe}}
  var web_ip = {{app_config|tojson|safe}}
-
-
-//function to load model
-function loadModel() {
-  model_name = document.getElementById('model_name_load').value
-  console.log('this is the selected model',model_name)
-  url = {{ url_for('api_blueprint.get_isis_links_model')|tojson }} + '?model_name='+model_name
-  console.log('url',url)
-  var graphData1 = getData(url)
-  graphData1.then(function (data) {
-        $('#table').bootstrapTable('load', data)
-        }
-  )
-}
-
-//function to save model
-function saveModel(){
-   model_name = document.getElementById('model_name').value
-   console.log('run sve Model with name' , model_name)
-   if ($('#save-model-form').parsley().validate() ) {
-          //var jsonTable = new JSONTable($("#table"))
-          //var graphData = jsonTable.toJSON()
-          var table = $('#table')
-          graphData = table.bootstrapTable('getData');
-          console.log('graphData',graphData)
-   var demandArrStr = encodeURIComponent(JSON.stringify(graphData));
-    url = {{ url_for('api_blueprint.save_links_model')|tojson }} +'?arr='+demandArrStr+'&model_name='+model_name
-    console.log(url)
-    var saveData = $.ajax({
-          type: 'POST',
-          url: url,
-          dataType: "text",
-          success: function(resultData) { alertify.notify("Model Saved ", 'success', 5) }
-    });
-    saveData.error(function() { alertify.notify("Something went wrong",'error',5); });
-
-        }
-}
-
-//save node position
-function node_position_save(){
-    node_postion_save =[]
-    d3.selectAll(".link").data().forEach( function (d) { var entry = {'id':d.source.name,'x':d.source.x,'y':d.source.y} ; node_postion_save.push(entry) })
-    var demandArrStr = encodeURIComponent(JSON.stringify(node_postion_save));
-        url = {{ url_for('api_blueprint.save_node_position')|tojson }}+'?arr='+demandArrStr
-
-
-    var saveData = $.ajax({
-          type: 'POST',
-          url: url,
-          dataType: "text",
-          success: function(resultData) { alertify.notify("Node Position Saved ", 'success', 5) }
-    });
-    saveData.error(function() { alertify.notify("Something went wrong",'error',5); });
-}
-
  //console.log(node_position)
  //autocomplete 
  var router_name = {{router_name|tojson}}
@@ -280,29 +201,14 @@ $('.typeahead').typeahead({
   }
 ); 
 
-//table add demands
 // bootstrap table from flask variables
 $(window).load(function() {
-
-$.fn.editable.defaults.mode = 'inline';
-var columns = {{columns_demands|tojson}};
-
-$('#demands_table').bootstrapTable({
-    data: [],
-    columns: columns,
-    sortable: true,
-    editable: true
-	});
-
-});
-
-// bootstrap table from flask variables
-$(window).load(function() {
-  var data_flask = {{values|tojson}};
+  var data = {{values|tojson}};
+  console.log(data)
   var columns = {{columns|tojson}};
   $(function() {
     $('#table').bootstrapTable ({
-      data: data_flask,
+      data: data,
       columns: columns,
     });
   });
@@ -316,7 +222,7 @@ function reset_demand() {
         $('#table').bootstrapTable('removeAll')
     }
     else {
-        $('#table').bootstrapTable("load", data_flask);
+        $('#table').bootstrapTable("load", data);
     }
 }
 
@@ -333,26 +239,8 @@ function reset_demand() {
     var demand = document.getElementById("demand").value * 1000000
     demandarr.push({'source':source,'target':target,'demand':demand})
     console.log("click and checked")
-    console.log('demandarr in netflow',demandarr)
     demand_deploy_inside(demandarr)
     }
-  else if ($('#add_demands').is(':checked') )
-   {
-   console.log('add demands checked')
-   var jsonTable = new JSONTable($("#demands_table"))
-   var new_demands= jsonTable.toJSON()
-   for(var i = 0; i < new_demands.length; i++) {
-    delete new_demands[i][''];
-    delete new_demands[i]['Action'];
-    delete new_demands[i]['id'];
-    delete new_demands[i]['index'];
-    new_demands[i]['demand'] = parseInt(new_demands[i]['demand']) * 1000000
-      }
-   console.log(new_demands)
-   demandarr_demands = new_demands
-   console.log('demandarr in add_demands',demandarr_demands)
-   demand_deploy_inside(demandarr_demands)
-   }
   else
     { 
     demandarr =[]
@@ -368,23 +256,12 @@ function reset_demand() {
         console.log(demandarr)
         var demandArrStr = encodeURIComponent(JSON.stringify(demandarr));
         // create an array with values from table ( as it might been updated (ie: change isis metric) )
-        /*
         var jsonTable = new JSONTable($("#table"))
         var arr= jsonTable.toJSON()
-        */
-        var table = $('#table')
-        arr = table.bootstrapTable('getData');
-        for(var i = 0; i < arr.length; i++) {
-            delete arr[i]['model_name'];
-            delete arr[i]['user_id'];
-            //delete arr[i]['id'];
-            delete arr[i]['state'];
-        }
-        console.log('this is the array',arr)
         var arrStr = encodeURIComponent(JSON.stringify(arr));
         //pass the table array and the demand array to api and save the results
         //console.log('demand_array',demandArrStr)
-        //console.log('jsontable------------',arrStr)
+        //console.log('jsontable',arrStr)
         url = {{ url_for('api_blueprint.model_demand')|tojson }}+'?arr='+arrStr+'&'+'demand='+demandArrStr
         var initAjax = function (){
           var customAjaxResponse = $.ajax({
@@ -415,7 +292,6 @@ function reset_demand() {
     }
 }
 function createresult() {
-  console.log('createresult funtion run')
   //reset search
   $('#table').bootstrapTable('resetSearch', '');
   alertify.notify("Model Run",'success',5)
@@ -428,27 +304,16 @@ function createresult() {
   d3.select("#main_svg").remove();
   create_legend('traffic') //create legend 
   // create d3js topology
-
-/*
   var jsonTable = new JSONTable($("#table")) //save table 
-  var graphData = jsonTable.toJSON() // save table as json 
-*/
-//try new option 
-  var table = $('#table')
-  console.log('---start--- with table',table.data)
-  graphData_bs = table.bootstrapTable('getData',false);
-  console.log('this is the table',graphData_bs)
-//end new option 
+  var graphData = jsonTable.toJSON() // save table as json
+  console.log("toJSON:",graphData)
   var source = '.' //define regexp for topology 
   var target = source 
   var re_source = new RegExp (source);
   var re_target = re_source
-  model_name = document.getElementById('model_name_load').value
-  //clone the object first
-  graphData = JSON.parse(JSON.stringify(graphData_bs))
+  //updateData(grapheDatas,source) //run d3js topology 
   result = data_prepare(graphData,re_source,re_target) //this returns the correct link and nodes
-  //console.log('results:',result)
-  console.log('graphData_bs',graphData_bs)
+  console.log('results:',result)
   var run_it = new lnet_d3js(web_ip,result,'demand') //run lnet_d3js
   run_it.restart(result[1],result[0],result[0]) //draw
 }
