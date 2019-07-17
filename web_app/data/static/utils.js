@@ -1,3 +1,14 @@
+//function to deepcopy an array of objects
+function deep_copy(o) {
+   var output, v, key;
+   output = Array.isArray(o) ? [] : {};
+   for (key in o) {
+       v = o[key];
+       output[key] = (typeof v === "object") ? deep_copy(v) : v;
+   }
+   return output;
+}
+
 //delete row if button with .ibtnDel click
 $("#table").on("click", ".ibtnDel_topology", function (e, value, row, index) {
     //$(this).closest("tr").remove();
@@ -19,9 +30,9 @@ function add_row_demands(){
             cols += '<td>' + Math.floor(Math.random() * 900) + '</td>'; //status
             cols += '<td>' + Math.floor(Math.random() * 900) + '</td>'; //id
             cols += '<td>' + Math.floor(Math.random() * 900) + '</td>'; //index
-            cols += '<td>' + 'source-edit-me' + '</td>'; //source
-            cols += '<td>' + 'target-edit-me' + '</td>'; //target
-            cols += '<td>' + 'demand-edit-me' + '</td>'; //demand
+            cols += '<td>' + 'edit example PE1' + '</td>'; //source
+            cols += '<td>' + 'edit example PE2' + '</td>'; //target
+            cols += '<td>' + 'edit example 500' + '</td>'; //demand
             cols += '<td><input type="button" class="ibtnDel btn btn-sm btn-danger "  value="Delete"></td>'; //action
             cols += '</tr>'
         newRow.append(cols);

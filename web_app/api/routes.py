@@ -222,11 +222,6 @@ def save_links_model():
     model_name = str(request.args['model_name'])
     arr = request.args['arr']
     df = pd.DataFrame(eval(arr))
-    try:
-        df = df.drop(['errors'], axis=1)
-    except:
-        print('no errrors')
-    df = df.drop(['Action','index','id'], axis=1)
     df['user_id'] = current_user
     df['model_name'] = model_name
     # delete old entries matching model_name and username
