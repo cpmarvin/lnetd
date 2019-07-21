@@ -19,6 +19,9 @@ from objects.models import Links_time,Links_Model
 
 from api.mutils import *
 
+#test new lsp demands
+from .lsp_deploy_demands import lsp_demands
+
 blueprint = Blueprint(
     'api_blueprint', 
     __name__, 
@@ -68,6 +71,27 @@ def spf():
     arr = request.args['arr']
     results = calculateSpf(arr,source,target)
     return jsonify(results)
+
+@blueprint.route('/model_lsp_demand')
+@login_required
+def model_lsp_demand():
+    demand_request = request.args['demand']
+    arr = request.args['arr']
+    df_links = pd.DataFrame(eval(arr))
+    lsps = eval(request.args['lsps'])
+    print(f'this is the lsps:{lsps}')
+    for entry in eval(demand_request):
+        source = entry['source']
+        target = entry['target']
+        demand = entry['demand']
+    results_array = lsp_demands(lsps,arr,source,target,demand)
+    lsps = results_array[1]
+    results = results_array[0]
+    df_links = df_links.drop(['util'], axis=1)
+    df_links['metric'] = pd.to_numeric(df_links['metric'], errors='coerce')
+    df_final = results #pd.merge(df_links,results,  how='left',on=['index','l_ip','r_ip','metric','source','target'])
+    results_final = df_final.to_dict(orient='records')
+    return jsonify(results_final,lsps)
 
 @blueprint.route('/model_demand')
 @login_required

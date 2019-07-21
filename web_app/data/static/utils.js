@@ -1,3 +1,46 @@
+//test lsp add
+//functio to add another row in lsp_table
+function add_row_lsp(){
+        var newRow = $("<tr>");
+        var cols = "";
+            cols += '<td>' + Math.floor(Math.random() * 900) + '</td>'; //status
+            cols += '<td>' + Math.floor(Math.random() * 900) + '</td>'; //id
+            cols += '<td>' + Math.floor(Math.random() * 900) + '</td>'; //index
+            cols += '<td>' + 'gb-pe5-lon' + '</td>'; //source
+            cols += '<td>' + 'gb-p10-lon' + '</td>'; //target
+            cols += '<td>' + '10.5.8.8,10.8.10.10' + '</td>'; //ero
+            cols += '<td>' + '1' + '</td>'; //metric
+            cols += '<td>' + '0' + '</td>'; //util
+            cols += '<td><input type="button" class="ibtnDel_lsp btn btn-sm btn-danger"  value="Delete"></td>'; //action
+            cols += '</tr>'
+        newRow.append(cols);
+        console.log(newRow)
+        $("#lsp_table").append(newRow);
+        var jsonTable = new JSONTable($("#lsp_table"))
+        var new_data_lsp= jsonTable.toJSON()
+        $('#lsp_table').bootstrapTable("load", new_data_lsp);
+}
+
+$('#add_row_lsp').click(function() { add_row_lsp() })
+// delete row for demands ( lame repeat of code , fix me !!! )
+//delete row if button with .ibtnDel_lsp click
+$("#lsp_table").on("click", ".ibtnDel_lsp", function (e, value, row, index) {
+    console.log('did it click')
+    //$(this).closest("tr").remove();
+    alertify.notify("LSP removed ..... ", 'error', 5)
+    var $table = $('#lsp_table')
+    var ids = $.map($table.bootstrapTable('getSelections'), function (row) {
+        return row.id;
+    });
+    $('#lsp_table').bootstrapTable('remove', {
+        field: 'id',
+        values: ids
+    });
+})
+
+//end test lsp add 
+
+
 //function to deepcopy an array of objects
 function deep_copy(o) {
    var output, v, key;
@@ -141,6 +184,12 @@ $(table).bootstrapTable('insertRow',{
 function TableActions (value, row, index) {
     return [
         '<input type="button" class="ibtnDel_topology btn btn-sm btn-danger "  value="Delete">'
+    ].join('');
+}
+
+function TableActions_lsp (value, row, index) {
+    return [
+        '<input type="button" class="ibtnDel_lsp btn btn-sm btn-danger "  value="Delete">'
     ].join('');
 }
 

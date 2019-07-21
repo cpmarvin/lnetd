@@ -25,16 +25,14 @@
   {% include 'modal_add_link.html' %}
   <!-- Include modal for loading screen -->
   {% include 'modal_loading_screen.html' %}
-  <!-- Include modal for netflow -->
-  {% include 'modal_netflow.html' %}
   <!-- Include modal for topology -->
   {% include 'modal_topology.html' %}
   <!-- Include modal for save model -->
   {% include 'modal_save_model.html' %}
   <!-- Include modal for load model -->
   {% include 'modal_load_model.html' %}
-  <!-- Include modal for add_demands model -->
-  {% include 'modal_add_demands.html' %}
+  <!-- Include modal for add_lsp model -->
+  {% include 'modal_add_lsp.html' %}
 <div>  
   <div class="right_col" role="main">
     <div class="row"> 
@@ -71,21 +69,13 @@
               <form class="form-inline" onsubmit="reset_demand();return false;">
                 <div class="form-group mx-sm-3 form-row input-group">
                   <div class="checkbox" class="form-control input" id="deploy_netflow_demands">
-                    <label>
-                      <input type="checkbox" id="netflow_demands" value="">Use Netflow Demands as well
-                    </label>
-                    <span class="input-group-btn">
-                      <button type="button" class="btn btn-primary btn-warning btn-sm" data-toggle="modal" data-target="#netflow_modal">
-                      Show existing Netflow Demands</button>
-                    </span>
                   </div>
                   <div class="checkbox" class="form-control input" id="deploy_netflow_demands">
                     <label>
-                      <input type="checkbox" id="add_demands" value="">Use Demand Table only
                     </label>
                     <span class="input-group-btn">
-                      <button type="button" class="btn btn-primary btn-warning btn-sm" data-toggle="modal" data-target="#add_demands_modal">
-                      Show Demand Table</button>
+                      <button type="button" class="btn btn-primary btn-warning btn-sm" data-toggle="modal" data-target="#add_lsp_modal">
+                      Show LSP Table</button>
                       <button class="btn btn-primary btn-warning btn-sm" type="submit" name="deploy">Reset all</button>
                     </span>
                   </div>
@@ -128,7 +118,7 @@
 		<div class="form-group mx-sm-3 input-group">
                   <span class="input-group-btn">
                     <button type="button" class="btn btn-info" data-toggle="modal" data-target="#save-model">Save Model</button> 
-		    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#load-model">Load Model</button>
+		    <!-- <button type="button" class="btn btn-info" data-toggle="modal" data-target="#load-model">Load Model</button> -->
                   </span>
 		</div>
               </form>
@@ -227,13 +217,15 @@ function saveModel(){
           table.bootstrapTable('resetSearch', '');
           graphData = table.bootstrapTable('getData');
           var graphData_copy = deep_copy(graphData);
-          for(var i = 0; i < graphData_copy.length; i++) {
-                delete graphData_copy[i]['index'];
-                delete graphData_copy[i]['id'];
-                delete graphData_copy[i]['state'];
-                delete graphData_copy[i]['Action'];
-                }
+      for(var i = 0; i < graphData_copy.length; i++) {
+            delete graphData_copy[i]['errors'];
+            delete graphData_copy[i]['index'];
+            delete graphData_copy[i]['id'];
+            delete graphData_copy[i]['state'];
+            delete graphData_copy[i]['Action'];
+              }
    var demandArrStr = encodeURIComponent(JSON.stringify(graphData_copy));
+
     url = {{ url_for('api_blueprint.save_links_model')|tojson }} +'?arr='+demandArrStr+'&model_name='+model_name
     console.log(url)
     var saveData = $.ajax({
@@ -285,12 +277,27 @@ $('.typeahead').typeahead({
   }
 ); 
 
+//begin lsp table
+$(window).load(function() {
+$.fn.editable.defaults.mode = 'inline';
+var columns = {{columns_lsp|tojson}};
+$('#lsp_table').bootstrapTable({
+    data: [],
+    columns: columns,
+    sortable: true,
+    editable: true
+        });
+
+});
+//end lsp table
+
 //table add demands
 // bootstrap table from flask variables
 $(window).load(function() {
 
 $.fn.editable.defaults.mode = 'inline';
-var columns = {{columns_demands|tojson}};
+var columns = {{columns_lsp|tojson}};
+
 $('#demands_table').bootstrapTable({
     data: [],
     columns: columns,
@@ -372,12 +379,9 @@ function reset_demand() {
         console.log(demandarr)
         var demandArrStr = encodeURIComponent(JSON.stringify(demandarr));
         // create an array with values from table ( as it might been updated (ie: change isis metric) )
-        /*
-        var jsonTable = new JSONTable($("#table"))
-        var arr= jsonTable.toJSON()
-        */
         var table = $('#table')
         arr = table.bootstrapTable('getData');
+        console.log('this is the arr in js:',arr)
         for(var i = 0; i < arr.length; i++) {
             delete arr[i]['model_name'];
             delete arr[i]['user_id'];
@@ -386,10 +390,10 @@ function reset_demand() {
         }
         console.log('this is the array',arr)
         var arrStr = encodeURIComponent(JSON.stringify(arr));
-        //pass the table array and the demand array to api and save the results
-        //console.log('demand_array',demandArrStr)
-        //console.log('jsontable------------',arrStr)
-        url = {{ url_for('api_blueprint.model_demand')|tojson }}+'?arr='+arrStr+'&'+'demand='+demandArrStr
+   	var jsonTable_lsp = new JSONTable($("#lsp_table"))
+   	var lsp= jsonTable_lsp.toJSON()
+	lsps = encodeURIComponent(JSON.stringify(lsp));
+        url = {{ url_for('api_blueprint.model_lsp_demand')|tojson }}+'?arr='+arrStr+'&'+'demand='+demandArrStr+'&'+'lsps='+lsps
         var initAjax = function (){
           var customAjaxResponse = $.ajax({
                                            type: 'GET',
@@ -410,7 +414,10 @@ function reset_demand() {
           }
        var model_results = initAjax();
        model_results.then(function( response ){
-         $('#table').bootstrapTable("load", response);
+         console.log('-----result:',response)
+         $('#table').bootstrapTable("load", response[0]);
+         console.log('------lsps:',response[1])
+         $('#lsp_table').bootstrapTable("load", response[1]);
          // bring modal up
          $('#modal-top').modal('toggle')
          //display topology
