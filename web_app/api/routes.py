@@ -80,18 +80,26 @@ def model_lsp_demand():
     df_links = pd.DataFrame(eval(arr))
     lsps = eval(request.args['lsps'])
     print(f'this is the lsps:{lsps}')
+    # create an empty frame
+    df_all_demands = pd.DataFrame()
+    df_all_lsps = []
     for entry in eval(demand_request):
         source = entry['source']
         target = entry['target']
         demand = entry['demand']
-    results_array = lsp_demands(lsps,arr,source,target,demand)
-    lsps = results_array[1]
-    results = results_array[0]
-    df_links = df_links.drop(['util'], axis=1)
-    df_links['metric'] = pd.to_numeric(df_links['metric'], errors='coerce')
-    df_final = results #pd.merge(df_links,results,  how='left',on=['index','l_ip','r_ip','metric','source','target'])
+        results_array = lsp_demands(lsps,arr,source,target,demand)
+        df_all_demands = pd.concat([df_all_demands, results_array[0]], axis=0)
+        df_all_lsps.extend(results_array[1])
+    df_final = df_all_demands.groupby(['index','l_int','capacity','source','target','r_ip','l_ip','metric','errors','Action','l_ip_r_ip'] , as_index=False)['util'].sum()
+    df_final_lsps = pd.DataFrame(df_all_lsps)
+    if len(lsps) > 0:
+        df_final_lsps = df_final_lsps.groupby(['id','capacity','ero','index','l_ip','metric','r_ip','source','target'] , as_index=False)['util'].sum()
+    else:
+        df_final_lsps = pd.DataFrame()
+
     results_final = df_final.to_dict(orient='records')
-    return jsonify(results_final,lsps)
+    df_final_lsps = df_final_lsps.to_dict(orient='records')
+    return jsonify(results_final,df_final_lsps)
 
 @blueprint.route('/model_demand')
 @login_required

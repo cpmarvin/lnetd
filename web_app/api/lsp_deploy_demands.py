@@ -32,7 +32,6 @@ def deploy_demand(lsps,arr,source,target,demand):
         df_lsps['l_int'] = 0
         df_lsps['errors'] = 0
         df_lsps['capacity'] = 0
-        df_lsps['l_int'] = ''
         df_lsps['metric'] = pd.to_numeric(df_lsps['metric'], errors='coerce')
         df_lsps['id'] = pd.to_numeric(df_lsps['id'], errors='coerce')
         df_lsps['index'] = pd.to_numeric(df_lsps['index'], errors='coerce')
@@ -51,7 +50,7 @@ def deploy_demand(lsps,arr,source,target,demand):
         df['ero'] = 'a,b'
 
         df_combined = pd.concat([df], axis=0).fillna(0)
-    print('-----df_combined',df_combined['l_int'])
+    print('-----df_combined\n',df_combined)
     failsafe = False
     try:
         #create a nx graph from spf only

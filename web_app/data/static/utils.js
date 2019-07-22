@@ -73,10 +73,10 @@ function add_row_demands(){
             cols += '<td>' + Math.floor(Math.random() * 900) + '</td>'; //status
             cols += '<td>' + Math.floor(Math.random() * 900) + '</td>'; //id
             cols += '<td>' + Math.floor(Math.random() * 900) + '</td>'; //index
-            cols += '<td>' + 'edit example PE1' + '</td>'; //source
-            cols += '<td>' + 'edit example PE2' + '</td>'; //target
-            cols += '<td>' + 'edit example 500' + '</td>'; //demand
-            cols += '<td><input type="button" class="ibtnDel btn btn-sm btn-danger "  value="Delete"></td>'; //action
+            cols += '<td>' + 'nl-p7-ams' + '</td>'; //source
+            cols += '<td>' + 'ke-pe3-nbi' + '</td>'; //target
+            cols += '<td>' + '500' + '</td>'; //demand
+            cols += '<td><input type="button" class="ibtnDel_demands btn btn-sm btn-danger "  value="Delete"></td>'; //action
             cols += '</tr>'
         newRow.append(cols);
         console.log(newRow)
@@ -90,7 +90,7 @@ function add_row_demands(){
 $('#add_row_demands').click(function() { add_row_demands() })
 // delete row for demands ( lame repeat of code , fix me !!! ) 
 //delete row if button with .ibtnDel click
-$("#demands_table").on("click", ".ibtnDel", function (e, value, row, index) {
+$("#demands_table").on("click", ".ibtnDel_demands", function (e, value, row, index) {
     //$(this).closest("tr").remove();
     alertify.notify("Demand removed ..... ", 'error', 5)
     var $table = $('#demands_table')
@@ -190,6 +190,12 @@ function TableActions (value, row, index) {
 function TableActions_lsp (value, row, index) {
     return [
         '<input type="button" class="ibtnDel_lsp btn btn-sm btn-danger "  value="Delete">'
+    ].join('');
+}
+
+function TableActions_demands (value, row, index) {
+    return [
+        '<input type="button" class="ibtnDel_demands btn btn-sm btn-danger "  value="Delete">'
     ].join('');
 }
 

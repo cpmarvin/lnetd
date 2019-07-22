@@ -31,6 +31,8 @@
   {% include 'modal_save_model.html' %}
   <!-- Include modal for load model -->
   {% include 'modal_load_model.html' %}
+  <!-- Include modal for add_demands model -->
+  {% include 'modal_add_demands.html' %}
   <!-- Include modal for add_lsp model -->
   {% include 'modal_add_lsp.html' %}
 <div>  
@@ -69,10 +71,13 @@
               <form class="form-inline" onsubmit="reset_demand();return false;">
                 <div class="form-group mx-sm-3 form-row input-group">
                   <div class="checkbox" class="form-control input" id="deploy_netflow_demands">
-                  </div>
-                  <div class="checkbox" class="form-control input" id="deploy_netflow_demands">
                     <label>
+                      <input type="checkbox" id="add_demands" value="">Use Demand Table only
                     </label>
+                    <span class="input-group-btn">
+                      <button type="button" class="btn btn-primary btn-warning btn-sm" data-toggle="modal" data-target="#add_demands_modal">
+                      Show Demand Table</button>
+                    </span>
                     <span class="input-group-btn">
                       <button type="button" class="btn btn-primary btn-warning btn-sm" data-toggle="modal" data-target="#add_lsp_modal">
                       Show LSP Table</button>
@@ -296,7 +301,7 @@ $('#lsp_table').bootstrapTable({
 $(window).load(function() {
 
 $.fn.editable.defaults.mode = 'inline';
-var columns = {{columns_lsp|tojson}};
+var columns = {{columns_demands|tojson}};
 
 $('#demands_table').bootstrapTable({
     data: [],

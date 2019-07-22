@@ -148,7 +148,7 @@ def model_demand():
             { "field": "source","title":"source","sortable":True,"editable":True},
             { "field": "target","title":"target","sortable":True,"editable":True},
             { "field": "demand","title":"demand","sortable":False,"editable":True},
-            { "field": "Action","title":"Action","formatter":"TableActions"},
+            { "field": "Action","title":"Action","formatter":"TableActions_demands"},
             ]
     return render_template('model_demand.html',values=isis_links,columns=columns,router_name=router_name,netflow_demands=netflow_demands,
                            node_position=node_position, columns_demands=columns_demands)
@@ -185,7 +185,7 @@ def model_edit():
             { "field": "source","title":"source","sortable":True,"editable":True},
             { "field": "target","title":"target","sortable":True,"editable":True},
             { "field": "demand","title":"demand","sortable":False,"editable":True},
-            { "field": "Action","title":"Action","formatter":"TableActions"},
+            { "field": "Action","title":"Action","formatter":"TableActions_demands"},
             ]
     model_name = Links_Model.query.with_entities(Links_Model.model_name).distinct()
     return render_template('model_edit.html',values=isis_links,columns=columns,router_name=router_name,netflow_demands=netflow_demands,
@@ -312,5 +312,14 @@ def model_demand_lsp():
             { "field": "util","title":"util","sortable":False,"editable":True},
             { "field": "Action","title":"Action","formatter":"TableActions_lsp"},
             ]
+    columns_demands = [
+            { "field": "state","checkbox":True,},
+            { "field": "id","title":"id","sortable":False},
+            { "field": "index","title":"index","sortable":False,},
+            { "field": "source","title":"source","sortable":True,"editable":True},
+            { "field": "target","title":"target","sortable":True,"editable":True},
+            { "field": "demand","title":"demand","sortable":False,"editable":True},
+            { "field": "Action","title":"Action","formatter":"TableActions_demands"},
+            ]
     return render_template('model_demand_lsp.html',values=isis_links,columns=columns,router_name=router_name,netflow_demands=netflow_demands,
-                           node_position=node_position, columns_lsp=columns_lsp)
+                           node_position=node_position, columns_lsp=columns_lsp, columns_demands=columns_demands)
