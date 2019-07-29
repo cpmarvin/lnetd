@@ -105,3 +105,40 @@ def get_sysdesc(hostname):
         vendor = 'NA'
     return vendor
 
+
+def get_util_ifName(hostname,interface,start):
+    logger.debug('Get util from influxdb based on %s with %s'%(hostname,interface))
+    if interface == -1:
+        return -1
+    int(start)
+    timestamp = datetime.datetime.utcnow().isoformat()
+    queryurl = '''SELECT non_negative_derivative(last(ifHCOutOctets), 1s) *8 from interface_statistics
+                  where hostname =~ /%s/ and  ifName = '%s' AND time >= now()- %sh10m and time <=now()- %sh
+                  GROUP BY time(5m)''' %(hostname,interface,start,start)
+    result = client.query(queryurl)
+    points = list(result.get_points(measurement='interface_statistics'))
+    if not points:
+        logger.warning('No util data for %s %s =>replace with -1'%(hostname,interface))
+        return -1
+    df = pd.DataFrame(points)
+    df.columns = ['bps', 'time']
+    df=df.to_dict(orient='records')
+    result = int(round(df[0]['bps']))
+    return result
+
+def get_capacity_ifName(hostname,interface):
+    logger.debug('Get capacity from influxdb based on %s with %s'%(hostname,interface))
+    if interface == 0 or interface == -1:
+        return -1
+    client = InfluxDBClient(INFLUXDB_HOST,'8086','','',INFLUXDB_NAME)
+    queryurl = "SELECT last(ifHighSpeed) from interface_statistics where hostname =~ /%s/ and  ifName = '%s'" %(hostname,interface)
+    result = client.query(queryurl)
+    points = list(result.get_points(measurement='interface_statistics'))
+    if not points:
+        logger.warning('No capacity data for %s %s => replace with -1'%(hostname,interface))
+        return -1
+    df = pd.DataFrame(points)
+    df.columns = ['capacity', 'time']
+    df=df.to_dict(orient='records')
+    result = int(round(df[0]['capacity']))
+    return result

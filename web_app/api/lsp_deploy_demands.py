@@ -26,9 +26,9 @@ def deploy_demand(lsps,arr,source,target,demand):
 
         #df_lsps=df_lsps.drop(['Action','ero'], axis=1)
         #df_lsps['metric'] = 1
-        df_lsps['l_ip_r_ip'] = ''.join(random.choices(df_lsps['index']  + string.digits, k=2))
-        df_lsps['l_ip'] = ''.join(random.choices('lsp-' + df_lsps['index']  + string.digits, k=2))
-        df_lsps['r_ip'] = ''.join(random.choices('lsp-' + df_lsps['index']  + string.digits, k=2))
+        df_lsps['l_ip_r_ip'] = ''.join(random.choices(df_lsps['ero']))
+        df_lsps['l_ip'] = ''.join(random.choices('lsp-' + df_lsps['ero']))
+        df_lsps['r_ip'] = ''.join(random.choices('lsp-' + df_lsps['ero']))
         df_lsps['l_int'] = 0
         df_lsps['errors'] = 0
         df_lsps['capacity'] = 0

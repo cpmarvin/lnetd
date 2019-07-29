@@ -42,7 +42,7 @@ def register_extensions(app):
     login_manager.init_app(app)
 
 def register_blueprints(app):
-    for module_name in ('api','objects','home', 'data', 'base', 'map','inventory','bgp','admin'):
+    for module_name in ('api','objects','home', 'data', 'base', 'map','inventory','bgp','admin','dc'):
         module = import_module('{}.routes'.format(module_name))
         app.register_blueprint(module.blueprint)
 

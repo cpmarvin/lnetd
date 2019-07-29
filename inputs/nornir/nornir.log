@@ -1,0 +1,205 @@
+2019-07-27 18:28:32,191 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {} on 3 hosts
+2019-07-27 18:30:13,988 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {} on 3 hosts
+2019-07-27 18:32:20,139 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {} on 3 hosts
+2019-07-27 18:33:10,106 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {} on 3 hosts
+2019-07-27 18:33:36,574 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {} on 3 hosts
+2019-07-27 18:35:59,291 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {} on 3 hosts
+2019-07-27 18:36:39,671 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {} on 3 hosts
+2019-07-27 18:38:52,745 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {} on 3 hosts
+2019-07-27 18:40:40,334 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {} on 3 hosts
+2019-07-27 18:40:44,845 - nornir.core.task -    ERROR -      start() - Host 'spine02': task 'check_lldp_neigh' failed with traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/nornir/core/task.py", line 67, in start
+    r = self.task(self, **self.params)
+  File "discover_dc1_fabric.py", line 25, in check_lldp_neigh
+    print_result(r,severity_level=INFO)
+NameError: name 'INFO' is not defined
+
+2019-07-27 18:40:44,860 - nornir.core.task -    ERROR -      start() - Host 'spine01': task 'check_lldp_neigh' failed with traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/nornir/core/task.py", line 67, in start
+    r = self.task(self, **self.params)
+  File "discover_dc1_fabric.py", line 25, in check_lldp_neigh
+    print_result(r,severity_level=INFO)
+NameError: name 'INFO' is not defined
+
+2019-07-27 18:40:44,873 - nornir.core.task -    ERROR -      start() - Host 'leaf01': task 'check_lldp_neigh' failed with traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/nornir/core/task.py", line 67, in start
+    r = self.task(self, **self.params)
+  File "discover_dc1_fabric.py", line 25, in check_lldp_neigh
+    print_result(r,severity_level=INFO)
+NameError: name 'INFO' is not defined
+
+2019-07-27 18:41:17,215 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {} on 3 hosts
+2019-07-27 18:41:44,314 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {} on 3 hosts
+2019-07-27 19:41:49,789 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {} on 3 hosts
+2019-07-27 19:44:49,288 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': gathering facts:   0%|                                                                                                                                                              | 0/3 [00:00<?, ?it/s]} on 3 hosts
+2019-07-27 19:44:49,299 - nornir.core.task -    ERROR -      start() - Host 'spine01': task 'check_lldp_neigh' failed with traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/nornir/core/task.py", line 67, in start
+    r = self.task(self, **self.params)
+TypeError: check_lldp_neigh() got an unexpected keyword argument 'progress_bar'
+
+2019-07-27 19:44:49,299 - nornir.core.task -    ERROR -      start() - Host 'spine02': task 'check_lldp_neigh' failed with traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/nornir/core/task.py", line 67, in start
+    r = self.task(self, **self.params)
+TypeError: check_lldp_neigh() got an unexpected keyword argument 'progress_bar'
+
+2019-07-27 19:44:49,300 - nornir.core.task -    ERROR -      start() - Host 'leaf01': task 'check_lldp_neigh' failed with traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/nornir/core/task.py", line 67, in start
+    r = self.task(self, **self.params)
+TypeError: check_lldp_neigh() got an unexpected keyword argument 'progress_bar'
+
+2019-07-27 19:45:43,705 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': gathering facts:   0%|                                                                                                                                                              | 0/3 [00:00<?, ?it/s]} on 3 hosts
+2019-07-27 19:46:24,019 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': gathering facts:   0%|                                                                                                                                                              | 0/3 [00:00<?, ?it/s]} on 3 hosts
+2019-07-27 19:47:26,312 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery
+:   0%|                                                                                                                                                              | 0/3 [00:00<?, ?it/s]} on 3 hosts
+2019-07-27 19:47:56,963 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery
+:   0%|                                                                                                                                                              | 0/3 [00:00<?, ?it/s]} on 3 hosts
+2019-07-27 19:48:19,161 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/3 [00:00<?, ?it/s]} on 3 hosts
+2019-07-27 19:50:04,395 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/3 [00:00<?, ?it/s]} on 3 hosts
+2019-07-27 19:52:49,711 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/3 [00:00<?, ?it/s]} on 3 hosts
+2019-07-27 19:53:15,668 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/3 [00:00<?, ?it/s]} on 3 hosts
+2019-07-27 19:54:25,147 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/3 [00:00<?, ?it/s]} on 3 hosts
+2019-07-27 19:55:43,282 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/1 [00:00<?, ?it/s]} on 1 hosts
+2019-07-27 19:56:36,038 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/1 [00:00<?, ?it/s]} on 1 hosts
+2019-07-27 20:10:52,152 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/1 [00:00<?, ?it/s]} on 1 hosts
+2019-07-27 20:11:33,978 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/1 [00:00<?, ?it/s]} on 1 hosts
+2019-07-27 20:12:02,160 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/1 [00:00<?, ?it/s]} on 1 hosts
+2019-07-27 20:12:24,710 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/1 [00:00<?, ?it/s]} on 1 hosts
+2019-07-27 20:14:20,474 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/1 [00:00<?, ?it/s]} on 1 hosts
+2019-07-27 20:14:57,803 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/1 [00:00<?, ?it/s]} on 1 hosts
+2019-07-27 20:17:31,155 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/1 [00:00<?, ?it/s]} on 1 hosts
+2019-07-27 20:18:49,915 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/1 [00:00<?, ?it/s]} on 1 hosts
+2019-07-27 20:20:07,042 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/1 [00:00<?, ?it/s]} on 1 hosts
+2019-07-27 20:20:30,328 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/1 [00:00<?, ?it/s]} on 1 hosts
+2019-07-27 20:23:01,498 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/1 [00:00<?, ?it/s]} on 1 hosts
+2019-07-27 20:23:35,240 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/1 [00:00<?, ?it/s]} on 1 hosts
+2019-07-27 20:23:50,612 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/1 [00:00<?, ?it/s]} on 1 hosts
+2019-07-27 20:24:33,828 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/1 [00:00<?, ?it/s]} on 1 hosts
+2019-07-27 20:25:30,692 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/1 [00:00<?, ?it/s]} on 1 hosts
+2019-07-27 20:25:47,786 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/1 [00:00<?, ?it/s]} on 1 hosts
+2019-07-27 20:26:48,591 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/1 [00:00<?, ?it/s]} on 1 hosts
+2019-07-27 20:27:19,718 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/1 [00:00<?, ?it/s]} on 1 hosts
+2019-07-27 20:27:50,202 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/3 [00:00<?, ?it/s]} on 3 hosts
+2019-07-27 20:28:52,564 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/3 [00:00<?, ?it/s]} on 3 hosts
+2019-07-27 20:50:20,146 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/3 [00:00<?, ?it/s]} on 3 hosts
+2019-07-27 20:50:54,063 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/4 [00:00<?, ?it/s]} on 4 hosts
+2019-07-27 20:55:11,258 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/4 [00:00<?, ?it/s]} on 4 hosts
+2019-07-27 21:01:58,423 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/4 [00:00<?, ?it/s]} on 4 hosts
+2019-07-27 21:02:41,542 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/4 [00:00<?, ?it/s]} on 4 hosts
+2019-07-27 21:03:34,841 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/4 [00:00<?, ?it/s]} on 4 hosts
+2019-07-27 21:04:06,745 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/4 [00:00<?, ?it/s]} on 4 hosts
+2019-07-27 21:08:42,185 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/4 [00:00<?, ?it/s]} on 4 hosts
+2019-07-27 21:09:09,278 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/4 [00:00<?, ?it/s]} on 4 hosts
+2019-07-27 21:09:28,490 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/4 [00:00<?, ?it/s]} on 4 hosts
+2019-07-27 21:12:57,620 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/4 [00:00<?, ?it/s]} on 4 hosts
+2019-07-27 21:13:27,340 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/4 [00:00<?, ?it/s]} on 4 hosts
+2019-07-27 21:20:27,367 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/4 [00:00<?, ?it/s]} on 4 hosts
+2019-07-27 21:23:31,169 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/4 [00:00<?, ?it/s]} on 4 hosts
+2019-07-27 21:23:47,065 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/4 [00:00<?, ?it/s]} on 4 hosts
+2019-07-27 21:26:02,355 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/4 [00:00<?, ?it/s]} on 4 hosts
+2019-07-27 21:26:41,657 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/4 [00:00<?, ?it/s]} on 4 hosts
+2019-07-27 21:29:14,940 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/4 [00:00<?, ?it/s]} on 4 hosts
+2019-07-27 21:30:56,942 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/4 [00:00<?, ?it/s]} on 4 hosts
+2019-07-27 22:34:45,439 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/5 [00:00<?, ?it/s]} on 5 hosts
+2019-07-27 22:35:24,855 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/5 [00:00<?, ?it/s]} on 5 hosts
+2019-07-27 22:36:02,623 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/5 [00:00<?, ?it/s]} on 5 hosts
+2019-07-27 22:42:25,749 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/5 [00:00<?, ?it/s]} on 5 hosts
+2019-07-27 22:53:33,068 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/5 [00:00<?, ?it/s]} on 5 hosts
+2019-07-27 22:57:16,509 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/5 [00:00<?, ?it/s]} on 5 hosts
+2019-07-27 22:59:34,157 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/5 [00:00<?, ?it/s]} on 5 hosts
+2019-07-27 23:10:32,374 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/5 [00:00<?, ?it/s]} on 5 hosts
+2019-07-28 15:04:18,694 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/5 [00:00<?, ?it/s]} on 5 hosts
+2019-07-29 09:15:23,743 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/5 [00:00<?, ?it/s]} on 5 hosts
+2019-07-29 09:15:26,770 - nornir.core.task -    ERROR -      start() - Host 'spine01': task 'Discover lldp neigh on host: 172.16.0.126' failed with traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/netmiko/base_connection.py", line 864, in establish_connection
+    self.remote_conn_pre.connect(**ssh_connect_params)
+  File "/usr/local/lib/python3.7/site-packages/paramiko/client.py", line 368, in connect
+    raise NoValidConnectionsError(errors)
+paramiko.ssh_exception.NoValidConnectionsError: [Errno None] Unable to connect to port 22 on 172.16.0.126
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/nornir/core/task.py", line 67, in start
+    r = self.task(self, **self.params)
+  File "/usr/local/lib/python3.7/site-packages/nornir/plugins/tasks/networking/netmiko_send_command.py", line 26, in netmiko_send_command
+    net_connect = task.host.get_connection("netmiko", task.nornir.config)
+  File "/usr/local/lib/python3.7/site-packages/nornir/core/inventory.py", line 302, in get_connection
+    extras=conn.extras,
+  File "/usr/local/lib/python3.7/site-packages/nornir/core/inventory.py", line 352, in open_connection
+    configuration=configuration,
+  File "/usr/local/lib/python3.7/site-packages/nornir/plugins/connections/netmiko.py", line 58, in open
+    self.connection = ConnectHandler(**parameters)
+  File "/usr/local/lib/python3.7/site-packages/netmiko/ssh_dispatcher.py", line 242, in ConnectHandler
+    return ConnectionClass(*args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/netmiko/base_connection.py", line 312, in __init__
+    self._open()
+  File "/usr/local/lib/python3.7/site-packages/netmiko/base_connection.py", line 317, in _open
+    self.establish_connection()
+  File "/usr/local/lib/python3.7/site-packages/netmiko/base_connection.py", line 870, in establish_connection
+    raise NetMikoTimeoutException(msg)
+netmiko.ssh_exception.NetMikoTimeoutException: Connection to device timed-out: linux 172.16.0.126:22
+
+2019-07-29 09:15:26,771 - nornir.core.task -    ERROR -      start() - Host 'spine01': task 'check_lldp_neigh' failed with traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/nornir/core/task.py", line 67, in start
+    r = self.task(self, **self.params)
+  File "discover_dc1_fabric.py", line 47, in check_lldp_neigh
+    severity_level=logging.DEBUG)
+  File "/usr/local/lib/python3.7/site-packages/nornir/core/task.py", line 124, in run
+    raise NornirSubTaskError(task=task, result=r)
+nornir.core.exceptions.NornirSubTaskError: Subtask: Discover lldp neigh on host: 172.16.0.126 (failed)
+
+
+2019-07-29 09:16:44,517 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/5 [00:00<?, ?it/s]} on 5 hosts
+2019-07-29 09:16:47,531 - nornir.core.task -    ERROR -      start() - Host 'spine01': task 'Discover lldp neigh on host: 172.16.0.126' failed with traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/netmiko/base_connection.py", line 864, in establish_connection
+    self.remote_conn_pre.connect(**ssh_connect_params)
+  File "/usr/local/lib/python3.7/site-packages/paramiko/client.py", line 368, in connect
+    raise NoValidConnectionsError(errors)
+paramiko.ssh_exception.NoValidConnectionsError: [Errno None] Unable to connect to port 22 on 172.16.0.126
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/nornir/core/task.py", line 67, in start
+    r = self.task(self, **self.params)
+  File "/usr/local/lib/python3.7/site-packages/nornir/plugins/tasks/networking/netmiko_send_command.py", line 26, in netmiko_send_command
+    net_connect = task.host.get_connection("netmiko", task.nornir.config)
+  File "/usr/local/lib/python3.7/site-packages/nornir/core/inventory.py", line 302, in get_connection
+    extras=conn.extras,
+  File "/usr/local/lib/python3.7/site-packages/nornir/core/inventory.py", line 352, in open_connection
+    configuration=configuration,
+  File "/usr/local/lib/python3.7/site-packages/nornir/plugins/connections/netmiko.py", line 58, in open
+    self.connection = ConnectHandler(**parameters)
+  File "/usr/local/lib/python3.7/site-packages/netmiko/ssh_dispatcher.py", line 242, in ConnectHandler
+    return ConnectionClass(*args, **kwargs)
+  File "/usr/local/lib/python3.7/site-packages/netmiko/base_connection.py", line 312, in __init__
+    self._open()
+  File "/usr/local/lib/python3.7/site-packages/netmiko/base_connection.py", line 317, in _open
+    self.establish_connection()
+  File "/usr/local/lib/python3.7/site-packages/netmiko/base_connection.py", line 870, in establish_connection
+    raise NetMikoTimeoutException(msg)
+netmiko.ssh_exception.NetMikoTimeoutException: Connection to device timed-out: linux 172.16.0.126:22
+
+2019-07-29 09:16:47,532 - nornir.core.task -    ERROR -      start() - Host 'spine01': task 'check_lldp_neigh' failed with traceback:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/site-packages/nornir/core/task.py", line 67, in start
+    r = self.task(self, **self.params)
+  File "discover_dc1_fabric.py", line 47, in check_lldp_neigh
+    severity_level=logging.DEBUG)
+  File "/usr/local/lib/python3.7/site-packages/nornir/core/task.py", line 124, in run
+    raise NornirSubTaskError(task=task, result=r)
+nornir.core.exceptions.NornirSubTaskError: Subtask: Discover lldp neigh on host: 172.16.0.126 (failed)
+
+
+2019-07-29 09:22:45,271 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/5 [00:00<?, ?it/s]} on 5 hosts
+2019-07-29 09:24:04,490 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/5 [00:00<?, ?it/s]} on 5 hosts
+2019-07-29 21:16:31,952 -  nornir.core -     INFO -        run() - Running task 'check_lldp_neigh' with args {'progress_bar': LLDP discovery:   0%|                                                                                                                                                               | 0/5 [00:00<?, ?it/s]} on 5 hosts

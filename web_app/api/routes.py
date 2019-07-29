@@ -91,9 +91,12 @@ def model_lsp_demand():
         df_all_demands = pd.concat([df_all_demands, results_array[0]], axis=0)
         df_all_lsps.extend(results_array[1])
     df_final = df_all_demands.groupby(['index','l_int','capacity','source','target','r_ip','l_ip','metric','errors','Action','l_ip_r_ip'] , as_index=False)['util'].sum()
+    df_final['l_ip_r_ip'] = df_final['l_ip_r_ip'].astype(str)
     df_final_lsps = pd.DataFrame(df_all_lsps)
     if len(lsps) > 0:
+        print('lsp before merge\n',df_final_lsps)
         df_final_lsps = df_final_lsps.groupby(['id','capacity','ero','index','l_ip','metric','r_ip','source','target'] , as_index=False)['util'].sum()
+        print('lsp after merge\n',df_final_lsps)
     else:
         df_final_lsps = pd.DataFrame()
 

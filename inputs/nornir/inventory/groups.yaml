@@ -17,6 +17,13 @@ juniper:
   data:
     type: juniper
 
+cumulus:
+  platform: linux
+  data:
+    type: cumulus
+dc1:
+  data:
+    site: dc1
 gb:
   data:
     site: gb

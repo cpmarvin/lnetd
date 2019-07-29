@@ -63,3 +63,39 @@ fr-p7-mrs:
         - juniper
         - fr
         - jnp_tacacs
+#cumulus
+spine01:
+    hostname: 172.16.0.126
+    port: 22
+    groups:
+        - cumulus
+        - dc1
+        - jnp_tacacs
+spine02:
+    hostname: 172.16.0.127
+    port: 22
+    groups:
+        - cumulus
+        - dc1
+        - jnp_tacacs
+leaf01:
+    hostname: 172.16.0.124
+    port: 22
+    groups:
+        - cumulus
+        - dc1
+        - jnp_tacacs
+leaf02:
+    hostname: 172.16.0.125
+    port: 22
+    groups:
+        - cumulus
+        - dc1
+        - jnp_tacacs
+leaf03:
+    hostname: 172.16.0.128
+    port: 22
+    groups:
+        - cumulus
+        - dc1
+        - jnp_tacacs
