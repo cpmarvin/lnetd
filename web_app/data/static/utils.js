@@ -73,7 +73,7 @@ function add_row_demands(){
             cols += '<td>' + Math.floor(Math.random() * 900) + '</td>'; //status
             cols += '<td>' + Math.floor(Math.random() * 900) + '</td>'; //id
             cols += '<td>' + Math.floor(Math.random() * 900) + '</td>'; //index
-            cols += '<td>' + 'nl-p7-ams' + '</td>'; //source
+            cols += '<td>' + 'nl-p13-ams' + '</td>'; //source
             cols += '<td>' + 'ke-pe3-nbi' + '</td>'; //target
             cols += '<td>' + '500' + '</td>'; //demand
             cols += '<td><input type="button" class="ibtnDel_demands btn btn-sm btn-danger "  value="Delete"></td>'; //action

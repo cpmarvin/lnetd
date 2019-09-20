@@ -14,7 +14,6 @@ def get_graph_aggregated(source,target):
 	result = client.query(queryurl)
 	points = list(result.get_points(measurement='h_interface_statistics'))
 	df = pd.DataFrame(points)
-	df.columns = ['bps', 'time']
 	df1=df.reindex(columns=["time","bps"]).to_csv(index=False)
 	return df1
 
