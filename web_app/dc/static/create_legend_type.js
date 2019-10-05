@@ -1,6 +1,6 @@
 function create_legend(type) {
         if (type == 'traffic') {
-		legendValues = [ 
+		legendValues = [
 			{'value':'No Data','color':'#999','y':'30','x':'10'},
 			{'value':'0%-20%','color':'blue','y':'30','x':'90'},
 			{'value':'20%-40%','color':'green','y':'30','x':'180'},
@@ -40,23 +40,23 @@ function create_legend(type) {
 				.attr("width", 1000)
 				.attr("height", 80)
 
-	var legend = svg.selectAll('.legend') 
-				.data(legendValues) 
+	var legend = svg.selectAll('.legend')
+				.data(legendValues)
 				.enter()
 				.append('g')
 				.attr('class', 'legend')
 				.attr('transform', function(d, i) {
 					return 'translate(' + d.x + ',' + d.y + ')'; });
-	
-	legend.append('rect') 
-		.attr('width', legendRectSize)                        
-		.attr('height', legendRectSize)                         
-		.style('fill', function(d) { return d.color})                                    
-		.style('stroke', function(d) { return d.color}) ;                               
 
-	legend.append('text')                                     
-			.attr('x', legendRectSize + legendSpacing)              
-			.attr('y', legendRectSize - legendSpacing)              
+	legend.append('rect')
+		.attr('width', legendRectSize)
+		.attr('height', legendRectSize)
+		.style('fill', function(d) { return d.color})
+		.style('stroke', function(d) { return d.color}) ;
+
+	legend.append('text')
+			.attr('x', legendRectSize + legendSpacing)
+			.attr('y', legendRectSize - legendSpacing)
 			.text(function(d) { return d.value; });
 
 }

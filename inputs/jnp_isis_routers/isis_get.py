@@ -10,7 +10,7 @@ import logging
 import sys
 sys.path.append('../utils/')
 
-from snmp_get import * 
+from snmp_get import *
 from lnetd_log import get_module_logger
 
 def main():
@@ -46,9 +46,9 @@ def main():
     #create panda dataframe
     labels = ['name', 'ip']
     df = pd.DataFrame.from_records(isis_db, columns=labels)
-    #drop ip if is 0.0.0.0 
+    #drop ip if is 0.0.0.0
     df=df[df['ip'].str.contains("0.0.0.0") == False]
-    #create country from hostname 
+    #create country from hostname
     df.loc[:, 'country'] = df['name'].str[0:2]
     df2 = df.fillna(0)
     try:

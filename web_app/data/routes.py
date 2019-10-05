@@ -1,23 +1,22 @@
-from flask import Blueprint, render_template, request ,session 
+from flask import Blueprint, render_template, request ,session
 from flask_login import login_required
-from objects.models import Routers,Links,Links_latency,Node_position,Links_Model
+from objects.models import Routers,Links,Links_latency,Node_position,Links_Model,App_config
 from database import db
 from collections import Counter,OrderedDict
 import pandas as pd
 from .get_demand_netflow import *
-import json 
+import json
 from influxdb import InfluxDBClient
 from sqlalchemy import or_,and_
 from .snmp_influx import get_max_util
 from .mutils import *
 import collections
-
 from functools import reduce
 
 blueprint = Blueprint(
-    'data_blueprint', 
-    __name__, 
-    url_prefix = '/data', 
+    'data_blueprint',
+    __name__,
+    url_prefix = '/data',
     template_folder = 'templates',
     static_folder = 'static'
     )
@@ -57,7 +56,7 @@ def topology_nested():
         isis_links = df.to_dict(orient='records')
     except Exception as e:
         isis_links = []
-    #print isis_links 
+    #print isis_links
     return render_template('topology_nested.html', values=isis_links,node_position=node_position)
 
 @blueprint.route('/topology_nested_aggregated')
@@ -76,7 +75,7 @@ def topology_nested_aggregated():
         isis_links = df_aggregate.to_dict(orient='records')
     except Exception as e:
         isis_links = []
-    #print isis_links 
+    #print isis_links
     return render_template('topology_nested_aggregated.html', values=isis_links,node_position=node_position)
 
 @blueprint.route('/topology_errors')
@@ -110,7 +109,10 @@ def filter_topology():
     target_filter = request.form.get('source_filter')
     df = pd.read_sql(db.session.query(Links).filter(Links.index >=0).statement,db.session.bind)
     isis_links = df.to_dict(orient='records')
-    return render_template('filter_topology.html',values=isis_links,source_filter = source_filter,target_filter=target_filter, node_position=node_position)
+    return render_template('filter_topology.html',values=isis_links,
+        source_filter = source_filter,
+        target_filter = target_filter,
+        node_position = node_position)
 
 
 @blueprint.route('/model_demand', methods=['GET', 'POST'])
@@ -137,7 +139,7 @@ def model_demand():
             { "field": "l_int","title":"l_int","sortable":False},
             { "field": "r_ip","title":"r_ip","sortable":False,"editable":True},
             { "field": "l_ip_r_ip","title":"l_ip_r_ip","sortable":False},
-            { "field": "util","title":"util","sortable":False},  
+            { "field": "util","title":"util","sortable":False},
             { "field": "capacity","title":"capacity","sortable":False,"editable":True},
             { "field": "Action","title":"Action","formatter":"TableActions"},
             ]
@@ -174,7 +176,7 @@ def model_edit():
             { "field": "l_int","title":"l_int","sortable":False},
             { "field": "r_ip","title":"r_ip","sortable":False,"editable":True},
             { "field": "l_ip_r_ip","title":"l_ip_r_ip","sortable":False},
-            { "field": "util","title":"util","sortable":False},  
+            { "field": "util","title":"util","sortable":False},
             { "field": "capacity","title":"capacity","sortable":False,"editable":True},
 	    { "field": "Action","title":"Action","formatter":"TableActions"},
             ]
@@ -189,7 +191,7 @@ def model_edit():
             ]
     model_name = Links_Model.query.with_entities(Links_Model.model_name).distinct()
     return render_template('model_edit.html',values=isis_links,columns=columns,router_name=router_name,netflow_demands=netflow_demands,
-                           node_position=node_position, model_name=model_name , columns_demands=columns_demands)  
+                           node_position=node_position, model_name=model_name , columns_demands=columns_demands)
 
 @blueprint.route('/traffic_links',methods=['GET', 'POST'])
 @login_required
@@ -228,32 +230,32 @@ def traffic_links():
         df_csv = 0
         df_year = 0
     else:
-    #create a dict for each link
+        #create a dict for each link
         df_dict=df.to_dict(orient='records')
         for i in df_dict:
-            queryurl = '''SELECT non_negative_derivative(mean(ifHCOutOctets), 1s) *8 from interface_statistics 
-                            where hostname =~ /%s/ and ifIndex ='%s' AND time >= now()- %sh 
+            queryurl = '''SELECT non_negative_derivative(mean(ifHCOutOctets), 1s) *8 from interface_statistics
+                            where hostname =~ /%s/ and ifIndex ='%s' AND time >= now()- %sh
                             group by time(5m)''' %(i['source'],i['l_int'],interval)
             result = client.query(queryurl)
             points = list(result.get_points(measurement='interface_statistics'))
             df_max = pd.DataFrame(points)
             if not df_max.empty:
                 df_variable.append(df_max)
-    #print df_variable
-    #merge the values
+        #print df_variable
+        #merge the values
         df_merged = reduce(lambda  left,right: pd.merge(left,right,on=['time'],how='outer'), df_variable).fillna(0)
-    #print df_merged
-    #get the sum
+        #print df_merged
+        #get the sum
         df_merged['bps']=df_merged.drop('time', axis=1).sum(axis=1)
         df_merged = df_merged.sort_values(by=['time'])
-    #with the sum pass this to graph
+        #with the sum pass this to graph
         df_csv=df_merged.to_dict(orient='records')
-    #df_csv=df_merged.reindex(columns=["time","bps"]).to_csv(index=False)
+        #df_csv=df_merged.reindex(columns=["time","bps"]).to_csv(index=False)
         max_value = df_merged['bps'].max()
         max_value = max_value/1000000
         df_year = generate_year_graph(source_filter[:-1],target_filter[:-1])
         df_year = df_year.to_dict(orient='records')
-    return render_template('traffic_links.html', values=isis_links, 
+    return render_template('traffic_links.html', values=isis_links,
 		countries=countries,max_value=int(max_value),graph=df_csv,
         	total_capacity=total_capacity,s_c=source_filter[:-1],t_c=target_filter[:-1],
 		df_year = df_year
@@ -269,10 +271,6 @@ def topology_time():
     isis_links = df.to_dict(orient='records')
     return render_template('topology_time.html', values=isis_links, node_position=node_position)
 
-
-
-
-#test
 @blueprint.route('/model_demand_lsp', methods=['GET', 'POST'])
 @login_required
 def model_demand_lsp():
@@ -323,3 +321,20 @@ def model_demand_lsp():
             ]
     return render_template('model_demand_lsp.html',values=isis_links,columns=columns,router_name=router_name,netflow_demands=netflow_demands,
                            node_position=node_position, columns_lsp=columns_lsp, columns_demands=columns_demands)
+
+@blueprint.route('/topology_netbox')
+@login_required
+def topology_netbox():
+    app_config_current = App_config.query.all()
+    nb_url = app_config_current[0].nb_url
+    nb_token = app_config_current[0].nb_token
+    current_user = str(session['user_id'])
+    node_position = pd.read_sql(db.session.query(Node_position).filter(
+        Node_position.user == current_user).statement, db.session.bind)
+    node_position = node_position.to_dict(orient='records')
+    df1 = get_netbox_connections(nb_token,nb_url)
+    df1['capacity'] = 1000
+    df1['util'] = 100
+    isis_links = df1.to_dict(orient='records')
+    #isis_links = [{'source': 'ke-pe3-nbi', 'target': 'ke-pe2-nbi', 'l_ip': 'ge-0/0/3', 'r_ip': 'ge-0/0/3', 'l_ip_r_ip': "('ge-0/0/3', 'ge-0/0/3')"}, {'source': 'ke-pe3-nbi', 'target': 'ke-pe2-nbi', 'l_ip': 'ge-0/0/0', 'r_ip': 'ge-0/0/1', 'l_ip_r_ip': "('ge-0/0/0', 'ge-0/0/1')"}, {'source': 'ke-pe2-nbi', 'target': 'ke-pe3-nbi', 'l_ip': 'ge-0/0/3', 'r_ip': 'ge-0/0/3', 'l_ip_r_ip': "('ge-0/0/3', 'ge-0/0/3')"}, {'source': 'ke-pe2-nbi', 'target': 'ke-pe3-nbi', 'l_ip': 'ge-0/0/1', 'r_ip': 'ge-0/0/0', 'l_ip_r_ip': "('ge-0/0/0', 'ge-0/0/1')"}]
+    return render_template('topology_netbox.html', values=isis_links, node_position=node_position)

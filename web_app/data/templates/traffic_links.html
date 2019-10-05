@@ -253,13 +253,13 @@
       var capacity = $(this).attr('capacity')
       $('#modal-top').modal('toggle')
       $('#modal-body').attr("id","graph2")
-      .html(graph(source,interface,capacity))
+      .html(graph(web_ip,source,interface,capacity))
     }
     )
   })
 
 
-
+  var web_ip = {{app_config|tojson|safe}}
   var capacity={{total_capacity}}
   var data = {{graph|tojson}}
   var df_year= {{df_year|tojson}}

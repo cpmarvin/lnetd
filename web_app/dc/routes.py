@@ -9,9 +9,9 @@ from objects.models import Fabric_links,Node_position
 
 
 blueprint = Blueprint(
-    'dc_blueprint', 
-    __name__, 
-    url_prefix = '/dc', 
+    'dc_blueprint',
+    __name__,
+    url_prefix = '/dc',
     template_folder = 'templates',
     static_folder = 'static'
     )

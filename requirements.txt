@@ -11,3 +11,5 @@ junos-eznc
 numpy
 nornir
 argon2_cffi
+simple-crypt
+pynetbox

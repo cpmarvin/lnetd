@@ -2,10 +2,10 @@ function graph(web_ip,source,target,capacity) {
     Plotly.purge(graph2)
     var rawDataURL = 'http://'+web_ip+':8801/api/graph_aggregated?'+'source='+source+'&'+'target='+target
     //console.log(rawDataURL)
-    //// map the fields 
+    //// map the fields
     var xField = 'time';
     var yField = 'bps';
-    /// create selector 
+    /// create selector
     var selectorOptions = {
         buttons: [{
             step: 'hour',

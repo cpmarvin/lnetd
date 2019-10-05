@@ -12,85 +12,63 @@
 {% endblock stylesheets %}
 
 {% block content %}
-  <div class="right_col" role="main">
-    <div class="">
-      <div class="page-title">
-        <div class="title_left">
-          <h3>ISP Telecom International PoPs<small></small></h3>
+<div class="right_col" role="main">
+  <div class="clearfix"></div>
+  <div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+      <div class="x_panel">
+        <div class="x_title">
+          <h2>ISP Telecom <small></small></h2>
+          <ul class="nav navbar-right panel_toolbox">
+            <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+            </li>
+          </ul>
+          <div class="clearfix"></div>
         </div>
-
-        <div class="title_right">
-          <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
-          </div>
-        </div>
-      </div>
-
-      <div class="clearfix"></div>
-<div class="row">
- <div class="col-md-12 col-sm-12 col-xs-12">
-          <div class="x_panel">
-            <div class="x_title">
-              <h2>ISP Telecom <small></small></h2>
-              <ul class="nav navbar-right panel_toolbox">
-                <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                </li>
-              </ul>
-              <div class="clearfix"></div>
-              </div>
-              <div class="x_content" id="graph_aggr" style="width:100%; height:600px;" >
-             </div>
-          </div>
-        </div>
-</div>
-
-      <div class="row">
-        <div class="col-md-12 col-sm-12 col-xs-12">
-          <div class="x_panel">
-            <div class="x_title">
-              <h2>PoPs </h2>
-              <ul class="nav navbar-right panel_toolbox">
-                <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                </li>
-              </ul>
-              <div class="clearfix"></div>
-            </div>
-            <div class="x_content">
-              <table id="datatable" class="table table-striped table-bordered">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Routers</th>
-                    <th>Capacity (Gbps)</th>
-                    <th>Util IN (Gbps)</th>
-                    <th>Util OUT (Gbps)</th>
-                  </tr>
-                </thead>
-
-
-                <tbody>
-                 {% for node in values %}
-                  <tr>
-                    <td>{{node.name}}</td>
-                    <td>{{node.routers}}</td>
-                    <td>{{node.capacity}}</td>
-                    <td>{{node.util_in}}</td>
-                    <td>{{node.util_out}}</td>
-                  </tr>
-                {% endfor %}
-
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-
-            </div>
-          </div>
+        <div class="x_content" id="graph_aggr" style="width:100%; height:600px;" >
         </div>
       </div>
     </div>
   </div>
+  <div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+      <div class="x_panel">
+        <div class="x_title">
+          <h2>PoPs </h2>
+          <ul class="nav navbar-right panel_toolbox">
+            <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+            </li>
+          </ul>
+          <div class="clearfix"></div>
+        </div>
+        <div class="x_content">
+          <table id="datatable" class="table table-striped table-bordered">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Routers</th>
+                <th>Capacity (Gbps)</th>
+                <th>Util IN (Gbps)</th>
+                <th>Util OUT (Gbps)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for node in values %}
+              <tr>
+                <td>{{node.name}}</td>
+                <td>{{node.routers}}</td>
+                <td>{{node.capacity}}</td>
+                <td>{{node.util_in}}</td>
+                <td>{{node.util_out}}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock content %}
 
 {% block javascripts %}

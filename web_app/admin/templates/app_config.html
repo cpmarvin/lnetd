@@ -4,26 +4,16 @@
 
 {% block stylesheets %}
   {{ super() }}
-  <link href="{{ url_for('static', filename='vendors/datatables.net-bs/css/dataTables.bootstrap.min.css') }}" rel="stylesheet">
-  <link href="{{ url_for('static', filename='vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css') }}" rel="stylesheet">
-  <link href="{{ url_for('static', filename='vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css') }}" rel="stylesheet">
-  <link href="{{ url_for('static', filename='vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css') }}" rel="stylesheet">
-  <link href="{{ url_for('static', filename='vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css') }}" rel="stylesheet">
-  <!-- bootsrap table -->
-  <link href="{{ url_for('static', filename='vendors/bootstrap-table/bootstrap-table.css') }}" rel="stylesheet">  
-  <!-- x-editable -->
-  <link href="{{ url_for('static', filename='vendors/x-editable/bootstrap3-editable/css/bootstrap-editable.css') }}" rel="stylesheet">
   <!--alertify -->
   <link href="{{ url_for('static', filename='vendors/alertifyjs/css/themes/bootstrap.css') }}" rel="stylesheet">
   <link href="{{ url_for('static', filename='vendors/alertifyjs/css/alertify.css') }}" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js-bootstrap-css/1.2.1/typeaheadjs.min.css" rel="stylesheet">
 
 {% endblock stylesheets %}
 
 {% block content %}
-<div>  
+<div>
   <div class="right_col" role="main">
-    <div class="row"> 
+    <div class="row">
       <div class="col-md-16 col-sm-16 col-xs-16 col-lg-16">
         <div class="x_panel">
           <div class="x_title">
@@ -33,30 +23,36 @@
               </div>
             </div>
           </div>
-
- <div class="row">
+          <div class="row">
             <div class="animate form">
-                <form id="app-config-form">
-                    <div class="form-group float-label-control">
-                        <label for="">ASN</label>
-                        <input type="text" name='asn' class="form-control required" value={{asn}}>
-                    </div>
-                    <div class="form-group float-label-control">
-                        <label for="">WEB_IP</label>
-                        <input type="text" name='web_ip' class="form-control required" value={{web_ip}}>
-                    </div>
-                    <div class="form-group float-label-control">
-                        <label for="">INFLUX_IP</label>  
-                        <input type="text" name='influx_ip' class="form-control required" value={{influx_ip}}>
-                    </div>
-                </form>
-              <button type="button" class="btn btn-info" onclick="app_config_save()">Save config</button>
+              <form id="app-config-form">
+                <div class="form-group float-label-control">
+                  <label for="">ASN</label>
+                  <input type="text" name='asn' class="form-control required" value={{asn}}>
+                </div>
+                <div class="form-group float-label-control">
+                  <label for="">WEB_IP</label>
+                  <input type="text" name='web_ip' class="form-control required" value={{web_ip}}>
+                </div>
+                <div class="form-group float-label-control">
+                  <label for="">INFLUX_IP</label>
+                  <input type="text" name='influx_ip' class="form-control required" value={{influx_ip}}>
+                </div>
+                <div class="form-group float-label-control">
+                  <label for="">NB_URL</label>
+                  <input type="text" name='nb_url' class="form-control required" value={{nb_url}}>
+                </div>
+                <div class="form-group float-label-control">
+                  <label for="">NB_TOKEN</label>
+                  <input type="text" name='nb_token' class="form-control required" value={{nb_token}}>
+                </div>
+                <div class="form-group float-label-control">
+                  <label for="">MASTER KEY</label>
+                  <input type="text" name='master_key' class="form-control required" value={{master_key}}>
+                </div>
+              </form>
+              <button type="button" class="btn btn-success" onclick="app_config_save()">Save config</button>
             </div>
-            </div>
-
-            </div>
-          </div>
-        </div>
           </div>
         </div>
       </div>
@@ -67,46 +63,8 @@
 
 {% block javascripts %}
   {{ super() }}
-  <!-- <script src="{{ url_for('static', filename='vendors/d3.js/d3.min.js') }}"></script> -->
-  <script src="{{ url_for('static', filename='custom/topology/create_legend.js') }}"></script>
-  <script src="{{ url_for('static', filename='vendors/plotly/plotly-latest.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='custom/topology/create_graph.js') }}"></script>
-  <script src="{{ url_for('static', filename='custom/topology/getSPF.js') }}"></script>
-  <script src="{{ url_for('static', filename='custom/topology/jsontables.js') }}"></script>
-  <!-- Bootsrap table -->
-  <script src="{{ url_for('static', filename='vendors/bootstrap-table/bootstrap-table.js') }}"></script>
-  <!-- Bootstrap editable extension -->
-  <script src="{{ url_for('static', filename='vendors/bootstrap-table/extensions/editable/bootstrap-table-editable.js') }}"></script>
-  <!-- x-editable externsion --> 
-  <script src="{{ url_for('static', filename='vendors/x-editable/bootstrap3-editable/js/bootstrap-editable.min.js') }}"></script>
   <!-- alertifyjs -->
   <script src="{{ url_for('static', filename='vendors/alertifyjs/alertify.min.js') }}"></script>
-  <!-- Datatables 
-  <script src="{{ url_for('static', filename='vendors/datatables.net/js/jquery.dataTables.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='vendors/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='vendors/datatables.net-buttons/js/dataTables.buttons.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='vendors/datatables.net-buttons/js/buttons.flash.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='vendors/datatables.net-buttons/js/buttons.html5.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='vendors/datatables.net-buttons/js/buttons.print.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='vendors/datatables.net-keytable/js/dataTables.keyTable.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='vendors/datatables.net-responsive/js/dataTables.responsive.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js') }}"></script>
-  <script src="{{ url_for('static', filename='vendors/datatables.net-scroller/js/dataTables.scroller.min.js') }}"></script>
-  -->
-  <!-- Just to test -->
-  <script src="https://gitcdn.link/repo/xcash/bootstrap-autocomplete/master/dist/latest/bootstrap-autocomplete.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/corejs-typeahead/1.2.1/typeahead.bundle.js"></script>
-  <!--
-  <script src="{{ url_for('data_blueprint.static', filename='utils.js') }}"></script>
-  <script src="{{ url_for('data_blueprint.static', filename='d3js_utils.js') }}"></script>
-  -->
-  <script src="https://d3js.org/d3.v4.min.js"></script>
-  <script src="{{ url_for('data_blueprint.static', filename='d3js_v5_utils.js') }}"></script>
-  <script src="{{ url_for('data_blueprint.static', filename='lnet_d3js.js') }}"></script>
-  <script src="{{ url_for('data_blueprint.static', filename='utils.js') }}"></script>
-
 <script>
 function app_config_save() {
   if ($('app-config-form')) {
@@ -115,7 +73,7 @@ function app_config_save() {
       url: '/admin/app_config_save',
       dataType: 'json',
       data: $('#app-config-form').serialize(),
-      error: function(result) { alertify.notify('error', 'error', 5);},   
+      error: function(result) { alertify.notify('error', 'error', 5);},
       success: function(result) { alertify.notify('Config Saved', 'success', 5);}
     });
   }

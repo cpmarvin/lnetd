@@ -7,58 +7,38 @@
 {% endblock stylesheets %}
 
 {% block content %}
-<div class="right_col" role="main">
-	<div class="">
-		<div class="page-title">
-
-<div class="title_right">
-	<div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right ">
-	</div>
-</div>
-</div>
-</div>
-
-<div class="clearfix"></div>
-
-<div class="row">
 
 
-	<!-- Modal used for graphs-->
-	<div class="modal fade" id="modal-top" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog modal-dialog-centered modal-lg " role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="exampleModalLabel">Plotly based Graphs</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body" id="modal-body">
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-				</div>
+
+<!-- Modal used for graphs-->
+<div class="modal fade" id="modal-top" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-lg " role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Plotly based Graphs</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body" id="modal-body">
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 			</div>
 		</div>
 	</div>
-	<!-- End Modal -->
-
-	<div class="clearfix"></div>
-
-	<!-- bar chart -->
-	<div class="col-md-14">
-		<div class="x_panel">
-			<div class="x_title">
-				<h2>ISP Telecom <small>ISIS topology</small></h2>
-				<ul class="nav navbar-right panel_toolbox">
-					<li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-					</li>
-				</li>
-			</ul>
-			<div class="clearfix"></div>
-		</div>
+</div>
+<!-- End Modal -->
+<div class="right_col" role="main">
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                									<h3>Topology Latency
+                                </h3>
 		<div class="x_content">
-			<div id="topology" style="width:100%; height:1120px;">
+			<div id="topology" style="width:100%; height:100%;">
                                                                                 <!-- Div for legend -->
                                                                                 <div class="x_content" id="legend_div"></div>
 				<!-- SPF checkbox !-->
@@ -80,7 +60,7 @@
 
 {% block javascripts %}
   {{ super() }}
-<script src="{{ url_for('static', filename='vendors/d3.js/d3.min.js') }}"></script> 
+<script src="{{ url_for('static', filename='vendors/d3.js/d3.min.js') }}"></script>
 <script src="{{ url_for('static', filename='vendors/plotly/plotly-latest.min.js') }}"></script>
 <script src="{{ url_for('static', filename='custom/topology/create_graph.js') }}"></script>
 <script src="{{ url_for('static', filename='custom/topology/getSPF_latency.js') }}"></script>
@@ -92,13 +72,13 @@
         var web_ip = {{app_config|tojson|safe}}
 	$(document).ready(function() {
 		updateData()
-		create_legend('latency') 
+		create_legend('latency')
 	})
 
 	function updateData() {
 
-		var source = '.' 
-		var target = source	
+		var source = '.'
+		var target = source
 		var re_source = new RegExp (source);
 		var re_target = new RegExp (target);
 
@@ -114,7 +94,7 @@
 
 		for (var i=0; i<grapheDatas1.length; i++) {
 			if (i != 0 &&
-				grapheDatas1[i].source == grapheDatas1[i-1].source && grapheDatas1[i].target == grapheDatas1[i-1].target) 
+				grapheDatas1[i].source == grapheDatas1[i-1].source && grapheDatas1[i].target == grapheDatas1[i-1].target)
 			{
 				grapheDatas1[i].linknum = grapheDatas1[i-1].linknum + 1;
 			}
@@ -123,7 +103,7 @@
 			};
 		};
 
-		for (var i = 0, len = grapheDatas1.length; i < len; i++) { 
+		for (var i = 0, len = grapheDatas1.length; i < len; i++) {
 			pair = grapheDatas1[i].l_ip_r_ip[0]+grapheDatas1[i].l_ip_r_ip[1]
 			pair = grapheDatas1[i].l_ip_r_ip
 
@@ -132,7 +112,7 @@
 				pair2 = grapheDatas1[z].l_ip_r_ip
 				if (pair2 == pair ) { grapheDatas1[z].linknum = grapheDatas1[i].linknum }
 
-			} 
+			}
 		}
 		//push_unique id for each link
 		for (var i=0; i<grapheDatas1.length; i++) {
@@ -142,7 +122,7 @@
 		grapheDatas = grapheDatas1.filter(function(d) { return re_source.test(d.source) && re_target.test(d.target) });
 
 
-		/// FUNCTION see force-horse for calculation 
+		/// FUNCTION see force-horse for calculation
 		function calcTranslationExact(debug,targetDistance, point0, point1) {
 			let x1_x0 = point1.x - point0.x,
 			y1_y0 = point1.y - point0.y,
@@ -150,7 +130,7 @@
 			if (y1_y0 === 0) {
 				x2_x0 = 0;
 				y2_y0 = targetDistance;
-			} 
+			}
 			else {
 				let angle = Math.atan((x1_x0) / (y1_y0));
 				x2_x0 = -targetDistance * Math.cos(angle);
@@ -169,7 +149,7 @@
 			var len = dr - ((dr/2) * Math.sqrt(3));
 			endX = endX + (  len/dr) ;
 			endY = endY + (  len/dr) ;
-		//reverse start and end so that label links switch 
+		//reverse start and end so that label links switch
 			if ( endX - d0x > 0 ) {
 				callback = "M" + d0x + "," + d0y   + "L" + endX + "," + endY;
 			}
@@ -197,10 +177,10 @@
 			}
 			else {
 				util = Math.ceil(util)
-				legend.forEach(function (d) { 
-					if (util >= d.low && util <= d.high) 
-					{ 
-						util = d.id ; 
+				legend.forEach(function (d) {
+					if (util >= d.low && util <= d.high)
+					{
+						util = d.id ;
 					}
 				})
 			}
@@ -209,27 +189,27 @@
 			return util
 		}
 
-		var height = document.getElementById('topology').clientHeight 
+		var height = document.getElementById('topology').clientHeight
 		var width = document.getElementById('topology').clientWidth
 		var width = 1900 ;
 		var height = 1001;
 		var color = d3.scale.category20();
 
 
-		
+
 		function returnX (source) {
-			//result is none at first 
+			//result is none at first
 			result = 'none'
-			//read from position.js 
+			//read from position.js
 			node_position.forEach(function (d) {
 				//iterate array
 				if (source === d.id ) {	result = parseInt(d.x) }})
-				//if forgot to define site name random x 
+				//if forgot to define site name random x
 				if ( result === 'none') { result = Math.floor(1 + Math.random()*(900 + 1 - 1 ))}
 			return result
 		}
 
-		//need a better way to do this , repeating function is lame 
+		//need a better way to do this , repeating function is lame
 		function returnY (source) {
 			result = 'none'
 			node_position.forEach(function (d) {
@@ -242,7 +222,7 @@
 		links = []
 		links = grapheDatas;
 		var nodes = [];
-		//populate nodes based on links 
+		//populate nodes based on links
 		links.forEach(function(link) {
 			link.source = nodes[link.source] || (nodes[link.source] = {name: link.source , fixed:true, x:returnX(link.source), y:returnY(link.source) });
 			link.target = nodes[link.target] || (nodes[link.target] = {name: link.target , fixed:true, x:returnX(link.target), y:returnY(link.target) });
@@ -254,14 +234,14 @@
 					.gravity(0.0)
 					.charge(-150)
 					.size([width, height])
-					//get the values without key from nodes object 
+					//get the values without key from nodes object
 					.nodes(d3.values(nodes))
 					.links(links)
 					.start();
 
 
 
-		//defined mix and max zoom 
+		//defined mix and max zoom
 		var min_zoom = 0.2;
 		var max_zoom = 8.0;
 
@@ -276,14 +256,14 @@
 					.on('load',function (d) { alert('load') });
 
 
-		//used for L key to display link label , need to find a better way for this. 
+		//used for L key to display link label , need to find a better way for this.
 		function keydown() {
 			if (d3.event.key === 76 ) return;
 			pathtext.style("fill-opacity",1)
 		}
 
-		//watch for L press 
-		d3.select('body')  
+		//watch for L press
+		d3.select('body')
 		.on('keydown', keydown);
 
 		//path
@@ -312,7 +292,7 @@
 						.attr("startOffset","50%")
 						.attr("xlink:href",function(d,i) { return "#linkId_" + i;})
 						.text(function(d) { return "Latency:"  +parseFloat(d.latency) });
-						//end path 
+						//end path
 
 		//node add
 		var node = svg.selectAll(".nodes")
@@ -328,14 +308,14 @@
 		//.style("fill", function(d) { return color(d.name.slice(0,3)); })
 		.on("mouseover", fade(.1))
 		.on("mouseout", fade(1))
-		.on("click",function (d) { 
-			if ($('#spf_check').is(':checked')) 
+		.on("click",function (d) {
+			if ($('#spf_check').is(':checked'))
 				{ return onClick1(d);console.log("clicked") }
 			else
 				{ console.log("click but not if") } })
 
 
-//add image for the nodes 
+//add image for the nodes
 
 		node.append("image")
 				.attr("xlink:href", "/static/images/router.png")
@@ -363,17 +343,17 @@
 		var div = d3.select("#graph")
 				.attr("class", "tooltip")
 				.style("opacity", 1)
-		var div1 = div 
+		var div1 = div
 				.attr("id","graph2")
 				.attr("class", "graph2")
 
-		//drag node 
+		//drag node
 		function dragstart(d) {
 			d3.event.sourceEvent.stopPropagation();
-			d3.select(this).classed("fixed", d.fixed = true); 
+			d3.select(this).classed("fixed", d.fixed = true);
 		}
 
-		//used in zoom 
+		//used in zoom
 		function redraw() { svg.attr("transform","translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")");}
 
 		var drag = force.drag()
@@ -389,7 +369,7 @@
 			return linkedByIndex[a.index + "," + b.index] || linkedByIndex[b.index + "," + a.index] || a.index == b.index;
 		}
 
-        //used in spf calculation , check if link id is equal to spf return 
+        //used in spf calculation , check if link id is equal to spf return
 		function check_link(id) {
 			id = id
 			result = spf_results.filter( function (d) { return d.id == id })
@@ -397,7 +377,7 @@
 				results = result[0].id
 			}
 			else { results = -1 }
-				return results 
+				return results
 		}
 
 		selectedNodes = []
@@ -441,7 +421,7 @@
 					}
 				);
 				pathtext.style("fill-opacity", function(o) {
-					{ if (o.source === d || o.target === d)  
+					{ if (o.source === d || o.target === d)
 							return 1;
 					}
 				});

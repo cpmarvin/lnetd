@@ -3,10 +3,10 @@ import re
 import pandas as pd
 from netaddr import IPNetwork, IPAddress
 
-def insert_routers(table,index,name,ip,country,vendor,model,version):
+def insert_routers(table,index,name,ip,country,vendor,model,version,tacacs_id):
     try:
         conn = sqlite3.connect('/opt/lnetd/web_app/database.db')
-        sql = ''' INSERT OR REPLACE INTO %s values('%s','%s','%s','%s','%s','%s','%s') ''' %(table,index,name,ip,country,vendor,model,version)
+        sql = ''' INSERT OR REPLACE INTO %s values('%s','%s','%s','%s','%s','%s','%s','%s') ''' %(table,index,name,ip,country,vendor,model,version,tacacs_id)
         cur = conn.cursor()
         cur.execute(sql)
         conn.commit()

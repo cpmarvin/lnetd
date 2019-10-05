@@ -1,0 +1,308 @@
+{% extends "base_site.html" %}
+
+{% block title %} Table Dynamic {% endblock title %}
+
+{% block stylesheets %}
+{{ super() }}
+<link href="{{ url_for('static', filename='vendors/datatables.net-bs/css/dataTables.bootstrap.min.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css') }}" rel="stylesheet">
+ <!--alertify -->
+  <link href="{{ url_for('static', filename='vendors/alertifyjs/css/themes/bootstrap.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendors/alertifyjs/css/alertify.css') }}" rel="stylesheet">
+<style>
+.panel .panel-heading {
+    background-color: #73879C;
+    background-image: none;
+    color: white;
+    border-color: #73879C;
+}
+.panel-primary {
+    border-color: #73879C;;
+}
+.stepwizard-step p {
+    margin-top: 0px;
+    color:#73879C;
+}
+.stepwizard-row {
+    display: table-row;
+}
+.stepwizard {
+    display: table;
+    width: 100%;
+    position: relative;
+}
+.stepwizard-step button[disabled] {
+    /*opacity: 1 !important;
+    filter: alpha(opacity=100) !important;*/
+}
+.stepwizard .btn.disabled, .stepwizard .btn[disabled], .stepwizard fieldset[disabled] .btn {
+    opacity:1 !important;
+    color:#bbb;
+}
+.stepwizard-row:before {
+    top: 14px;
+    bottom: 0;
+    position: absolute;
+    content:" ";
+    width: 100%;
+    height: 0px;
+    background-color: #ccc;
+    z-index: 0;
+}
+.stepwizard-step {
+    display: table-cell;
+    text-align: center;
+    position: relative;
+}
+.btn-circle {
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    padding: 6px 0;
+    font-size: 12px;
+    line-height: 1.428571429;
+    border-radius: 15px;
+}
+</style>
+{% endblock stylesheets %}
+{% block content %}
+<div class="modal fade " id="modal-top1" tabindex="-1" role="dialog" aria-labelledby="loadingModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-body" id="modal-body">
+        <div id="PageContent">
+          <div id="loadingIndicatorCtn">
+            <div class="loadingIndicator">
+              <h1><span class="label label-info">
+                <i class="fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:30px;color:"blue""></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Loading...</span>
+              </h1>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End Modal -->
+<div class="right_col" role="main">
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                                <h3>IX BGP PROVISION</h3>
+                    </div>          <div class="x_content">
+<div class="col-md-12 col-sm-12 col-xs-12">
+    <div class="stepwizard">
+        <div class="stepwizard-row setup-panel">
+            <div class="stepwizard-step col-xs-3">
+                <a href="#step-1" type="button" class="btn btn-success btn-circle">1</a>
+                <p><small>Peer Information</small></p>
+            </div>
+            <div class="stepwizard-step col-xs-3">
+                <a href="#step-2" type="button" class="btn btn-default btn-circle" disabled="disabled">2</a>
+                <p><small>Border Router Information</small></p>
+            </div>
+            <div class="stepwizard-step col-xs-3">
+                <a href="#step-3" type="button" class="btn btn-default btn-circle" disabled="disabled">3</a>
+                <p><small>Config Generation</small></p>
+            </div>
+            <div class="stepwizard-step col-xs-3">
+                <a href="#step-4" type="button" class="btn btn-default btn-circle" disabled="disabled">4</a>
+                <p><small>Config Deploy</small></p>
+            </div>
+        </div>
+    </div>
+    <form role="form">
+        <div class="panel panel-primary setup-content" id="step-1">
+            <div class="panel-heading">
+                 <h3 class="panel-title">Peer Information</h3>
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <label class="control-label">ASN:</label>
+                    <input maxlength="100" type="text" required="required" class="form-control" placeholder="Enter ASN" name="asn"/>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">IP Address:</label>
+                    <input maxlength="100" type="text" required="required" class="form-control" placeholder="Enter Peer IP" name="ip"/>
+                </div>
+                <button class="btn btn-primary nextBtn pull-right" type="button">Next</button>
+            </div>
+        </div>
+
+        <div class="panel panel-primary setup-content" id="step-2">
+            <div class="panel-heading">
+                 <h3 class="panel-title">Device Info</h3>
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <label class="control-label">Router:</label>
+             <select class="selectpicker form-control" required="required" name="router" id="router">
+                <option value=''>Select Option</option>
+                {% for value in values %}
+                 <option value={{value}}>{{value}}</option>
+                {% endfor%}
+               </select>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Peer Group:</label>
+          <select class="selectpicker form-control" required="required" name="peer_groups" id="peer_groups">
+          </select>
+                </div>
+                <button class="btn btn-primary nextBtn pull-right" type="button">Generate Configs</button>
+            </div>
+        </div>
+
+        <div class="panel panel-primary setup-content" id="step-3">
+            <div class="panel-heading">
+                 <h3 class="panel-title">Config Generation</h3>
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <label class="control-label">Configuration:</label>
+        <textarea class="form-control" id="exampleFormControlTextarea1" rows="10" name="config"></textarea>
+                </div>
+                <button class="btn btn-primary nextBtn pull-right" type="button">Next</button>
+            </div>
+        </div>
+
+        <div class="panel panel-primary setup-content" id="step-4">
+            <div class="panel-heading">
+                 <h3 class="panel-title">Config Deploy</h3>
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <label class="control-label">Status:</label>
+                    <textarea class="form-control" id="exampleFormControlTextarea2" rows="10" name="status"></textarea>
+                </div>
+                <button class="btn btn-success pull-right" onClick="window.location.reload();" type="button" >StartOver!</button>
+            </div>
+        </div>
+    </form>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+{% endblock content %}
+{% block javascripts %}
+{{ super() }}
+<script src="{{ url_for('static', filename='vendors/alertifyjs/alertify.min.js') }}"></script>
+
+<script>
+$(document).ready(function() {
+
+    var dropdown1 = {{values|tojson|safe}}
+    $('#router').on('change', function() {$('#peer_groups').html(
+        '<option>' + dropdown1[$(this).val()].join('</option><option>') + '</option>'
+    ); }); });
+
+$(document).ready(function () {
+
+    var navListItems = $('div.setup-panel div a'),
+        allWells = $('.setup-content'),
+        allNextBtn = $('.nextBtn');
+
+    allWells.hide();
+
+    navListItems.click(function (e) {
+        e.preventDefault();
+        var $target = $($(this).attr('href')),
+            $item = $(this);
+
+        if (!$item.hasClass('disabled')) {
+            navListItems.removeClass('btn-success').addClass('btn-default');
+            $item.addClass('btn-success');
+            allWells.hide();
+            $target.show();
+            $target.find('input:eq(0)').focus();
+        }
+    });
+
+    allNextBtn.click(function () {
+        console.log('when do i run this')
+        var curStep = $(this).closest(".setup-content"),
+            curStepBtn = curStep.attr("id"),
+            nextStepWizard = $('div.setup-panel div a[href="#' + curStepBtn + '"]').parent().next().children("a"),
+            curInputs = curStep.find("input[type='text'],input[type='url'],textarea,select"),
+            isValid = true;
+
+        $(".form-group").removeClass("has-error");
+        for (var i = 0; i < curInputs.length; i++) {
+            console.log('when do i run this 2',curInputs[i].failed,curInputs[i].name)
+            if (!curInputs[i].validity.valid || curInputs[i].attributes.failed ) {
+                isValid = false;
+                $(curInputs[i]).closest(".form-group").addClass("has-error");
+            }
+        }
+
+        if (isValid) {
+        if(curStepBtn == 'step-2') {
+                  //delete textarea in case something was there already
+                  $("textarea#exampleFormControlTextarea1").val('' )
+                  values_form = $('form').serializeArray()
+                  asn = values_form[0].value
+          ip = values_form[1].value
+          rtr = values_form[2].value
+          peer_group= values_form[3].value
+                  url = {{ url_for('prov_blueprint.generate_config')|tojson }} + '?router='+rtr+'&asn='+asn+'&ip='+ip+'&peer_group='+peer_group
+                  var get_status =  initAjax(url)
+get_status.then(function (d, statusText, xhr) {
+    console.log('this is the status',(xhr.status))
+    if (xhr.status == 200) {
+        $("textarea#exampleFormControlTextarea1").val( d )
+        $("textarea#exampleFormControlTextarea1").removeAttr('failed')
+    }
+    else {
+        $("textarea#exampleFormControlTextarea1").val( d )
+        $("textarea#exampleFormControlTextarea1").closest(".form-group").addClass("has-error");
+        $("textarea#exampleFormControlTextarea1").attr('failed','yes')
+    }
+});
+        };
+                if(curStepBtn == 'step-3') {
+          //delete textarea in case something was there already
+          $("textarea#exampleFormControlTextarea2").val('' )
+                  console.log('3') ;
+                  values_form = $('form').serializeArray()
+          router = values_form[2].value
+          config = values_form[4].value
+          url = {{ url_for('prov_blueprint.deploy_config')|tojson }} + '?router='+router+'&config='+config
+              var get_status = initAjax(url)
+          get_status.then(function(d) { $("textarea#exampleFormControlTextarea2").val( d ) });
+        };
+        nextStepWizard.removeAttr('disabled').trigger('click') };
+    });
+
+    $('div.setup-panel div a.btn-success').trigger('click');
+});
+        //helper function for url get and modal
+        var initAjax = function (url){
+          var customAjaxResponse = $.ajax({
+                                           type: 'GET',
+                                           url: url,
+                                           beforeSend: function (xhr) {
+                                                          alertify.notify("Requesting Data ..... ", 'warning', 5)
+                                                          $('#modal-top1').modal('show')
+                                                                       }
+                                           }).done(function (data, statusText, xhr) {
+                                                          alertify.notify("Response Received",'success', 5)
+                                                          $('#modal-top1').modal('toggle')
+                                           }).error(function (xhr) {
+                                                          alertify.notify("Data Error", 'error', 15)
+                                                          $('#modal-top1').modal('toggle')
+
+                                          });
+          return customAjaxResponse.promise();
+          }
+
+</script>
+
+{% endblock javascripts %}

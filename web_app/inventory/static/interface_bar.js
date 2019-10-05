@@ -22,7 +22,7 @@ var data_test = [
 
 if (rtr_interfaces.length == 0){
 data = data_test
-} 
+}
 
 // Transpose the data into layers
 var dataset = d3.layout.stack()(["up", "down"].map(function(values) {

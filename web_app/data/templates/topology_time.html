@@ -18,96 +18,64 @@
 {% endblock stylesheets %}
 
 {% block content %}
-<div class="right_col" role="main">
-        <div class="">
-                <div class="page-title">
-
-<div class="title_right">
-        <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right ">
-        </div>
-</div>
-</div>
-</div>
-
-<div class="clearfix"></div>
-
-<div class="row">
-        <!-- Modal used for graphs-->
-        <div class="modal fade" id="modal-top" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered modal-lg " role="document">
-                        <div class="modal-content">
-                                <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">Plotly based Graphs</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                        </button>
-                                </div>
-                                <div class="modal-body" id="modal-body">
-                                </div>
-                                <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                </div>
+<!-- Modal used for graphs-->
+<div class="modal fade" id="modal-top" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg " role="document">
+                <div class="modal-content">
+                        <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Plotly based Graphs</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                </button>
+                        </div>
+                        <div class="modal-body" id="modal-body">
+                        </div>
+                        <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         </div>
                 </div>
         </div>
-        <!-- End Modal -->
-
-        <div class="clearfix"></div>
-
-        <!-- bar chart -->
-        <div class="col-md-14">
-                <div class="x_panel">
-                        <div class="x_title">
-                                <h2>ISP Telecom <small>ISIS topology</small></h2>
-                                <ul class="nav navbar-right panel_toolbox">
-                                        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                                        </li>
-                                </li>
-                        </ul>
-                        <div class="clearfix"></div>
+</div>
+<!-- End Modal -->
+<div class="right_col" role="main">
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h3> Select Start time </h3>
+                    <div class='input-group date' id='datetimepicker1' style="width:20%; height:10%;">
+                        <input type='text' class="form-control" />
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                    <h3>Show 20 Intervals from start time </h3>
+                    <div><input type="text" id="time_slider" name="time_slider" value="" /></div>
+                    <div class="x_content">
+                        <!-- Div for d3js topology -->
+                        <div id="topology" style="width:100%; height:100%;">
+                            <!-- Div for legend -->
+                            <div class="x_content" id="legend_div"></div>
+                            <!-- SPF div and checkbox !-->
+                            <div class="checkbox" id="spf_div">
+                                <form>
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" id="spf_check" value="">Activate SPF
+                                    </label>
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" id="dynamic_topology" value="">Dynamic Topology
+                                    </label>
+                                </form>
+                            </div>
+                            <!-- Div for SPF results -->
+                            <div class="spf_results x_content" id="sfp_div1"></div>
+                        </div>
+                    </div>
                 </div>
-                                <div class="row">
-                                        <div class="col-md-12 col-sm-12 col-xs-12">
-                                                <div class="x_panel">
-                                                        <div class="x_title">
-                                                         <h3> Select Start time </h3>
-                                                         <div class='input-group date' id='datetimepicker1' style="width:20%; height:10%;">
-                                                          <input type='text' class="form-control" />
-                                                           <span class="input-group-addon">
-                                                            <span class="glyphicon glyphicon-calendar"></span>
-                                                           </span>
-                                                          </div>
-                                                                <h3>Show 20 Intervals from start time </h3>
-                                                                <div><input type="text" id="time_slider" name="time_slider" value="" /></div>
-                                                                <div class="x_content">
-                                                                        <!-- Div for d3js topology -->
-                                                                        <div id="topology" style="width:100%; height:100%;">
-                                                                                <!-- Div for legend -->
-                                                                                <div class="x_content" id="legend_div"></div>
-                                                                                <!-- SPF div and checkbox !-->
-                                                                                <div class="checkbox" id="spf_div">
-                                              <form>
-                                                <label class="checkbox-inline">
-                                                  <input type="checkbox" id="spf_check" value="">Activate SPF 
-                                                </label>
-                                                <label class="checkbox-inline">
-                                                  <input type="checkbox" id="dynamic_topology" value="">Dynamic Topology
-                                                </label>
-                                              </form>
-                                                                                </div>
-                                                                                <!-- Div for SPF results -->
-                                                                                <div class="spf_results x_content" id="sfp_div1"></div>
-                                                                        </div>
-                                                                </div>
-                                                        </div>
-                                                </div>
-                                        </div>
-                                </div>
+            </div>
         </div>
-</div>
-<!-- /bar charts -->
-<div class="clearfix"></div>
-</div>
+    </div>
 </div>
 
 {% endblock content %}
@@ -132,13 +100,13 @@ var node_position = {{node_position | tojson | safe}}
 var graphData = JSON.parse('{{ values | tojson | safe}}');
 var web_ip = {{app_config|tojson|safe}}
 
-//datepicker 
+//datepicker
 $('#datetimepicker1').datetimepicker({
                 format: 'YYYY-MM-DD HH:mm:ss',
                 stepping: 5}).on("dp.hide", function (e){ update_slider(
                 moment($('#datetimepicker1').data("DateTimePicker").viewDate()._d).format('YYYY-MM-DD HH:mm:ss')
                                                 ) })
-//end datepicker 
+//end datepicker
 
 //slider
 function update_slider(selected_date){
@@ -146,8 +114,8 @@ function update_slider(selected_date){
 url = {{ url_for('api_blueprint.get_links_interval')|tojson }}+'?time='+selected_date
 console.log(url)
 values = getData(url)
-values.then(function (data) { 
-        //update slider data 
+values.then(function (data) {
+        //update slider data
         instance = $("#time_slider").data("ionRangeSlider");
         instance.destroy()
         //lame create again
@@ -174,7 +142,7 @@ $("#time_slider").ionRangeSlider({
 })
 })
 }
-//initial with current data 
+//initial with current data
 $("#time_slider").ionRangeSlider({
     type: "single",
     grid: true,
@@ -195,11 +163,11 @@ $("#time_slider").ionRangeSlider({
         console.log("update");
     }
 });
-//end slider 
+//end slider
 
     create_legend('traffic')
     var source = ""
-    var target = source 
+    var target = source
     var re_source = new RegExp (source);
     var re_target = re_source
     result = data_prepare(graphData,re_source,re_target) //this returns the correct link and nodes
@@ -216,7 +184,7 @@ $("#time_slider").ionRangeSlider({
         }
     });
 
-    //update data 
+    //update data
         function updateData(time) {
         console.log('updateData run with time',time)
         url = {{ url_for('api_blueprint.get_isis_links_time')|tojson }}+'?time='+time
@@ -231,7 +199,7 @@ $("#time_slider").ionRangeSlider({
             run_it.restart(nodes,links,linkstext);
         })
     }
-    //end update data 
+    //end update data
 
 //})
 

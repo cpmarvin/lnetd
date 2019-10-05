@@ -13,88 +13,59 @@
 {% endblock stylesheets %}
 
 {% block content %}
-<div class="right_col" role="main">
-	<div class="">
-		<div class="page-title">
-
-<div class="title_right">
-	<div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right ">
-	</div>
-</div>
-</div>
-</div>
-
-<div class="clearfix"></div>
-
-<div class="row">
-	<!-- Modal used for graphs-->
-	<div class="modal fade" id="modal-top" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog modal-dialog-centered modal-lg " role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="exampleModalLabel">Plotly based Graphs</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body" id="modal-body">
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-				</div>
+<!-- Modal used for graphs-->
+<div class="modal fade" id="modal-top" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-lg " role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Plotly based Graphs</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body" id="modal-body">
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 			</div>
 		</div>
 	</div>
-	<!-- End Modal -->
-
-	<div class="clearfix"></div>
-
-	<!-- bar chart -->
-	<div class="col-md-14">
-		<div class="x_panel">
-			<div class="x_title">
-				<h2>ISP Telecom <small>ISIS topology</small></h2>
-				<ul class="nav navbar-right panel_toolbox">
-					<li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-					</li>
-				</li>
-			</ul>
-			<div class="clearfix"></div>
-		</div>
-				<div class="row">
-					<div class="col-md-12 col-sm-12 col-xs-12">
-						<div class="x_panel">
-							<div class="x_title">
-								<h3>Topology <button onclick="javascript:node_position_save();" class="btn btn-info">Save Layout</button> </h3>
-								<div class="x_content">
-									<!-- Div for d3js topology -->
-									<div id="topology" style="width:100%; height:100%;">
-										<!-- Div for legend -->
-										<div class="x_content" id="legend_div"></div>
-										<!-- SPF div and checkbox !-->
-										<div class="checkbox" id="spf_div">
-                                              <form>
-                                                <label class="checkbox-inline">
-                                                  <input type="checkbox" id="spf_check" value="">Activate SPF 
-                                                </label>
-                                                <label class="checkbox-inline">
-                                                  <input type="checkbox" id="dynamic_topology" value="">Dynamic Topology
-                                                </label>
-                                              </form>
-										</div>
-										<!-- Div for SPF results -->
-										<div class="spf_results x_content" id="sfp_div1"></div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-	</div>
 </div>
-<!-- /bar charts -->
-<div class="clearfix"></div>
-</div>
+<!-- End Modal -->
+<div class="right_col" role="main">
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h3>Topology Region EU
+                        <button onclick="javascript:node_position_save();" class="btn btn-info">Save Layout
+                        </button>
+                    </h3>
+                    <div class="x_content">
+                        <!-- Div for d3js topology -->
+                        <div id="topology" style="width:100%; height:100%;">
+                            <!-- Div for legend -->
+                            <div class="x_content" id="legend_div"></div>
+                            <!-- SPF div and checkbox !-->
+                            <div class="checkbox" id="spf_div">
+                                <form>
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" id="spf_check" value="">Activate SPF
+                                    </label>
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" id="dynamic_topology" value="">Dynamic Topology
+                                    </label>
+                                </form>
+                            </div>
+                            <!-- Div for SPF results -->
+                            <div class="spf_results x_content" id="sfp_div1"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 {% endblock content %}
@@ -114,7 +85,7 @@
 <script>
 var node_position = {{node_position | tojson | safe}}
 var graphData = JSON.parse('{{ values | tojson | safe}}');
-var web_ip = {{app_config|tojson|safe}} 
+var web_ip = {{app_config|tojson|safe}}
 
 //save node position
 function node_position_save(){
@@ -137,7 +108,7 @@ $(document).ready(function() {
 
     create_legend('traffic')
     var source = "gb|fr|nl" // filter source target if neede
-    var target = source 
+    var target = source
     var re_source = new RegExp (source);
     var re_target = re_source
     result = data_prepare(graphData,re_source,re_target) //this returns the correct link and nodes
@@ -168,7 +139,7 @@ $(document).ready(function() {
             //linkedByIndex = result[2]
             run_it.restart(nodes,links,linkstext);
         })
-    }, 60000); //60sec 
+    }, 60000); //60sec
 
 })
 

@@ -31,7 +31,7 @@ function calcTranslationExact(debug,targetDistance, point0, point1) {
   if (y1_y0 === 0) {
     x2_x0 = 0;
     y2_y0 = targetDistance;
-  } 
+  }
   else {
     let angle = Math.atan((x1_x0) / (y1_y0));
     x2_x0 = -targetDistance * Math.cos(angle);
@@ -49,7 +49,7 @@ function calcTranslationExact(debug,targetDistance, point0, point1) {
   var len = dr - ((dr/2) * Math.sqrt(3));
   endX = endX + (  len/dr) ;
   endY = endY + (  len/dr) ;
-    //reverse start and end so that label links switch 
+    //reverse start and end so that label links switch
   if ( endX - d0x > 0 ) {
     callback = "M" + d0x + "," + d0y   + "L" + endX + "," + endY;
   }
@@ -65,7 +65,7 @@ function data_prepare(grapheDatas1,re_source,re_target) {
   //console.log('inside data_prepare data is :' ,grapheDatas1)
 
   function returnX (source) {
-  //result is none at first 
+  //result is none at first
   result = 'none'
   //read from position.js
   //console.log(node_position)
@@ -74,11 +74,11 @@ function data_prepare(grapheDatas1,re_source,re_target) {
     //iterate array
     if (source.trim() == d.id.trim()) {
       result = parseInt(d.x)
-      //console.log('found') 
+      //console.log('found')
     }
   })
-  //if forgot to define site name random x 
-  if ( result == 'none') { 
+  //if forgot to define site name random x
+  if ( result == 'none') {
     result = Math.floor(1 + Math.random()*(900 + 1 - 1 ))
   }
   //console.log('this is the result:',result)
@@ -86,7 +86,7 @@ function data_prepare(grapheDatas1,re_source,re_target) {
 
   }
 
-//need a better way to do this , repeating function is lame 
+//need a better way to do this , repeating function is lame
 function returnY (source) {
   result = 'none'
   node_position.forEach(function (d) {
@@ -109,9 +109,9 @@ grapheDatas1.sort(function(a,b) {
   }
 });
 
-for (var i=0; i<grapheDatas1.length; i++) { 
+for (var i=0; i<grapheDatas1.length; i++) {
   if (i != 0 &&
-    grapheDatas1[i].source == grapheDatas1[i-1].source && grapheDatas1[i].target == grapheDatas1[i-1].target) 
+    grapheDatas1[i].source == grapheDatas1[i-1].source && grapheDatas1[i].target == grapheDatas1[i-1].target)
   {
     grapheDatas1[i].linknum = grapheDatas1[i-1].linknum + 1;
   }
@@ -120,7 +120,7 @@ for (var i=0; i<grapheDatas1.length; i++) {
   };
 };
 
-for (var i = 0, len = grapheDatas1.length; i < len; i++) { 
+for (var i = 0, len = grapheDatas1.length; i < len; i++) {
   pair = grapheDatas1[i].l_ip_r_ip[0]+grapheDatas1[i].l_ip_r_ip[1]
   pair = grapheDatas1[i].l_ip_r_ip
 
@@ -129,7 +129,7 @@ for (var i = 0, len = grapheDatas1.length; i < len; i++) {
     pair2 = grapheDatas1[z].l_ip_r_ip
     if (pair2 == pair ) { grapheDatas1[z].linknum = grapheDatas1[i].linknum }
 
-  } 
+  }
 }
 //push_unique id for each link
 for (var i=0; i<grapheDatas1.length; i++) {
@@ -188,7 +188,7 @@ function node_click(d) {
     { return on_node_click(d);console.log("clicked") }
   }
   else {
-     console.log("click but not if") 
+     console.log("click but not if")
   }
 }
 
@@ -236,10 +236,10 @@ function get_util(d,start) {
     var cur_util = util
     var capacity = d.capacity*1000000
     util = (cur_util*100)/(capacity)
-    legend.forEach(function (d) { 
-      if (util >= d.low && util <= d.high) 
-      { 
-        util = d.id ; 
+    legend.forEach(function (d) {
+      if (util >= d.low && util <= d.high)
+      {
+        util = d.id ;
       }
     })
   }
@@ -259,24 +259,24 @@ function get_util(d,start) {
         { util = "#999"}
       else {
         util = Math.ceil(util)
-        legend.forEach(function (d) { 
-          if (util >= d.low && util <= d.high) 
-          { 
-            util = d.id ; 
+        legend.forEach(function (d) {
+          if (util >= d.low && util <= d.high)
+          {
+            util = d.id ;
           }
         })
       }
       return util
     }
 
-//used in spf calculation , check if link id is equal to spf return 
+//used in spf calculation , check if link id is equal to spf return
 function check_link(id) {
   result = spf_results[0].filter( function (d) { return d.l_ip == id })
   if (typeof(result[0]) !== "undefined") {
-    results = result[0].l_ip 
+    results = result[0].l_ip
   }
   else { results = -1 }
-    return results 
+    return results
 }
 
 
@@ -284,19 +284,19 @@ function check_link(id) {
 //use to calculated node_weight
 function node_weight(d) {
     d.weight = links.filter(function(l) {
-      return l.source.index == d.index // || l.target.index == d.index 
+      return l.source.index == d.index // || l.target.index == d.index
     }).length
     return d.weight
   }
-  
-//tier of connectivity 
+
+//tier of connectivity
 $('#level_topology').change(function() {
       if(this.checked){
           var pathCoord = function(node, index, num_nodes, level){
                   var circumference = level.node().getTotalLength(); //path lenght
                   var pointAtLength = function(l){return level.node().getPointAtLength(l)}; //function to get the point on the path
                   var sectionLength = (circumference)/num_nodes; // distance between nodes
-                  var position = sectionLength*index+sectionLength/2; // split the nodes 
+                  var position = sectionLength*index+sectionLength/2; // split the nodes
                   return pointAtLength(circumference-position)
                       }
                   var level1 = d3.select("#main_svg").select("#main_g").append("path")
@@ -344,36 +344,36 @@ var total_pe = nodes.filter(function(d) { return re_source_pe.test(d.name) }).le
                 else if (d.weight == 1){ //at least 1 link
                   valueToUse = level1
                   link_number1 = link_number1 + 1
-                  var coord = pathCoord(d,link_number1 , total_number1 ,valueToUse) 
-                              d.fx = coord.x 
-                              d.fy = coord.y 
+                  var coord = pathCoord(d,link_number1 , total_number1 ,valueToUse)
+                              d.fx = coord.x
+                              d.fy = coord.y
                 }
                 else if (d.weight == 2){
                   valueToUse = level2
                   link_number2 = link_number2 + 1
-                  var coord = pathCoord(d,link_number2 , total_number2 ,valueToUse) 
-                              d.fx = coord.x 
+                  var coord = pathCoord(d,link_number2 , total_number2 ,valueToUse)
+                              d.fx = coord.x
                               d.fy = coord.y
                 }
                 else if (d.weight == 3){
                   valueToUse = level3
                   link_number3 = link_number3 + 1
-                  var coord = pathCoord(d,link_number3 , total_number3 ,valueToUse) 
-                              d.fx = coord.x 
+                  var coord = pathCoord(d,link_number3 , total_number3 ,valueToUse)
+                              d.fx = coord.x
                               d.fy = coord.y
                 }
                 else if (d.weight == 4){
                   valueToUse = level4
                   link_number4 = link_number4 + 1
-                  var coord = pathCoord(d,link_number4 , total_number4 ,valueToUse) 
-                              d.fx = coord.x 
+                  var coord = pathCoord(d,link_number4 , total_number4 ,valueToUse)
+                              d.fx = coord.x
                               d.fy = coord.y
                 }
                 else if (d.weight >=5){
                   valueToUse = level5
                   link_number5 = link_number5 + 1
                   var coord = pathCoord(d,link_number5 , total_number5 ,valueToUse)
-                              d.fx = coord.x 
+                              d.fx = coord.x
                               d.fy = coord.y
                 }
                 var temp_sel = d3.selectAll(".node").selectAll('text')

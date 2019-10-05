@@ -23,12 +23,17 @@ def main():
   conn = sqlite3.connect("/opt/lnetd/web_app/database.db")
   df_input = pd.read_sql("SELECT * FROM International_PoP_temp", conn)
   df_input = df_input.drop(['index'], axis=1)
-  df_input['util_out'] = df_input.apply(lambda row: get_util_router(row['routers'])[0], axis=1)
-  df_input['util_in'] = df_input.apply(lambda row: get_util_router(row['routers'])[1], axis=1)
-  df_input['capacity'] = df_input.apply(lambda row: get_capacity_router(row['routers']), axis=1)
+  df_input['util_out'] = df_input.apply(
+      lambda row: get_util_router(row['routers'])[0], axis=1)
+  df_input['util_in'] = df_input.apply(
+      lambda row: get_util_router(row['routers'])[1], axis=1)
+  df_input['capacity'] = df_input.apply(
+      lambda row: get_capacity_router(row['routers']), axis=1)
   df_input['text'] = df_input.apply(lambda row: row['name'] + ' <br> Capacity ' + str(row['capacity']) + ' Gbps'
-                                    + ' <br> Util IN ' + str(row['util_in']) + ' Gbps'
-                                    + ' <br> Util OUT ' + str(row['util_out']) + ' Gbps'
+                                    + ' <br> Util IN ' +
+                                      str(row['util_in']) + ' Gbps'
+                                    + ' <br> Util OUT ' +
+                                      str(row['util_out']) + ' Gbps'
                                     + ' <br> Free ' + str(row['capacity'] - max(row['util_out'], row['util_in'])) + ' Gbps', axis=1)
   print('write to db')
   disk_engine = create_engine('sqlite:////opt/lnetd/web_app/database.db')

@@ -38,7 +38,7 @@ $("#lsp_table").on("click", ".ibtnDel_lsp", function (e, value, row, index) {
     });
 })
 
-//end test lsp add 
+//end test lsp add
 
 
 //function to deepcopy an array of objects
@@ -88,7 +88,7 @@ function add_row_demands(){
 }
 
 $('#add_row_demands').click(function() { add_row_demands() })
-// delete row for demands ( lame repeat of code , fix me !!! ) 
+// delete row for demands ( lame repeat of code , fix me !!! )
 //delete row if button with .ibtnDel click
 $("#demands_table").on("click", ".ibtnDel_demands", function (e, value, row, index) {
     //$(this).closest("tr").remove();
@@ -103,7 +103,7 @@ $("#demands_table").on("click", ".ibtnDel_demands", function (e, value, row, ind
     });
 })
 //
-//function to add another row ( add both the form and reverse ) 
+//function to add another row ( add both the form and reverse )
 function editObject() {
     if ($('#add-link-form').parsley().validate() ) {
         var entry = $('#add-link-form').serializeArray()
@@ -210,12 +210,12 @@ function reset_demand_only() {
     var table = $('#table')
     table_data = table.bootstrapTable('getData',false);
     new_data = JSON.parse(JSON.stringify(table_data))
-    new_data.forEach( function (d) { 
+    new_data.forEach( function (d) {
         d.util =0 })
     $('#table').bootstrapTable("load", new_data);
 }
 
-//forcast function 
+//forcast function
 function forecast_data(df_bps, df_bps_lower, df_bps_upper) {
     // create selector
     var selectorOptions = {

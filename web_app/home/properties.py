@@ -6,4 +6,4 @@ pretty_names = OrderedDict([
     ('BPrefix_per_country', 'Prefixes per Country'),
     ('CPrefix_per_router', 'Top 10 Router by prefixes'),
     ('DLinks_per_router', 'Top 10 Router by links'),
-    ])
+])

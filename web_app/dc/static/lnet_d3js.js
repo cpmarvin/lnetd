@@ -1,5 +1,5 @@
 function lnet_d3js(web_ip,result,type){
-  nodes = result[1] 
+  nodes = result[1]
   links = result[0]
   linkstext = result[0]
   var linkedByIndex = {}
@@ -17,8 +17,8 @@ function lnet_d3js(web_ip,result,type){
   var simulation = d3.forceSimulation(nodes)
       .force("charge", d3.forceManyBody().strength(-800))
       .force("link", d3.forceLink(links).distance(10).strength(0))
-      .force("x", d3.forceX(300)) //center to x 300 , only used when dynamic 
-      .force("y", d3.forceY(300)) // center to y 300, only used when dynamic 
+      .force("x", d3.forceX(300)) //center to x 300 , only used when dynamic
+      .force("y", d3.forceY(300)) // center to y 300, only used when dynamic
       .alphaTarget(1)
       .on("tick", ticked);
   var g = svg.append("g").attr("id","main_g")
@@ -59,10 +59,10 @@ function lnet_d3js(web_ip,result,type){
                   node.fy = node.y
                 })
 //end
-//drag 
+//drag
 const mouseOverFunction = function (d) {
-  // const circle = d3.select(this); //not needed for now 
-  node 
+  // const circle = d3.select(this); //not needed for now
+  node
     .transition(500)
       .style('opacity', (o) => {
         //console.log('d si o on mouseOverFunction',d,o)
@@ -139,7 +139,7 @@ const mouseOutFunction = function () {
         .attr("x", 12)
         .style("font-size", "30px")
         .text(function(d) {return d.name ;});
-        
+
       node = nodeEnter.merge(node); // enter + update
 
   // Apply the general update pattern to the links.
@@ -195,7 +195,7 @@ const mouseOutFunction = function () {
                     else{
                       return "util: " + (d.util/1000000000).toFixed(2) + "Gbps"
                     }
-                  })   
+                  })
   linktext = linktextEnter.merge(linktext)
 
   // Update and restart the simulation.
@@ -215,5 +215,5 @@ const mouseOutFunction = function () {
 
   node
     .attr("transform", function(d) {return "translate(" + d.x + "," + d.y + ")";});
-  }    
+  }
 }

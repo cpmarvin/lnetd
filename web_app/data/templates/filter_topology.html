@@ -26,8 +26,6 @@
 			<input type="text" class="form-control" name= "source_filter" id="source_filter" placeholder="eg gb-p|fr-p ">
 		</div>
 		<div class="form-group mx-sm-3 input-group">
-			<label for="target_filter" class="sr-only">Target</label>
-			<input type="text" class="form-control" id="target_filter" placeholder="eg gb-p|fr-p">
 			<span class="input-group-btn">
 				<button class="btn btn-primary btn-success" type="submit" name="filter_topology">Go!</button>
 			</span>
@@ -73,7 +71,7 @@
 										<div class="checkbox" id="spf_div">
                                               <form>
                                                 <label class="checkbox-inline">
-                                                  <input type="checkbox" id="spf_check" value="">Activate SPF 
+                                                  <input type="checkbox" id="spf_check" value="">Activate SPF
                                                 </label>
                                                 <label class="checkbox-inline">
                                                   <input type="checkbox" id="dynamic_topology" value="">Dynamic Topology
@@ -105,7 +103,7 @@
 {% block javascripts %}
   {{ super() }}
 <!-- <script src="{{ url_for('static', filename='vendors/d3.js/d3.min.js') }}"></script> -->
-<script src="{{ url_for('static', filename='custom/topology/create_legend.js') }}"></script> 
+<script src="{{ url_for('static', filename='custom/topology/create_legend.js') }}"></script>
 <script src="{{ url_for('static', filename='vendors/plotly/plotly-latest.min.js') }}"></script>
 <script src="{{ url_for('static', filename='custom/topology/create_graph.js') }}"></script>
 <script src="{{ url_for('static', filename='custom/topology/getSPF.js') }}"></script>
@@ -117,15 +115,13 @@
     var node_position = {{node_position|tojson|safe}}
 	var graphData = JSON.parse('{{ values | tojson | safe}}');
 	var source = '{{source_filter}}'
-        var web_ip = {{app_config|tojson|safe}}
+    var web_ip = {{app_config|tojson|safe}}
     var target = '{{target_filter}}'
 	$(document).ready(function() {
-		create_legend('traffic') 
+		create_legend('traffic')
         var re_source = new RegExp (source);
         var re_target = new RegExp (target);
 		result = data_prepare(graphData,re_source,re_target) //this returns the correct link and nodes
-		console.log('source:',source,'target:',target)
-		console.log(result)
 		var run_it = new lnet_d3js(web_ip,result,'traffic') //run lnet_d3js
         run_it.restart(result[1],result[0],result[0]) //draw
 
@@ -139,7 +135,7 @@
         }
     });
 	})
-	
+
 </script>
 
 {% endblock javascripts %}

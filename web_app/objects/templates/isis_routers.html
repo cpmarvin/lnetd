@@ -9,74 +9,112 @@
   <link href="{{ url_for('static', filename='vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css') }}" rel="stylesheet">
   <link href="{{ url_for('static', filename='vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css') }}" rel="stylesheet">
   <link href="{{ url_for('static', filename='vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css') }}" rel="stylesheet">
+    <!--alertify -->
+  <link href="{{ url_for('static', filename='vendors/alertifyjs/css/themes/bootstrap.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendors/alertifyjs/css/alertify.css') }}" rel="stylesheet">
 {% endblock stylesheets %}
 
 {% block content %}
-  <div class="right_col" role="main">
-    <div class="">
-      <div class="page-title">
-        <div class="title_left">
-          <h3>ISP Telecom <small>all routers from ISIS database</small></h3>
-        </div>
 
-        <div class="title_right">
-          <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+<!--Edit links Modal-->
+<div id="edit-router" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true></span>
+        </button>
+        <h4 class="modal-title" id="title">Edit Router </h4>
+      </div>
+      <form id="app-config-form" data-parsley-validate class="form-horizontal form-label-left" method="post">
+        <div class="modal-body">
+                    <div class="form-group float-label-control">
+                        <label for="">Router</label>
+                        <input type="text" name='router_name' class="form-control required" readonly value={{values.name}}
+                    </div>
+                    <div class="form-group float-label-control">
+                        <label for="">TACACS</label>
+                              <select class="form-control" name="tacacs">
+        {% for n in tacacs_id %}
+                                    <option value={{n.id}} >{{n.name}}</option>
+        {% endfor %}
+                              </select>
+                    </div>
           </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-success" onclick="app_edit_router()">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!--Edit links Modal-->
+<div class="right_col" role="main">
+  <div class="">
+    <div class="page-title">
+      <div class="title_left">
+        <h3>ISP Telecom <small>all routers from ISIS database</small></h3>
+      </div>
+      <div class="title_right">
+        <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
         </div>
       </div>
-
-      <div class="clearfix"></div>
-
-      <div class="row">
-        <div class="col-md-12 col-sm-12 col-xs-12">
-          <div class="x_panel">
-            <div class="x_title">
-              <h2>Routers</h2>
-              <ul class="nav navbar-right panel_toolbox">
-                <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                </li>
-              </ul>
-              <div class="clearfix"></div>
-            </div>
-            <div class="x_content">
-              <table id="datatable" class="table table-striped table-bordered">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>IP</th>
-                    <th>Country</th>
-                    <th>Vendor</th>
-                    <th>Model</th>
-                    <th>Version</th>
-                  </tr>
-                </thead>
-
-
-                <tbody>
- 		 {% for node in values %}
-                  <tr>
-                    <td>{{node.name}}</td>
-                    <td>{{node.ip}}</td>
-                    <td>{{node.country}}</td>
-                    <td> {{names[node.vendor]}}</td>
-                    <td>{{node.model}}</td>
-                    <td>{{node.version}}</td>
-                  </tr>
-		{% endfor %}
-
-                </tbody>
-              </table>
-            </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+          <div class="x_title">
+            <h2>Routers</h2>
+            <ul class="nav navbar-right panel_toolbox">
+              <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+              </li>
+            </ul>
+            <div class="clearfix"></div>
           </div>
-        </div>
-
-
-            </div>
-          </div>
+          <div class="x_content">
+            <table id="datatable" class="table table-striped table-bordered">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>IP</th>
+                  <th>Country</th>
+                  <th>Vendor</th>
+                  <th>Model</th>
+                  <th>Version</th>
+                  <th>Tacacs</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for node in values %}
+                <tr>
+                  <td>{{node.name}}</td>
+                  <td>{{node.ip}}</td>
+                  <td>{{node.country}}</td>
+                  <td> {{names[node.vendor]}}</td>
+                  <td>{{node.model}}</td>
+                  <td>{{node.version}}</td>
+                  <td>
+                    <a href="#edit-router"
+                    data-toggle="modal" data-val={{node.name}} data-target="#edit-router"
+                    class="label label-default">{{node.tacacs}}
+                  </a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
   </div>
+</div>
+</div>
+</div>
+</div>
+</div>
 {% endblock content %}
 
 {% block javascripts %}
@@ -97,4 +135,31 @@
   <script src="{{ url_for('static', filename='vendors/jszip/dist/jszip.min.js') }}"></script>
   <script src="{{ url_for('static', filename='vendors/pdfmake/build/pdfmake.min.js') }}"></script>
   <script src="{{ url_for('static', filename='vendors/pdfmake/build/vfs_fonts.js') }}"></script>
+    <!-- alertifyjs -->
+  <script src="{{ url_for('static', filename='vendors/alertifyjs/alertify.min.js') }}"></script>
+  <script>
+    //triggered when modal is about to be shown
+$('#edit-router').on('show.bs.modal', function(e) {
+    //get data-val attribute of the clicked element
+    var router_name = $(e.relatedTarget).data('val');
+    //populate the textbox
+    $(e.currentTarget).find('input[name="router_name"]').val(router_name);
+});
+function app_edit_router() {
+  if ($('app-config-form')) {
+    $.ajax({
+      type: 'POST',
+      url: '/admin/app_edit_router',
+      dataType: 'json',
+      data: $('#app-config-form').serialize(),
+      error: function(result) { alertify.notify('error', 'error', 5);},
+      success: function(result) {
+        alertify.notify('Tacacs Changed', 'success', 5);
+        $('#edit-router').modal('toggle') ;
+        setTimeout(location.reload.bind(location), 1000);
+      }
+    });
+  }
+}
+  </script>
 {% endblock javascripts %}

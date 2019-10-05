@@ -9,46 +9,6 @@
 {% endblock stylesheets %}
 
 {% block content %}
-  <div class="right_col" role="main">
-    <!-- top tiles -->
-    <div class="row tile_count" style="height: 10px;">
-      <div class="col-md-3 col-sm-3 col-xs-3 tile_stats_count">
-        <span class="count_top"><i class="fa fa-area-chart"></i> Total Traffic</span>
-        <div class="count">{{(total_inbound/1000000000)|round(2)}} Gbs</div>
-      </div>
-      <div class="col-md-3 col-sm-3 col-xs-3 tile_stats_count">
-        <span class="count_top"><i class="fa fa-pie-chart"></i> Total Transit</span>
-        <div class="count">{{(total_transit/1000000000)|round(2)}} Gbs</div>
-      </div>
-      <div class="col-md-3 col-sm-3 col-xs-3 tile_stats_count">
-        <span class="count_top"><i class="fa fa-thumbs-up"></i> Total Peering</span>
-        <div class="count">{{(total_peering/1000000000)|round(2)}} Gbs</div>
-      </div>
-      <div class="col-md-3 col-sm-3 col-xs-3 tile_stats_count">
-        <span class="count_top"><i class="fa fa-sitemap"></i> Total CDN</span>
-        <div class="count">{{(total_cdn/1000000000)|round(2)}} Gbs</div>
-      </div>
-    </div>
-   
-    <!-- /top tiles -->
-<!--
-    <div class="">
-       <div class="page-title">
-        <div class="title_left">
-          <h3>Morris Js</h3>
-        </div>
-        <div class="title_right">
-          <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right ">
-            </div>
-          </div>
-        </div>
-      </div>
--->
-      <div class="clearfix"></div>
-
-      <div class="row">
-
-
 <!-- Modal -->
 <div class="modal fade" id="modal-top" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg " role="document">
@@ -68,55 +28,64 @@
   </div>
 </div>
 <!-- End Modal -->
-        <!-- bar charts group -->
-
-
-        <div class="clearfix"></div>
-        <!-- /bar charts group -->
-
-        <!-- bar chart -->
-        <div class="col-md-14">
-          <div class="x_panel">
-            <div class="x_title">
-              <h2>ISP Telecom - P&T 
-              <button onclick="javascript:node_position_save();" class="btn btn-info">Save Layout</button> </h2>
-              <ul class="nav navbar-right panel_toolbox">
-                <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                </li>
-                </li>
-              </ul>
-              <div class="clearfix"></div>
-            </div>
-            <div class="x_content">
-              <div id="topology" style="width:100%; height:1120px;">
-		<!-- SPF checkbox !-->
-                <div id="legend_div"></div>
-                </div>
-		<!-- SPF checkbox End !-->
-	     </div>
-            </div>
-          </div>
+<div class="right_col" role="main">
+  <!-- top tiles -->
+  <div class="row tile_count" style="height: 10px;">
+    <div class="col-md-3 col-sm-3 col-xs-3 tile_stats_count">
+      <span class="count_top"><i class="fa fa-area-chart"></i> Total Traffic</span>
+      <div class="count">{{(total_inbound/1000000000)|round(2)}} Gbs</div>
+    </div>
+    <div class="col-md-3 col-sm-3 col-xs-3 tile_stats_count">
+      <span class="count_top"><i class="fa fa-pie-chart"></i> Total Transit</span>
+      <div class="count">{{(total_transit/1000000000)|round(2)}} Gbs</div>
+    </div>
+    <div class="col-md-3 col-sm-3 col-xs-3 tile_stats_count">
+      <span class="count_top"><i class="fa fa-thumbs-up"></i> Total Peering</span>
+      <div class="count">{{(total_peering/1000000000)|round(2)}} Gbs</div>
+    </div>
+    <div class="col-md-3 col-sm-3 col-xs-3 tile_stats_count">
+      <span class="count_top"><i class="fa fa-sitemap"></i> Total CDN</span>
+      <div class="count">{{(total_cdn/1000000000)|round(2)}} Gbs</div>
+    </div>
+  </div>
+  <div class="clearfix"></div>
+  <div class="row">
+    <div class="clearfix"></div>
+    <div class="col-md-14">
+      <div class="x_panel">
+        <div class="x_title">
+          <h2>ISP Telecom - P&T
+            <button onclick="javascript:node_position_save();" class="btn btn-info">Save Layout</button> </h2>
+            <ul class="nav navbar-right panel_toolbox">
+              <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+              </li>
+            </li>
+          </ul>
+          <div class="clearfix"></div>
         </div>
-        <!-- /bar charts -->
-              <div class="clearfix"></div>
-
-
-
-
-              </div>
-            </div>
+        <div class="x_content">
+          <div id="topology" style="width:100%; height:1120px;">
+            <div id="legend_div"></div>
           </div>
         </div>
       </div>
     </div>
   </div>
+  <div class="clearfix"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 
 {% endblock content %}
 
 {% block javascripts %}
   {{ super() }}
 
-<script src="{{ url_for('map_blueprint.static', filename='create_legend_type.js') }}"></script> 
+<script src="{{ url_for('map_blueprint.static', filename='create_legend_type.js') }}"></script>
 <script src="{{ url_for('static', filename='vendors/plotly/plotly-latest.min.js') }}"></script>
 <script src="{{ url_for('map_blueprint.static', filename='create_graph.js') }}"></script>
 <script src="https://d3js.org/d3.v4.min.js"></script>
@@ -148,7 +117,7 @@ function node_position_save(){
 	var source = ''
         var target = ''
 	$(document).ready(function() {
-		create_legend('traffic') 
+		create_legend('traffic')
         var re_source = new RegExp (source);
         var re_target = new RegExp (target);
 		result = data_prepare(graphData,re_source,re_target) //this returns the correct link and nodes
