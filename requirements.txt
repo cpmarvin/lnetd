@@ -7,7 +7,7 @@ pandas
 flask_cors
 influxdb
 networkx
-junos-eznc
+junos-eznc==2.2.1
 numpy
 nornir
 argon2_cffi
