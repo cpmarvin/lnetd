@@ -13,3 +13,4 @@ nornir
 argon2_cffi
 simple-crypt
 pynetbox
+redis
