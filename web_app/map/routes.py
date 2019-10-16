@@ -11,6 +11,12 @@ from objects.models import International_PoP,International_PoP_temp
 from objects.models import App_external_flows
 
 from .generate_data import generate_data
+from .mutils import generat_unique_info
+
+from influxdb import InfluxDBClient
+INFLUXDB_HOST = '127.0.0.1'
+INFLUXDB_NAME = 'telegraf_agg'
+client = InfluxDBClient(INFLUXDB_HOST, '8086', '', '', INFLUXDB_NAME)
 
 blueprint = Blueprint(
     'map_blueprint', 
@@ -125,3 +131,37 @@ def internation_pop():
     df_eu = pd.read_sql(qry,db.session.bind)
     df_eu = df_eu.to_dict(orient='records')
     return render_template('international_pop.html', values=internation_pop,df_ea=df_ea,df_sa=df_sa,df_eu=df_eu)
+
+@blueprint.route('/peer_report')
+@login_required
+def peer_report():
+    objects_counters = generat_unique_info()
+    objects_counters = sorted(objects_counters , key = lambda i: i['index'])
+    #print(objects_counters)
+    return render_template('peer_report.html',objects_counters=objects_counters)
+
+@blueprint.route('/get_graph_data',methods=['GET', 'POST'])
+@login_required
+def get_graph_data():
+    rvalue = request.args
+    if rvalue['type'] != '':
+        query = f'''select max(bps_out) as bps_out ,max(bps_in) as bps_in from h_transit_statistics where country =~/{rvalue['country']}/
+        and pop =~/{rvalue['pop']}/
+        and target =~ /{rvalue['type']}/
+        AND time >= now()- 7d and time < now()
+                        GROUP BY time(1h)'''
+    else:
+        query = f'''select max(bps_out) as bps_out ,max(bps_in) as bps_in from h_transit_statistics where country =~/{rvalue['country']}/
+        and pop =~/{rvalue['pop']}/
+        and target =~ /{rvalue['target']}/
+        AND time >= now()- 7d and time < now()
+                        GROUP BY time(1h)'''
+    result = client.query(query)
+    t = list(result.get_points(measurement='h_transit_statistics'))
+    df = pd.DataFrame(t)
+    df = df.fillna(0)
+    df['div_id'] = rvalue['index']
+    df['name'] = rvalue['name']
+    result = df.reindex(columns=["time","bps_in","bps_out","div_id","name"]).to_dict(orient='records')
+    #print(df)
+    return jsonify(result)

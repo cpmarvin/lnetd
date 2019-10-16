@@ -34,3 +34,73 @@ def return_cc(name):
         return name[:2]
     else:
         return 'NO-NHS'
+
+def check_type(source):
+    if 'TRANS' in source:
+        return 'TRANS'
+    elif 'CDN' in source:
+        return 'CDN'
+    elif 'PEER' in source:
+        return 'PEER'
+    else:
+        return 'none'
+
+def get_lnetd_external():
+    '''
+    Fetch current LnetD target data from External Topology
+    and return a panda
+    '''
+    #connect to sqllite lnetd
+    conn = sqlite3.connect("/opt/lnetd/web_app/database.db")
+    #create pandas frame
+    sql='''SELECT source,target,node from External_topology'''
+    df = pd.read_sql(sql, conn)
+    return df
+
+def generat_unique_info():
+    df = get_lnetd_external()
+    #drop row that have both source and node the same
+    df = df[df['source'] == df['node']]
+
+    df.loc[:, 'country'] = df['source'].str[0:2]
+    df['pop'] = df['source'].apply(lambda x: x.split('-')[2])
+    df['type'] = df.apply(lambda row: check_type(row['target']), axis=1)
+    # per type of traffic
+    df_type = df[['type']].drop_duplicates()
+    df_type['name'] = 'All ' + df_type['type'].str.upper() + ' traffic'
+    df_type.reset_index(drop=True, inplace=True)
+    #per country
+    df_country = df[['country']].drop_duplicates()
+    df_country['name'] = 'All traffic in country: ' + df_country['country']
+    df_country.reset_index(drop=True, inplace=True)
+    #per country and type
+    df_country_type = df[['country', 'type']].drop_duplicates()
+    df_country_type['name'] = 'All ' + df_country_type['type'].str.upper() + \
+        ' traffic in country: ' + df_country_type['country']
+    df_country_type.reset_index(drop=True, inplace=True)
+    #per pop
+    df_pop = df[['pop']].drop_duplicates()
+    df_pop['name'] = 'All traffic in PoP: ' + df_pop['pop']
+    df_pop.reset_index(drop=True, inplace=True)
+    #per pop and type
+    df_pop_type = df[['pop', 'type']].drop_duplicates()
+    df_pop_type['name'] = 'All ' + df_pop_type['type'].str.upper() + \
+        ' traffic in PoP: ' + df_pop_type['pop']
+    df_pop_type.reset_index(drop=True, inplace=True)
+    #per target
+    df_target = df[['target']].drop_duplicates()
+    df_target['name'] = 'All traffic to : ' + df_target['target']
+    df_target.reset_index(drop=True, inplace=True)
+    #per country , pop and target
+    df_country_pop_target = df[['country', 'pop', 'target']].drop_duplicates()
+    df_country_pop_target['name'] = 'All traffic to : ' + \
+        df_country_pop_target['target'] + ' in PoP ' + df_country_pop_target['pop']
+    df_country_pop_target.reset_index(drop=True, inplace=True)
+    #concatenate all in a final panda
+    df_final = pd.concat([df_type,
+                          df_country, df_country_type, df_pop, df_pop_type, df_target, df_country_pop_target])
+    df_final = df_final.reset_index(drop=True)
+    df_final = df_final.fillna('').reset_index()
+    #print(df_final)
+    final = df_final.to_dict(orient='records')
+    return final

@@ -13,6 +13,7 @@
 */5 * * * * cd /opt/lnetd/inputs/external_topology && python3 generate_topology.py
 #aggregate 1h 
 0 * * * * cd /opt/lnetd/output/h_aggregated/ && python3 h_aggregate_influxdb.py
+0 * * * * cd /opt/lnetd/output/h_aggregated/ && python3 transit_h_aggregate_influxdb.py
 #get latency
 0 * * * * cd /opt/lnetd/inputs/nornir && python3 get_latency.py
 #get bgp peers

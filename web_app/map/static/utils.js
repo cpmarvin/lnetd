@@ -82,3 +82,118 @@ function reset_demand_only() {
     $('#table').bootstrapTable("load", new_data);
 }
 
+
+function graph_aggr(data,capacity,graph_id,source_cc,target_cc) {
+    var rawDataURL = data
+    //lame , promise issues
+    div_id = data[0]['div_id']+'div_id'
+    console.log('this is the div_id inside graph_aggr',div_id)
+    $( "#"+div_id ).empty();
+    title = data[0]['name']
+    // / create selector
+    var selectorOptions = {
+        visible: true,
+        buttons: [{
+            step: 'hour',
+            stepmode: 'backward',
+            count: 24,
+            label: '24h'
+        }, {
+            step: 'day',
+            stepmode: 'backward',
+            count: 14,
+            label: '2weeks'
+        }, {
+            step: 'month',
+            stepmode: 'backward',
+            count: 1,
+            label: '1month'
+        }, {
+            step: 'month',
+            stepmode: 'backward',
+            count: 6,
+            label: '6months'
+        }, {
+            step: 'all',
+            label: 'all'
+        }],
+    };
+    // //prepare the graph
+    var data = [ prepData(data), prepDataIn(data) ];
+    var layout = {
+        showlegend: true,
+        autoresize: true,
+        width: document.getElementById(div_id).clientWidth,
+        height: 371,
+        margin: {
+         l: 50,
+         r: 0,
+         b: 40,
+         t: 0,
+         pad: 0,
+        },
+        title1: title,
+        xaxis: {
+            fixedrange: true,
+            rangeselector: selectorOptions,
+            rangeslider: {},
+            type: 'date',
+            title: 'Time',
+        },
+        yaxis: {
+            fixedrange: true,
+            autotick: true,
+            autorange: true,
+            tickformat: ".3s",
+            title: 'Mbps'
+        }
+    };
+
+    Plotly.newPlot(div_id, data, layout);
+    // //prepare the data
+    function prepData(rawData) {
+        //map the fields
+        var xField = 'time';
+        var yField = 'bps_out';
+        var x = [];
+        var y = [];
+
+        rawData.forEach(function(datum, i) {
+
+            x.push(new Date(datum[xField]));
+            y.push(datum[yField]); });
+
+        return {
+            mode: 'lines',
+            connectgaps: 'false',
+            fill: 'tonexty',
+            fillcolor: '#99CCFF',
+            line: {width: 1, shape: 'spline', color: '#99CCFF'},
+            name: 'OUT',
+            x: x,
+            y: y
+        }; }
+     //prepare the data trace2 bps_in
+    function prepDataIn(rawData) {
+        //map the fields
+        var xField = 'time';
+        var yField = 'bps_in';
+        var x = [];
+        var y = [];
+
+        rawData.forEach(function(datum, i) {
+
+            x.push(new Date(datum[xField]));
+            y.push(-datum[yField]); });
+
+        return {
+            mode: 'lines',
+            connectgaps: 'false',
+            fill: 'tozeroy',
+            fillcolor: '#57b88f',
+            line: {width: 1, shape: 'spline', color: '#57b88f'},
+            name: 'IN',
+            x: x,
+            y: y
+        }; }
+}

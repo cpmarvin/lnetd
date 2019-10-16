@@ -60,3 +60,46 @@ def get_util_ifIndex(hostname,interface,start):
         result = int(round(df[0]['bps']))
         time = df[0]['time']
         return [result,time]
+
+def get_util_ifName(hostname, interface):
+    if interface == 0:
+        return 0
+    timestamp = datetime.datetime.utcnow().isoformat()
+
+    queryurl = '''SELECT non_negative_derivative(percentile(ifHCOutOctets,95), 1s) *8 as bps_out,
+                   non_negative_derivative(percentile(ifHCInOctets,95), 1s) *8 as bps_in from
+                        interface_statistics where hostname =~ /%s/ and  ifName = '%s'
+                        AND time >= now()- 1h and time < now()
+                        GROUP BY time(1h)''' % (hostname, interface)
+
+    # print(queryurl)
+    result = client.query(queryurl)
+    points = list(result.get_points(measurement='interface_statistics'))
+    if not points:
+        return 0
+
+    df = pd.DataFrame(points)
+    # print(df.head(1).values.tolist())
+    df = df.to_dict(orient='records')
+    result_out = int(round(df[0]['bps_out']))
+    result_in = int(round(df[0]['bps_in']))
+    time = df[0]['time']
+    return [result_out, result_in, time]
+
+
+def get_capacity_ifName(hostname, interface):
+    if interface == 0:
+        return 0
+    timestamp = datetime.datetime.utcnow().isoformat()
+
+    queryurl = '''SELECT last(ifHighSpeed) as capacity from interface_statistics
+            where hostname =~ /%s/ and  ifName = '%s' ''' % (hostname, interface)
+    result = client.query(queryurl)
+    points = list(result.get_points(measurement='interface_statistics'))
+    if not points:
+        return -1
+    df = pd.DataFrame(points)
+    df = df.to_dict(orient='records')
+    result = int(round(df[0]['capacity']))
+    return result
+
