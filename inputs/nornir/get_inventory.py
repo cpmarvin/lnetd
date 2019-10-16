@@ -14,6 +14,10 @@ from mutils import get_cards_jnp,get_cards_xr
 import warnings
 warnings.filterwarnings(action='ignore',module='.*paramiko.*')
 
+#fix ntc-templates
+import os
+os.environ['NET_TEXTFSM'] = '/opt/lnetd/inputs/nornir/ntc-templates/'
+
 #filter function
 def core_device_jnp(host):                                                          
     return bool(re.search('.',host.name) and (host['type'] == 'juniper')) 
