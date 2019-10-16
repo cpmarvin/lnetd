@@ -35,8 +35,18 @@ def inventory_interface():
 @login_required
 def inventory_device():
     device_cc = request.form.get('device_cc')
+    # get list of routers from inventory
+    df_router_name = pd.read_sql(db.session.query(
+        Inventory_cards.router_name.distinct()).statement, db.session.bind)
+    router_name = df_router_name.sort_values(
+        by='anon_1').to_dict(orient='records')
     if (device_cc == None):
-        device_cc = 'gb-pe8-lon'
+        #device_cc = 'gb-pe8-lo'
+        return render_template('inventory_device.html', router_name=router_name, device_cc='',
+                           cards='', values='',
+                           router_model='', router_model_js='',
+                           rtr_interfaces='',
+                           cards_inv='')
     # get router model
     qry = db.session.query(Routers).filter(
         and_(Routers.name.like(device_cc))).statement
@@ -73,11 +83,6 @@ def inventory_device():
     # add 0 instead of NA
     rtr_interfaces = df_final.fillna(0)
     rtr_interfaces = rtr_interfaces.to_dict(orient='records')
-    # get list of routers from inventory
-    df_countries = pd.read_sql(db.session.query(
-        Inventory_cards.router_name.distinct()).statement, db.session.bind)
-    router_name = df_countries.sort_values(
-        by='anon_1').to_dict(orient='records')
     return render_template('inventory_device.html', router_name=router_name, device_cc=device_cc,
                            cards=cards, values=interface,
                            router_model=router_model, router_model_js=router_model_js,
