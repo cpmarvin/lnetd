@@ -49,22 +49,7 @@ def get_cards_jnp(task):
     hostname = task.host.name
     username = task.host.username
     password = task.host.password
-    yml = '''
----
-chassis:
- rpc: get-chassis-inventory
- args:
-  extensive: True
- item: chassis/description
- key: chassis-module
- view: chassisView
- 
-chassisView:
- fields:
-  name: name
-  model_number: model-number
-'''
-    globals().update(FactoryLoader().load(yaml.load(yml)))
+
     dev = Device(host=hostname, user=username, password=password, port='830', gather_facts=False)
     try:
       dev.open()
@@ -92,7 +77,7 @@ def get_cards_xr(router,output):
     try:
         df = pd.DataFrame(output)
         df = df.drop(['config_state'], axis=1)
-        df.columns = ['card_slot','card_status','card_name']
+        df.columns = ['card_slot','card_name','card_status']
         df['router_name'] = router
         return(df)
     except Exception as e:

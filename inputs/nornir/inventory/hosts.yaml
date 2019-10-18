@@ -1,11 +1,4 @@
 ---
-nl-p7-ams:
-    hostname: 10.13.13.13
-    port: 22
-    groups:
-        - cisco-xr
-        - nl
-        - xr_tacacs
 ke-pe3-nbi:
     hostname: 10.3.3.3
     port: 22
@@ -63,6 +56,12 @@ fr-p7-mrs:
         - juniper
         - fr
         - jnp_tacacs
+nl-p13-ams:
+    hostname: 10.13.13.13
+    port: 22
+    groups:
+        - cisco-xr
+        - xr_tacacs
 #cumulus
 spine01:
     hostname: 172.16.0.126
