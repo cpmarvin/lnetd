@@ -12,7 +12,7 @@ blueprint = Blueprint(
 
 
 from database import db
-from .models import Routers, Prefixes, Links, Tacacs
+from .models import Routers, Prefixes, Links, Tacacs, Tag
 
 
 @blueprint.route('/isis_prefixes')
@@ -21,14 +21,18 @@ def isis_prefixes():
     isis_prefixes = Prefixes.query.all()
     return render_template('isis_prefixes.html', values=isis_prefixes)
 
-
 @blueprint.route('/isis_routers')
 @login_required
 def isis_routers():
     isis_routers = Routers.query.all()
     tacacs_id = Tacacs.query.all()
-    return render_template('isis_routers.html', values=isis_routers, names=pretty_names, tacacs_id=tacacs_id)
-
+    tag_values = Tag.query.all()
+    import pandas as pd
+    tag_values = pd.read_sql(db.session.query(Tag).statement,db.session.bind)
+    tag_values['text'] = tag_values['name']
+    tag_values['id'] = tag_values['name']
+    tag_values = tag_values.to_dict(orient='records')
+    return render_template('isis_routers.html', values=isis_routers, names=pretty_names, tacacs_id=tacacs_id,tag_values = tag_values)
 
 @blueprint.route('/isis_links')
 @login_required

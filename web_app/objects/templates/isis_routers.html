@@ -12,6 +12,7 @@
     <!--alertify -->
   <link href="{{ url_for('static', filename='vendors/alertifyjs/css/themes/bootstrap.css') }}" rel="stylesheet">
   <link href="{{ url_for('static', filename='vendors/alertifyjs/css/alertify.css') }}" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
 {% endblock stylesheets %}
 
 {% block content %}
@@ -30,16 +31,22 @@
         <div class="modal-body">
                     <div class="form-group float-label-control">
                         <label for="">Router</label>
-                        <input type="text" name='router_name' class="form-control required" readonly value={{values.name}}
+                        <input type="text" name='router_name' class="form-control required" readonly value=
                     </div>
                     <div class="form-group float-label-control">
-                        <label for="">TACACS</label>
+                        <br><label for="">TACACS</label><br>
                               <select class="form-control" name="tacacs">
         {% for n in tacacs_id %}
                                     <option value={{n.id}} >{{n.name}}</option>
         {% endfor %}
                               </select>
                     </div>
+
+                    <div id = 'replace' class="form-group float-label-control">
+			<label for="">Tags</label><br>
+			<select class="form-control" name="id_tags" id="id_tags" style="width: 100%"></select>
+                    </div>
+
           </div>
         </div>
         <div class="modal-footer">
@@ -90,7 +97,11 @@
               <tbody>
                 {% for node in values %}
                 <tr>
-                  <td>{{node.name}}</td>
+                  <td>{{node.name}}<br>
+		  {% for tag in node.tags %}
+		  <span class="label label-info">{{tag.name}}</span>
+		  {% endfor %}
+		  </td>
                   <td>{{node.ip}}</td>
                   <td>{{node.country}}</td>
                   <td> {{names[node.vendor]}}</td>
@@ -98,10 +109,10 @@
                   <td>{{node.version}}</td>
                   <td>
                     <a href="#edit-router"
-                    data-toggle="modal" data-val={{node.name}} data-target="#edit-router"
+                    data-toggle="modal" data-val={{node.name}} data-tags = "{%- for tag in node.tags -%}{{tag.name}},{%- endfor -%}" data-target="#edit-router"
                     class="label label-default">{{node.tacacs}}
                   </a>
-                </td>
+		 </td>
               </tr>
               {% endfor %}
             </tbody>
@@ -137,24 +148,53 @@
   <script src="{{ url_for('static', filename='vendors/pdfmake/build/vfs_fonts.js') }}"></script>
     <!-- alertifyjs -->
   <script src="{{ url_for('static', filename='vendors/alertifyjs/alertify.min.js') }}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
   <script>
-    //triggered when modal is about to be shown
-$('#edit-router').on('show.bs.modal', function(e) {
+    //get all tag values
+    var tag_values = {{tag_values|tojson|safe}}
+
+    $('#edit-router').on('show.bs.modal', function(e) {
+    //get all tags already assign to this device
+    var existing_tags = $(e.relatedTarget).data('tags').split(',');
+
+    var ownerData = JSON.parse(JSON.stringify(tag_values))
+    ownerData.filter(function(value) {
+        if (existing_tags.includes(value['text'])) {
+            value['selected'] = true;
+          }
+        return value;
+       }
+    )
+
+    //make sure no previous selection
+    $('#id_tags').find('option').remove()
+
+    $('#id_tags').select2({
+        dropdownParent: $('#edit-router'),
+        theme: "classic",
+        width: "resolve",
+        tags: true,
+        data: ownerData,
+        multiple: true,
+        allowClear: true,
+        placeholder: "Tags",})
+
     //get data-val attribute of the clicked element
     var router_name = $(e.relatedTarget).data('val');
     //populate the textbox
     $(e.currentTarget).find('input[name="router_name"]').val(router_name);
 });
+
 function app_edit_router() {
   if ($('app-config-form')) {
     $.ajax({
       type: 'POST',
       url: '/admin/app_edit_router',
       dataType: 'json',
-      data: $('#app-config-form').serialize(),
+      data: $('#app-config-form').serialize() + "&all_tags="+ $("#id_tags").val() ,
       error: function(result) { alertify.notify('error', 'error', 5);},
       success: function(result) {
-        alertify.notify('Tacacs Changed', 'success', 5);
+        alertify.notify('Router Changed', 'success', 5);
         $('#edit-router').modal('toggle') ;
         setTimeout(location.reload.bind(location), 1000);
       }

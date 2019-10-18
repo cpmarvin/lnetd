@@ -1,7 +1,7 @@
 from flask_login import UserMixin
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Table
 from sqlalchemy.sql import func
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship,backref
 
 from database import Base
 
@@ -9,9 +9,31 @@ from simplecrypt import encrypt, decrypt
 from base64 import b64encode, b64decode
 
 
+tags = Table('tags',Base.metadata,
+                Column('tag_id', Integer, ForeignKey('Tag.id')),
+                Column('router_name', Integer, ForeignKey('Routers.name')),
+                )
+
+class Tag(Base):
+    __tablename__ = 'Tag'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(32), unique=True)
+
+    def __init__(self, **kwargs):
+        for property, value in kwargs.items():
+            if hasattr(value, '__iter__') and not isinstance(value, str):
+                value, = value
+            setattr(self, property, value)
+
+    def __repr__(self):
+        return str(self.name)
+
 class Routers(Base, UserMixin):
 
     __tablename__ = 'Routers'
+
+    tags = relationship('Tag', secondary=tags,
+                           backref=backref('Routers', lazy='dynamic'))
 
     index = Column(Integer, primary_key=True)
     name = Column(String(300), unique=True)

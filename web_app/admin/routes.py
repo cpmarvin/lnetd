@@ -3,7 +3,7 @@ from flask_login import login_required
 from base.basic_role import requires_roles
 
 from database import db
-from objects.models import App_config, App_external_flows, Tacacs, Routers
+from objects.models import App_config, App_external_flows, Tacacs, Routers, Tag
 from base.models import User
 
 import pandas as pd
@@ -106,16 +106,39 @@ def app_external_netflow_save():
         return json.dumps({'success': False}), 400, {'ContentType': 'application/json'}
 
 
+def handle_tags(router_name=None,tags=None):
+    try:
+        router = Routers.query.filter_by(name=str(router_name)).first()
+        #delete all tags on existing router (not safe)
+        router.tags = []
+        all_tags = Tag.query.all()
+        all_tags_list = [ tag.name for tag in all_tags ]
+        for tag in tags:
+            if tag == 'null':
+                return
+            #if its a new tag , add it to tag table
+            if tag not in all_tags_list:
+                entry_tag = Tag(name=tag)
+                db.session.merge(entry_tag)
+                db.session.commit()
+            tag_current = Tag.query.filter_by(name=str(tag)).first()
+            router.tags.append(tag_current)
+    except Exception as e:
+        raise Exception('Error in handle_tags')
+
 @blueprint.route('/app_edit_router', methods=['POST'])
 @login_required
 @requires_roles('admin')
 def app_edit_router():
     try:
         app_add_tacacs = request.form.to_dict()
+        all_tags = app_add_tacacs['all_tags'].split(',')
         router_name = app_add_tacacs['router_name']
         tacacs_id = int(app_add_tacacs['tacacs'])
         router = Routers.query.filter_by(name=router_name).first()
         router.tacacs_id = tacacs_id
+        #take care of tags for this router
+        handle_tags(router,all_tags)
         db.session.merge(router)
         db.session.commit()
         return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}

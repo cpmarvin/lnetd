@@ -1,0 +1,4 @@
+2019-10-18 21:26:08,755 - nornir.plugins.inventory.simple -    DEBUG -   __init__() - File 'defaults.yaml' was not found
+2019-10-18 21:26:09,212 -  nornir.core -     INFO -        run() - Running task 'basic_template' with args {'vars': {'ip': '1.1.1.1', 'asn': '30844', 'router': 'gb-p10-lon', 'peer_group': 'IX-AMSIX-HK', 'description': 'PEER::LIQUID-TELECOMMUNICATIONS-LTD', 'ipv4_limit': 5500, 'ipv6_limit': 1100, 'ip_version': 4}} on 1 hosts
+2019-10-18 21:26:09,216 - nornir.core.task -    DEBUG -      start() - Host 'gb-p10-lon': running task 'basic_template'
+2019-10-18 21:26:09,218 - nornir.core.task -    DEBUG -      start() - Host 'gb-p10-lon': running task 'Base Configuration'
