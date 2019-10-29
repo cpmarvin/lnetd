@@ -365,6 +365,8 @@ class External_topology_temp(Base, UserMixin):
     direction = Column(String(120), unique=False)
     src_icon = Column(String(120), unique=False)
     tar_icon = Column(String(120), unique=False)
+    cir = Column(String(120), unique=False)
+    type = Column(String(120), unique=False)
 
     def __init__(self, **kwargs):
         for property, value in kwargs.items():
@@ -394,6 +396,8 @@ class External_topology(Base, UserMixin):
     l_ip_r_ip = Column(String(120), unique=False)
     util = Column(String(120), unique=False)
     capacity = Column(String(120), unique=False)
+    cir = Column(String(120), unique=False)
+    type = Column(String(120), unique=False)
 
     def __init__(self, **kwargs):
         for property, value in kwargs.items():

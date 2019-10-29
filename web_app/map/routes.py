@@ -38,12 +38,13 @@ def static_map():
     df = pd.read_sql(db.session.query(External_topology).filter(External_topology.index >=0).statement,db.session.bind)
     isis_links = df.to_dict(orient='records')
     df_inbound_total = df.loc[df['direction'] == 'in']
-    df_inbound_transit = df_inbound_total.loc[df['source'].str.contains(r'(TRANS)')]
-    df_inbound_cdn = df_inbound_total.loc[df['source'].str.contains(r'(CDN)')]
+    df_inbound_transit = df_inbound_total.loc[df['type'].str.contains(r'(TRANS)',case=False)]
+    df_inbound_cdn = df_inbound_total.loc[df['source'].str.contains(r'(CDN)',case=False)]
+    df_inbound_peering = df_inbound_total.loc[df['source'].str.contains(r'(PEER)',case=False)]
     total_inbound = df_inbound_total['util'].sum()
     total_transit = df_inbound_transit['util'].sum()
-    total_cdn = df_inbound_cdn['util'].sum()
-    total_peering = total_inbound - total_transit - total_cdn
+    total_cdn = df_inbound_cdn['util'].sum() 
+    total_peering = df_inbound_peering['util'].sum()
     return render_template(
                            'static_map.html',values=isis_links,source_filter = source_filter,target_filter=target_filter,
                                 node_position=node_position,total_inbound=total_inbound,total_transit=total_transit,
@@ -62,15 +63,17 @@ def edit_static_map():
     router_name = df_router_name['anon_1'].values.tolist()
     columns = [
             { "field": "state","checkbox":True },
-            { "field": "id","title":"id","sortable":False},
-            { "field": "index","title":"index","sortable":False},
+            { "field": "id","title":"id","sortable":False,"class":"hide_me"},
+            { "field": "index","title":"index","sortable":False,"class":"hide_me"},
             { "field": "source","title":"source","sortable":True,"editable":True},
             { "field": "target","title":"target","sortable":False,"editable":True},
             { "field": "node","title":"node","sortable":False,"editable":True},
             { "field": "interface","title":"interface","sortable":False,"editable":True},
             { "field": "direction","title":"direction","sortable":False,"editable":True},
-            { "field": "src_icon","title":"src_icon","sortable":False,"editable":True},
-            { "field": "tar_icon","title":"tar_icon","sortable":False,"editable":True},
+            { "field": "src_icon","title":"src_icon","sortable":False,"editable":True,"class":"hide_me"},
+            { "field": "tar_icon","title":"tar_icon","sortable":False,"editable":True,"class":"hide_me"},
+            { "field": "cir","title":"cir","sortable":False,"editable":True},
+            { "field": "type","title":"type","sortable":False,"editable":True},
             { "field": "Action","title":"Action","formatter":"TableActions"},
             ]
     return render_template('edit_static_map.html',values=isis_links,columns=columns,router_name=router_name)
@@ -106,8 +109,8 @@ def edit_internation_pop():
     df_router_name = pd.read_sql(db.session.query(Links.source.distinct()).statement,db.session.bind)
     columns = [
             { "field": "state","checkbox":True },
-            { "field": "id","title":"id","sortable":False},
-            { "field": "index","title":"index","sortable":False},
+            { "field": "id","title":"id","sortable":False,"class":"hide_me"},
+            { "field": "index","title":"index","sortable":False,"class":"hide_me"},
             { "field": "name","title":"name","sortable":True,"editable":True},
             { "field": "routers","title":"routers","sortable":False,"editable":True},
             { "field": "region","title":"region","sortable":False,"editable":True},
@@ -145,15 +148,15 @@ def peer_report():
 def get_graph_data():
     rvalue = request.args
     if rvalue['type'] != '':
-        query = f'''select max(bps_out) as bps_out ,max(bps_in) as bps_in from h_transit_statistics where country =~/{rvalue['country']}/
+        query = f'''select sum(cir) as cir, sum(capacity) as capacity, max(bps_out) as bps_out ,max(bps_in) as bps_in from h_transit_statistics where country =~/{rvalue['country']}/
         and pop =~/{rvalue['pop']}/
-        and target =~ /{rvalue['type']}/
+        and type =~ /{rvalue['type']}/
         AND time >= now()- 7d and time < now()
                         GROUP BY time(1h)'''
     else:
-        query = f'''select max(bps_out) as bps_out ,max(bps_in) as bps_in from h_transit_statistics where country =~/{rvalue['country']}/
+        query = f'''select sum(cir) as cir, sum(capacity) as capacity, max(bps_out) as bps_out ,max(bps_in) as bps_in from h_transit_statistics where country =~/{rvalue['country']}/
         and pop =~/{rvalue['pop']}/
-        and target =~ /{rvalue['target']}/
+        and type =~ /{rvalue['type']}/
         AND time >= now()- 7d and time < now()
                         GROUP BY time(1h)'''
     result = client.query(query)
@@ -162,6 +165,8 @@ def get_graph_data():
     df = df.fillna(0)
     df['div_id'] = rvalue['index']
     df['name'] = rvalue['name']
-    result = df.reindex(columns=["time","bps_in","bps_out","div_id","name"]).to_dict(orient='records')
+    df['cir'] = df['cir'] * 1000000
+    df['capacity'] = df['capacity'] * 1000000
+    result = df.reindex(columns=["time","bps_in","bps_out","div_id","name","cir","capacity"]).to_dict(orient='records')
     #print(df)
     return jsonify(result)

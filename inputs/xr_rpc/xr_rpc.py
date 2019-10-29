@@ -42,6 +42,7 @@ rpc_mpls = """
 def main():
     logger.info('Get Netconf data')    
     mpls_te, isis_hostname = get_netconf(rpc_mpls,rpc_hostname)
+    #print(mpls_te)
     logger.info('Parse xml data for hostname')
     df_hostname = parse_xml('hostname', isis_hostname)
     logger.info('Parse xml data for links')

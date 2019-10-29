@@ -36,8 +36,8 @@ def edit_peering_points():
     isis_links = df.to_dict(orient='records')
     columns = [
         {"field": "state", "checkbox": True},
-        {"field": "id", "title": "id", "sortable": False},
-        {"field": "index", "title": "index", "sortable": False},
+        {"field": "id", "title": "id", "sortable": False,"class":"hide_me"},
+        {"field": "index", "title": "index", "sortable": False,"class":"hide_me"},
         {"field": "name", "title": "name", "sortable": True, "editable": True},
         {"field": "ipv4", "title": "ipv4", "sortable": False, "editable": True},
         {"field": "ipv6", "title": "ipv6", "sortable": False, "editable": True},

@@ -78,8 +78,8 @@ def app_external_netflow():
     isis_links = df.to_dict(orient='records')
     columns = [
         {"field": "state", "checkbox": True},
-        {"field": "id", "title": "id", "sortable": False},
-        {"field": "index", "title": "index", "sortable": False},
+        {"field": "id", "title": "id", "sortable": False,"class":"hide_me"},
+        {"field": "index", "title": "index", "sortable": False,"class":"hide_me"},
         {"field": "name", "title": "name", "sortable": True, "editable": True},
         {"field": "router", "title": "router",
             "sortable": False, "editable": True},

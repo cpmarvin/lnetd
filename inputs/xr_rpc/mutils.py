@@ -45,6 +45,7 @@ def get_netconf(*args):
         logger.info('Get netconf data for %s' %i)
         res = ios_xr.dispatch(to_ele(i))
         res = to_xml(res.data)
+        #print(res)
         results.append(remove_ns(res))
     return results
 

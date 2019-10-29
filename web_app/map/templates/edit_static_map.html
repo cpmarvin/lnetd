@@ -34,51 +34,36 @@
       <form id="add-link-form" data-parsley-validate class="form-horizontal form-label-left" method="post">
         <div class="modal-body">
           <div class="form-group" style="height: 350px">
-                        <label class="control-label col-md-4 col-sm-4 col-xs-12">Source:</label>
+                        <label class="control-label col-md-4 col-sm-4 col-xs-4">Source</label>
                         <div class="col-md-6">
                             <input class="form-control validate" id="source_add" name="source_add" placeholder="source" required autofocus>
                             <div class="help-block with-errors"></div>
                         </div>
-                        <label class="control-label col-md-4 col-sm-4 col-xs-12">Target:</label>
+                        <label class="control-label col-md-4 col-sm-4 col-xs-4">Target</label>
                         <div class="col-md-6">
-                            <input class="form-control validate" id="target_add" name="target_add" placeholder="target" required autofocus>
-                            <div class="help-block with-errors"></div>
-                        </div>
-                        <label class="control-label col-md-4 col-sm-4 col-xs-12">Node</label>
-                        <div class="col-md-6">
-			    <select class="form-control" id="node_add" name="node_add">
+                            <select class="form-control" id="target_add" name="target_add">
                             {% for item in router_name %}
                              <option value="{{ item }}">{{ item }}</option>
-			    {% endfor %}
+                            {% endfor %}
                             </select>
                             <div class="help-block with-errors"></div>
                         </div>
-                        <label class="control-label col-md-4 col-sm-4 col-xs-12">Interface</label>
+                        <label class="control-label col-md-4 col-sm-4 col-xs-4">Interface</label>
                         <div class="col-md-6">
                             <input class="form-control validate" id="interface_add" name="interface_add" placeholder="r_ip" required autofocus>
                             <div class="help-block with-errors"></div>
                         </div>
-                        <label class="control-label col-md-4 col-sm-4 col-xs-12">Direction</label>
+                        <label class="control-label col-md-4 col-sm-4 col-xs-4">Cir</label>
                         <div class="col-md-6">
-                              <select class="form-control" id="direction_add" name="direction_add">
-				    <option>in</option>
-   				    <option>out</option>
-  			      </select>
+                            <input class="form-control validate" id="cir_add" name="cir_add" placeholder="cir in mbps" required autofocus>
                             <div class="help-block with-errors"></div>
                         </div>
-                        <label class="control-label col-md-4 col-sm-4 col-xs-12">Source Icon</label>
+                        <label class="control-label col-md-4 col-sm-4 col-xs-4">Type</label>
                         <div class="col-md-6">
-                              <select class="form-control" id="sicon_add" name="icon_add">
-                                    <option>cloud</option>
-                                    <option>router</option>
-                              </select>
-                            <div class="help-block with-errors"></div>
-                        </div>
-                        <label class="control-label col-md-4 col-sm-4 col-xs-12">Target Icon</label>
-                        <div class="col-md-6">
-                              <select class="form-control" id="ticon_add" name="icon_add">
-                                    <option>cloud</option>
-                                    <option>router</option>
+                              <select class="form-control" id="type_add" name="type_add">
+                                    <option>transit</option>
+                                    <option>peering</option>
+                                    <option>cdn</option>
                               </select>
                             <div class="help-block with-errors"></div>
                         </div>
@@ -131,6 +116,7 @@
           data-show-columes="true"
           data-pagination="false"
           data-click-to-select="true"
+          data-id-field="index"
           class="table table-striped table-bordered table-condensed table-responsive">
           </table>
         </div>
@@ -151,20 +137,6 @@
   <script src="{{ url_for('static', filename='vendors/x-editable/bootstrap3-editable/js/bootstrap-editable.min.js') }}"></script>
   <!-- alertifyjs -->
   <script src="{{ url_for('static', filename='vendors/alertifyjs/alertify.min.js') }}"></script>
-  <!-- Datatables -->
-  <script src="{{ url_for('static', filename='vendors/datatables.net/js/jquery.dataTables.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='vendors/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='vendors/datatables.net-buttons/js/dataTables.buttons.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='vendors/datatables.net-buttons/js/buttons.flash.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='vendors/datatables.net-buttons/js/buttons.html5.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='vendors/datatables.net-buttons/js/buttons.print.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='vendors/datatables.net-keytable/js/dataTables.keyTable.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='vendors/datatables.net-responsive/js/dataTables.responsive.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js') }}"></script>
-  <script src="{{ url_for('static', filename='vendors/datatables.net-scroller/js/dataTables.scroller.min.js') }}"></script>
-
   <!-- Just to test -->
   <script src="https://gitcdn.link/repo/xcash/bootstrap-autocomplete/master/dist/latest/bootstrap-autocomplete.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/corejs-typeahead/1.2.1/typeahead.bundle.js"></script>
@@ -204,25 +176,50 @@ function editObject() {
     var newRow = $("<tr>");
     var cols = "";
   	cols += '<td>' + Math.floor(Math.random() * 900) + '</td>';
-    cols += '<td>' + Math.floor(Math.random() * 900) + '</td>';
+        cols += '<td>' + Math.floor(Math.random() * 900) + '</td>';
   	cols += '<td>' + Math.floor(Math.random() * 900) + '</td>';
   	cols += '<td>' + entry[0].value + '</td>'; //source
   	cols += '<td>' + entry[1].value + '</td>'; //target
-  	cols += '<td>' + entry[2].value + '</td>'; //Node
-  	cols += '<td>' + entry[3].value + '</td>'; //Interface
-  	cols += '<td>' + entry[4].value + '</td>'; //direction
-    cols += '<td>' + entry[5].value + '</td>'; //Source Icon
-    cols += '<td>' + entry[6].value + '</td>'; //Target Icon
+  	cols += '<td>' + entry[1].value + '</td>'; //Node
+  	cols += '<td>' + entry[2].value + '</td>'; //Interface
+  	cols += '<td>' + 'in' + '</td>'; //direction
+    cols += '<td>' + 'cloud' + '</td>'; //Source Icon
+    cols += '<td>' + 'router' + '</td>'; //Target Icon
+        cols += '<td>' + entry[3].value + '</td>'; //CIR
+        cols += '<td>' + entry[4].value + '</td>'; //Type
     cols += '<td><input type="button" class="ibtnDel btn btn-sm btn-danger "  value="Delete"></td>';
     cols += '</tr>'
     newRow.append(cols);
     console.log('new row',newRow)
     $("#table").append(newRow);
+
+        //reverse
+        var newRow_rev = $("<tr>");
+        var cols_rev = "";
+        cols_rev += '<td>' + Math.floor(Math.random() * 900) + '</td>';
+        cols_rev += '<td>' + Math.floor(Math.random() * 900) + '</td>';
+        cols_rev += '<td>' + Math.floor(Math.random() * 900) + '</td>';
+        cols_rev += '<td>' + entry[1].value + '</td>'; //source
+        cols_rev += '<td>' + entry[0].value + '</td>'; //target
+        cols_rev += '<td>' + entry[1].value + '</td>'; //Node
+        cols_rev += '<td>' + entry[2].value + '</td>'; //Interface
+        cols_rev += '<td>' + 'out' + '</td>'; //direction
+        cols_rev += '<td>' + 'router' + '</td>'; //Source Icon
+        cols_rev += '<td>' + 'cloud' + '</td>'; //Target Icon
+        cols_rev += '<td>' + entry[3].value + '</td>'; //CIR
+        cols_rev += '<td>' + entry[4].value + '</td>'; //Type
+        cols_rev += '<td><input type="button" class="ibtnDel btn btn-sm btn-danger "  value="Delete"></td>';
+        cols_rev += '</tr>'
+        console.log(cols_rev)
+        newRow_rev.append(cols_rev);
+        $("#table").append(newRow_rev);
+
     //reload data into the table to allow modify of the metric
     var jsonTable = new JSONTable($("#table"))
     var new_data= jsonTable.toJSON()
   	$('#table').bootstrapTable("load", new_data);
     alertify.notify("Link added ..... ", 'success', 5)}}
+
   // bootstrap table from flask variables
    $(window).load(function() {
     var data = {{values|tojson}};

@@ -1,3 +1,8 @@
+.hide_me{
+  display:none;
+  visibility:hidden;
+}
+
 html , body{
 	
  height:100%;

@@ -14,13 +14,13 @@ def write_influx(df, host='localhost', port=8086):
     dbname = 'telegraf_agg'
     user, password = 'dummy', 'dummy'
     client = DataFrameClient(host, port, user, password, dbname)
-    tag_columns = ['source', 'target', 'interface','pop','country']
+    tag_columns = ['source', 'target', 'interface','pop','country','type']
     client.write_points(df, 'h_transit_statistics', tag_columns=tag_columns)
 
 
 def main():
     conn = sqlite3.connect("/opt/lnetd/web_app/database.db")
-    sql = '''SELECT interface,source,target,node from External_topology '''
+    sql = '''SELECT interface,source,target,node,cir,type from External_topology '''
     df = pd.read_sql(sql, conn)
     print(df)
     df = df[df['source'] == df['node']]
@@ -39,7 +39,8 @@ def main():
     df['bps_out'] = df['bps_out'].astype(int)
     df['bps_in'] = df['bps_in'].astype(int)
     df['capacity'] = df['capacity'].astype(int)
-    print(df)
+    df['cir'] = df['cir'].astype(int)
+    #print(df)
     write_influx(df)
 
 if __name__ == '__main__':

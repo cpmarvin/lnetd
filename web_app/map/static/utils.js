@@ -85,11 +85,13 @@ function reset_demand_only() {
 
 function graph_aggr(data,capacity,graph_id,source_cc,target_cc) {
     var rawDataURL = data
+    //pop last interval from array , it's mostly 0 in not exactly on the hours due to aggregataion
+    rawDataURL.pop()
     //lame , promise issues
     div_id = data[0]['div_id']+'div_id'
     console.log('this is the div_id inside graph_aggr',div_id)
     $( "#"+div_id ).empty();
-    title = data[0]['name']
+    title = data[0]['name'] + 'Capaci'
     // / create selector
     var selectorOptions = {
         visible: true,
@@ -119,9 +121,15 @@ function graph_aggr(data,capacity,graph_id,source_cc,target_cc) {
         }],
     };
     // //prepare the graph
-    var data = [ prepData(data), prepDataIn(data) ];
+    var data = [ prepData(data), prepDataIn(data), prepDataCir(data), prepDataCirIn(data), prepDataCapacity(data), prepDataCapacityIn(data) ];
     var layout = {
         showlegend: true,
+        legend: {
+           y: 0.5,
+           font: {
+            size: 12
+           }
+        },
         autoresize: true,
         width: document.getElementById(div_id).clientWidth,
         height: 371,
@@ -129,7 +137,7 @@ function graph_aggr(data,capacity,graph_id,source_cc,target_cc) {
          l: 50,
          r: 0,
          b: 40,
-         t: 0,
+         t: 20,
          pad: 0,
         },
         title1: title,
@@ -157,7 +165,6 @@ function graph_aggr(data,capacity,graph_id,source_cc,target_cc) {
         var yField = 'bps_out';
         var x = [];
         var y = [];
-
         rawData.forEach(function(datum, i) {
 
             x.push(new Date(datum[xField]));
@@ -180,7 +187,7 @@ function graph_aggr(data,capacity,graph_id,source_cc,target_cc) {
         var yField = 'bps_in';
         var x = [];
         var y = [];
-
+        //pop last interval as it's going to be 0 if not exactly on the outer
         rawData.forEach(function(datum, i) {
 
             x.push(new Date(datum[xField]));
@@ -196,4 +203,101 @@ function graph_aggr(data,capacity,graph_id,source_cc,target_cc) {
             x: x,
             y: y
         }; }
+
+    // //prepare the data
+    function prepDataCir(rawData) {
+        //map the fields
+        var xField = 'time';
+        var yField = 'cir';
+        var x = [];
+        var y = [];
+        //pop last interval as it's going to be 0 if not exactly on the outer
+        rawData.forEach(function(datum, i) {
+
+            x.push(new Date(datum[xField]));
+            y.push(datum[yField]); });
+
+        return {
+            type: 'lines',
+            connectgaps: 'false',
+            line: {width: 2, dash: 'dot', color: 'rgb(219, 64, 82)'},
+            name: 'Cir-OUT',
+	    showlegend: true,
+            visible: "legendonly",
+            x: x,
+            y: y
+        }; }
+
+    // //prepare the data
+    function prepDataCirIn(rawData) {
+        //map the fields
+        var xField = 'time';
+        var yField = 'cir';
+        var x = [];
+        var y = [];
+        //pop last interval as it's going to be 0 if not exactly on the outer
+        rawData.forEach(function(datum, i) {
+
+            x.push(new Date(datum[xField]));
+            y.push(-datum[yField]); });
+
+        return {
+            mode: 'lines',
+            connectgaps: 'false',
+            line: {width: 2, dash: 'dot', color: 'rgb(219, 64, 82)'},
+            name: 'Cir-IN',
+	    showlegend: true,
+            visible: "legendonly",
+            x: x,
+            y: y
+        }; }
+
+//capacity IN
+    function prepDataCapacity(rawData) {
+        //map the fields
+        var xField = 'time';
+        var yField = 'capacity';
+        var x = [];
+        var y = [];
+        //pop last interval as it's going to be 0 if not exactly on the outer
+        rawData.forEach(function(datum, i) {
+
+            x.push(new Date(datum[xField]));
+            y.push(datum[yField]); });
+
+        return {
+            mode: 'lines',
+            connectgaps: 'false',
+            line: {width: 2, dash: 'dot', color: 'rgb(219, 64, 82)'},
+            name: 'Cap-OUT',
+            showlegend: true,
+            visible: "legendonly",
+            x: x,
+            y: y
+        }; }
+
+//capacity IN
+    function prepDataCapacityIn(rawData) {
+        //map the fields
+        var xField = 'time';
+        var yField = 'capacity';
+        var x = [];
+        var y = [];
+        //pop last interval as it's going to be 0 if not exactly on the outer
+        rawData.forEach(function(datum, i) {
+
+            x.push(new Date(datum[xField]));
+            y.push(-datum[yField]); });
+
+        return {
+            mode: 'lines',
+            connectgaps: 'false',
+            line: {width: 2, dash: 'dot', color: 'rgb(219, 64, 82)'},
+            name: 'Cap-IN',
+            showlegend: true,
+	    visible: "legendonly",
+            x: x,
+            y: y
+        }; }
+
 }

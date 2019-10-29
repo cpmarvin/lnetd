@@ -53,7 +53,7 @@ def get_lnetd_external():
     #connect to sqllite lnetd
     conn = sqlite3.connect("/opt/lnetd/web_app/database.db")
     #create pandas frame
-    sql='''SELECT source,target,node from External_topology'''
+    sql='''SELECT source,target,node,cir,type from External_topology'''
     df = pd.read_sql(sql, conn)
     return df
 
@@ -64,7 +64,9 @@ def generat_unique_info():
 
     df.loc[:, 'country'] = df['source'].str[0:2]
     df['pop'] = df['source'].apply(lambda x: x.split('-')[2])
-    df['type'] = df.apply(lambda row: check_type(row['target']), axis=1)
+    # no need for now 
+    #df['type'] = df.apply(lambda row: check_type(row['target']), axis=1)
+
     # per type of traffic
     df_type = df[['type']].drop_duplicates()
     df_type['name'] = 'All ' + df_type['type'].str.upper() + ' traffic'
