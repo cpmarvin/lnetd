@@ -7,4 +7,4 @@ https://networktocode.slack.com #lnetd
 #if you are are using LnetD in your network and are willing to share that contact me:
 cpmarvin at gmail.com or slack ( cpmarvin )
 
-See wiki for install details
+See https://github.com/cpmarvin/lnetd/wiki for install details
