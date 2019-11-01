@@ -77,6 +77,7 @@ print("\nGenerate LnetD routers info and write to db\n")
 df_routers = df[["source", "source_router_ip"]]
 df_routers.columns = ["name", "ip"]
 df_routers.loc[:, "country"] = df_routers["name"].str[0:2]
+df_routers = df_routers.drop_duplicates()
 print(df_routers)
 write_to_db("rpc_routers", df_routers)
 
