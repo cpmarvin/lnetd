@@ -123,7 +123,8 @@ def parseVLenFieldsLnetD(fields, lsp_id, seq_no, verbose=0, level=0):
     with the help of parseVLenFieldLnetD and retrun a dict <insert dict example>'''
 
     vfields = {}
-
+    #keep count of how many LSP_22 we have , will generate key based on this , so start at -1 -> first key 0
+    TLV_22_COUNT = -1
     while len(fields) > 1:
         # get the type and len for each TLV
         (ftype, flen) = struct.unpack(">BB", fields[0:2])
@@ -132,11 +133,14 @@ def parseVLenFieldsLnetD(fields, lsp_id, seq_no, verbose=0, level=0):
 
         if ftype not in vfields:
             vfields[ftype] = []
+        if ftype == 22:
+            #we have our first TLV22
+            TLV_22_COUNT = TLV_22_COUNT + 1
 
         # for each TLV type parse the content and append the data
         vfields[ftype].append(
             parseVLenFieldLnetD(
-                ftype, flen, fields[2:2 + flen], verbose, level + 1)
+                ftype, flen, fields[2:2 + flen], TLV_22_COUNT, verbose, level + 1)
         )
 
         fields = fields[2 + flen:]
@@ -144,7 +148,7 @@ def parseVLenFieldsLnetD(fields, lsp_id, seq_no, verbose=0, level=0):
     return vfields
 
 
-def parseVLenFieldLnetD(ftype, flen, fval, verbose=0, level=0):
+def parseVLenFieldLnetD(ftype, flen, fval, TLV_22_COUNT, verbose=0, level=0):
     '''TLV data parser'''
     rv = {"L": flen,
           }
@@ -157,9 +161,10 @@ def parseVLenFieldLnetD(ftype, flen, fval, verbose=0, level=0):
             # TLV 22
             # print(f'TLV:22 with packet at: {fval}')
             #print(''.join(format(x, '02x') for x in fval))
+            #generate key based on number of TLV_22 ->first should be TLV22-0
+            TLV_22_KEY = 'TLV22-' + str(TLV_22_COUNT)
             rv["V"] = []
-            rv["SV"] = []
-            cnt = -1
+            rv[TLV_22_KEY] = []
             TLV_END = False
             while not TLV_END:
                 lsp_id = struct.unpack(">7s", fval[0:7])
@@ -176,7 +181,7 @@ def parseVLenFieldLnetD(ftype, flen, fval, verbose=0, level=0):
                 # print(f'sub_tlv:{sub_tlv_total_len}')
                 #print(''.join(format(x, '02x') for x in fval[0:1]))
                 fval = fval[1:]
-                rv['V'].append({'lsp_id': lsp_id[0],
+                rv[TLV_22_KEY].append({'lsp_id': lsp_id[0],
                                 'metric': metric,
                                 'l_ip': None,
                                 'r_ip': None})
@@ -193,14 +198,14 @@ def parseVLenFieldLnetD(ftype, flen, fval, verbose=0, level=0):
                         # print(f'l_ip:{l_ip}')
                         # print(''.join(format(x, '02x')
                         # for x in fval[0:sub_flen]))
-                        rv["V"][0]["l_ip"] = l_ip[0]
+                        rv[TLV_22_KEY][0]["l_ip"] = l_ip[0]
                         fval = fval[sub_flen:]
                     elif sub_ftype == 8:
                         r_ip = struct.unpack(">L", fval[0:sub_flen])
                         # print(f'r_ip:{r_ip}')
                         # print(''.join(format(x, '02x')
                         # for x in fval[0:sub_flen]))
-                        rv["V"][0]['r_ip'] = r_ip[0]
+                        rv[TLV_22_KEY][0]['r_ip'] = r_ip[0]
                         fval = fval[sub_flen:]
                     else:
                         # stop parsing SUB_TLVs

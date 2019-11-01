@@ -30,34 +30,40 @@ DUMMY_NR = 3
 
 print("Decode ISIS binary lsp from netconf message")
 lnetd_links = []
+
 for entry in isis_db:
     lsp_dict = parseIsisMsg(DUMMY_NR, entry["lsp_encode"])
-    tlv_22_root = lsp_dict["V"]["VFIELDS"][22][0]["V"][0]
-    tlv_22_lsp_id = tlv_22_root["lsp_id"]
-    tlv_22_l_ip = tlv_22_root["l_ip"]
-    tlv_22_r_ip = tlv_22_root["r_ip"]
-    tlv_22_metric = tlv_22_root["metric"]
-    tlv_134_router_id = lsp_dict["V"]["VFIELDS"][134][0]["V"][0]
-    tlv_137_router_name = lsp_dict["V"]["VFIELDS"][137][0]["V"][0].decode("utf-8")
-    lnet_entry = {
-        "source": tlv_137_router_name,
-        "source_router_ip": id2str(tlv_134_router_id),
-        "target": hex2isisd(tlv_22_lsp_id),
-        "l_ip": id2str(tlv_22_l_ip),
-        "r_ip": id2str(tlv_22_r_ip),
-        "metric": str2dec(tlv_22_metric),
-    }
-    lnetd_links.insert(0, lnet_entry)
+    tlv_22_root = lsp_dict["V"]["VFIELDS"][22]
+    tlv_key_nr = len(tlv_22_root)
+    tlv_key = 0
+    while tlv_key < tlv_key_nr:
+        tlv_key_str = 'TLV22-' + str(tlv_key)
+        tlv_22_lsp_id = tlv_22_root[tlv_key][tlv_key_str][0]["lsp_id"]
+        tlv_22_l_ip = tlv_22_root[tlv_key][tlv_key_str][0]["l_ip"]
+        tlv_22_r_ip = tlv_22_root[tlv_key][tlv_key_str][0]["r_ip"]
+        tlv_22_metric = tlv_22_root[tlv_key][tlv_key_str][0]["metric"]
+        tlv_134_router_id = lsp_dict["V"]["VFIELDS"][134][0]["V"][0]
+        tlv_137_router_name = lsp_dict["V"]["VFIELDS"][137][0]["V"][0].decode("utf-8")
+        lnet_entry = {
+            "source": tlv_137_router_name,
+            "source_router_ip": id2str(tlv_134_router_id),
+            "target": hex2isisd(tlv_22_lsp_id),
+            "l_ip": id2str(tlv_22_l_ip),
+            "r_ip": id2str(tlv_22_r_ip),
+            "metric": str2dec(tlv_22_metric),
+        }
+        lnetd_links.insert(0, lnet_entry)
 
-    print(
-        f"""Decode LSP :
-           source: {tlv_137_router_name},
-           source_router_ip:{id2str(tlv_134_router_id)},
-           target: {hex2isisd(tlv_22_lsp_id)},
-           l_ip: {id2str(tlv_22_l_ip)},
-           r_ip: {id2str(tlv_22_r_ip)},
-           metric: {str2dec(tlv_22_metric)}"""
-    )
+        print(
+            f"""Decode LSP :
+               source: {tlv_137_router_name},
+               source_router_ip:{id2str(tlv_134_router_id)},
+               target: {hex2isisd(tlv_22_lsp_id)},
+               l_ip: {id2str(tlv_22_l_ip)},
+               r_ip: {id2str(tlv_22_r_ip)},
+               metric: {str2dec(tlv_22_metric)}"""
+        )
+        tlv_key = tlv_key + 1
 
 
 labels = ["source", "source_router_ip", "target", "l_ip", "r_ip", "metric"]
