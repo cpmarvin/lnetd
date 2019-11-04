@@ -128,6 +128,28 @@ def spf_and_latency():
     results = calculateSpf_latency(arr,source,target)
     return jsonify(results)
 
+@blueprint.route('/save_node_position_global', methods=['POST'])
+@login_required
+def save_node_position_global():
+  try:
+    current_user = session['user_id']
+    map_type = request.args['map_type']
+    arr = request.args['arr']
+    df_node_position = pd.DataFrame(eval(arr))
+    df_node_position = df_node_position.drop_duplicates()
+    df_node_position['user'] = current_user
+    df_node_position['map_type'] = map_type
+    sql_inserts = SQL_INSERT_UPDATE_FROM_DATAFRAME(
+        df_node_position, 'node_position_global')
+    replace_sql = db.engine.connect()
+    trans = replace_sql.begin()
+    for sql_entry in sql_inserts:
+      replace_sql.execute(sql_entry)
+    trans.commit()
+    return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
+  except Exception as e:
+    raise
+
 @blueprint.route('/save_node_position',methods=['POST'])
 @login_required
 def save_node_position():

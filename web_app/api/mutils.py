@@ -8,6 +8,14 @@ INFLUXDB_NAME = 'telegraf_agg'
 
 client = InfluxDBClient(INFLUXDB_HOST, '8086', '', '', INFLUXDB_NAME)
 
+def SQL_INSERT_UPDATE_FROM_DATAFRAME(SOURCE, TARGET):
+  '''Create insert or REPLACE SQL
+  from dataframe'''
+  sql_texts = []
+  for index, row in SOURCE.iterrows():
+    sql_texts.append('INSERT OR REPLACE INTO ' + TARGET + ' (' +
+                     str(', '.join(SOURCE.columns)) + ') VALUES ' + str(tuple(row.values)))
+  return sql_texts
 
 def get_influxdb_data(source,target):
     try:

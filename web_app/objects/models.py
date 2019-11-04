@@ -14,6 +14,24 @@ tags = Table('tags',Base.metadata,
                 Column('router_name', Integer, ForeignKey('Routers.name')),
                 )
 
+class Node_position_global(Base):
+    __tablename__ = 'Node_position_global'
+
+    id = Column(String(120), primary_key=True)
+    user = Column(String(120), primary_key=True)
+    x = Column(String(120), unique=False)
+    y = Column(String(120), unique=False)
+    map_type = Column(String(120), unique=False)
+
+    def __init__(self, **kwargs):
+        for property, value in kwargs.items():
+            if hasattr(value, '__iter__') and not isinstance(value, str):
+                value, = value
+            setattr(self, property, value)
+
+    def __repr__(self):
+        return str(self.id)
+
 class Tag(Base):
     __tablename__ = 'Tag'
     id = Column(Integer, primary_key=True, autoincrement=True)
