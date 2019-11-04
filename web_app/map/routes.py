@@ -11,7 +11,7 @@ from objects.models import International_PoP,International_PoP_temp
 from objects.models import App_external_flows
 
 from .generate_data import generate_data
-from .mutils import generat_unique_info
+from .mutils import generat_unique_info, generate_traffic_util
 
 from influxdb import InfluxDBClient
 INFLUXDB_HOST = '127.0.0.1'
@@ -32,24 +32,15 @@ def static_map():
     current_user = session['user_id']
     node_position = pd.read_sql(db.session.query(External_position).filter(External_position.user == current_user).statement,db.session.bind)
     node_position = node_position.to_dict(orient='records')
-    source_filter = request.form.get('source_filter')
-    target_filter = request.form.get('source_filter')
+    #source_filter = request.form.get('source_filter')
+    #target_filter = request.form.get('source_filter')
     #print source_filter
     df = pd.read_sql(db.session.query(External_topology).filter(External_topology.index >=0).statement,db.session.bind)
     isis_links = df.to_dict(orient='records')
-    df_inbound_total = df.loc[df['direction'] == 'in']
-    df_inbound_transit = df_inbound_total.loc[df['type'].str.contains(r'(TRANS)',case=False)]
-    df_inbound_cdn = df_inbound_total.loc[df['source'].str.contains(r'(CDN)',case=False)]
-    df_inbound_peering = df_inbound_total.loc[df['source'].str.contains(r'(PEER)',case=False)]
-    total_inbound = df_inbound_total['util'].sum()
-    total_transit = df_inbound_transit['util'].sum()
-    total_cdn = df_inbound_cdn['util'].sum() 
-    total_peering = df_inbound_peering['util'].sum()
+    traffic_values = generate_traffic_util(df)
     return render_template(
-                           'static_map.html',values=isis_links,source_filter = source_filter,target_filter=target_filter,
-                                node_position=node_position,total_inbound=total_inbound,total_transit=total_transit,
-                                total_peering=total_peering,total_cdn=total_cdn
-                          )
+                           'static_map.html',values=isis_links,
+                                node_position=node_position,traffic_values=traffic_values)
 
 @blueprint.route('/edit_static_map',methods=['GET', 'POST'])
 @login_required

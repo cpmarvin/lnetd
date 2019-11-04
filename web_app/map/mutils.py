@@ -106,3 +106,35 @@ def generat_unique_info():
     #print(df_final)
     final = df_final.to_dict(orient='records')
     return final
+
+def generate_traffic_util(df):
+  '''Parse panda and create dict with traffic util'''
+  traffic_values = {}
+  # get inbound traffic
+  df_inbound_total = df.loc[df['direction'] == 'in']
+  df_inbound_transit = df_inbound_total.loc[df['type'].str.contains(
+      r'(TRANS)', case=False)]
+  df_inbound_cdn = df_inbound_total.loc[df['type'].str.contains(
+      r'(CDN)', case=False)]
+  df_inbound_peering = df_inbound_total.loc[df['type'].str.contains(
+      r'(PEER)', case=False)]
+  # get outbound traffic
+  df_outbound_total = df.loc[df['direction'] == 'out']
+  df_outbound_transit = df_outbound_total.loc[df['type'].str.contains(
+      r'(TRANS)', case=False)]
+  df_outbound_cdn = df_outbound_total.loc[df['type'].str.contains(
+      r'(CDN)', case=False)]
+  df_outbound_peering = df_outbound_total.loc[df['type'].str.contains(
+      r'(PEER)', case=False)]
+  # add to dict inbound
+  traffic_values['total_in'] = df_inbound_total['util'].sum()
+  traffic_values['transit_in'] = df_inbound_transit['util'].sum()
+  traffic_values['cdn_in'] = df_inbound_cdn['util'].sum()
+  traffic_values['peer_in'] = df_inbound_peering['util'].sum()
+  # add to dict outbound
+  traffic_values['total_out'] = df_outbound_total['util'].sum()
+  traffic_values['transit_out'] = df_outbound_transit['util'].sum()
+  traffic_values['cdn_out'] = df_outbound_cdn['util'].sum()
+  traffic_values['peer_out'] = df_outbound_peering['util'].sum()
+
+  return traffic_values

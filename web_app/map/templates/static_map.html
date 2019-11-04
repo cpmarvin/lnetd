@@ -30,24 +30,39 @@
 <!-- End Modal -->
 <div class="right_col" role="main">
   <!-- top tiles -->
-  <div class="row tile_count" style="height: 10px;">
+  <div class="row tile_count" style="height: 20px;">
     <div class="col-md-3 col-sm-3 col-xs-3 tile_stats_count">
       <span class="count_top"><i class="fa fa-area-chart"></i> Total Traffic</span>
-      <div class="count">{{(total_inbound/1000000000)|round(2)}} Gbs</div>
+      <div class="count"><i class="fa fa-arrow-circle-down"></i> {{(traffic_values['total_in']/1000000000)|round(2)}} Gbs</div>
     </div>
     <div class="col-md-3 col-sm-3 col-xs-3 tile_stats_count">
       <span class="count_top"><i class="fa fa-pie-chart"></i> Total Transit</span>
-      <div class="count">{{(total_transit/1000000000)|round(2)}} Gbs</div>
+      <div class="count"><i class="fa fa-arrow-circle-down"></i> {{(traffic_values['transit_in']/1000000000)|round(2)}} Gbs</div>
     </div>
     <div class="col-md-3 col-sm-3 col-xs-3 tile_stats_count">
       <span class="count_top"><i class="fa fa-thumbs-up"></i> Total Peering</span>
-      <div class="count">{{(total_peering/1000000000)|round(2)}} Gbs</div>
+      <div class="count"><i class="fa fa-arrow-circle-down"></i> {{(traffic_values['peer_in']/1000000000)|round(2)}} Gbs</div>
     </div>
     <div class="col-md-3 col-sm-3 col-xs-3 tile_stats_count">
       <span class="count_top"><i class="fa fa-sitemap"></i> Total CDN</span>
-      <div class="count">{{(total_cdn/1000000000)|round(2)}} Gbs</div>
+      <div class="count"><i class="fa fa-arrow-circle-down"></i> {{(traffic_values['cdn_in']/1000000000)|round(2)}} Gbs</div>
     </div>
   </div>
+  <div class="row tile_count" style="height: 20px;">
+    <div class="col-md-3 col-sm-3 col-xs-3 tile_stats_count">
+      <div class="count"><i class="fa fa-arrow-circle-up"></i> {{(traffic_values['total_out']/1000000000)|round(2)}} Gbs</div>
+    </div>
+    <div class="col-md-3 col-sm-3 col-xs-3 tile_stats_count">
+      <div class="count"><i class="fa fa-arrow-circle-up"></i> {{(traffic_values['transit_out']/1000000000)|round(2)}} Gbs</div>
+    </div>
+    <div class="col-md-3 col-sm-3 col-xs-3 tile_stats_count">
+      <div class="count"><i class="fa fa-arrow-circle-up"></i> {{(traffic_values['peer_out']/1000000000)|round(2)}} Gbs</div>
+    </div>
+    <div class="col-md-3 col-sm-3 col-xs-3 tile_stats_count">
+      <div class="count"><i class="fa fa-arrow-circle-up"></i> {{(traffic_values['cdn_out']/1000000000)|round(2)}} Gbs</div>
+    </div>
+  </div>
+
   <div class="clearfix"></div>
   <div class="row">
     <div class="clearfix"></div>
