@@ -1,0 +1,54 @@
+<!--Edit links -->
+<div id="add-link" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="title">Add link </h4>
+        <button type="button" class="btn btn-default" data-dismiss="modal">
+          <span aria-hidden="true">Close</span>
+        </button>
+      </div>
+      <form id="add-link-form" data-parsley-validate class="form-horizontal form-label-left" method="post">
+        <div class="modal-body">
+          <div class="form-group" style="">
+            <label class="control-label col-md-4 col-sm-4 col-xs-12">Source:</label>
+            <div class="col-md-6">
+              <input class="form-control validate" id="source_add" name="source_add" placeholder="source" required autofocus>
+              <div class="help-block with-errors"></div>
+            </div>
+            <label class="control-label col-md-4 col-sm-4 col-xs-12">Target:</label>
+            <div class="col-md-6">
+              <input class="form-control validate" id="target_add" name="target_add" placeholder="target" required autofocus>
+              <div class="help-block with-errors"></div>
+            </div>
+            <label class="control-label col-md-4 col-sm-4 col-xs-12">Local IP:</label>
+            <div class="col-md-6">
+              <input class="form-control validate" id="l_ip_add" name="l_ip_add" placeholder="l_ip" required autofocus>
+              <div class="help-block with-errors"></div>
+            </div>
+            <label class="control-label col-md-4 col-sm-4 col-xs-12">Remote IP::</label>
+            <div class="col-md-6">
+              <input class="form-control validate" id="r_ip_add" name="r_ip_add" placeholder="r_ip" required autofocus>
+              <div class="help-block with-errors"></div>
+            </div>
+            <label class="control-label col-md-4 col-sm-4 col-xs-12">Metric:</label>
+            <div class="col-md-6">
+              <input class="form-control validate" id="metric_add" name="metric_add" placeholder="metric" required autofocus>
+              <div class="help-block with-errors"></div>
+            </div>
+            <label class="control-label col-md-4 col-sm-4 col-xs-12">Capacity:</label>
+            <div class="col-md-6">
+              <input class="form-control validate" id="capacity_add" name="capacity_add" placeholder="capacity" required autofocus>
+              <div class="help-block with-errors"></div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-success" onclick="editObject()">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- End Links -->

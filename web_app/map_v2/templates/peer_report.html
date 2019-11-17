@@ -1,0 +1,101 @@
+{% extends "base_site.html" %}
+
+{% block title %} Table Dynamic {% endblock title %}
+
+{% block stylesheets %}
+{{ super() }}
+{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="container-fluid page-body-wrapper">
+  <div class="main-panel">
+    <div class="content-wrapper">
+
+      <!-- 1st Row -->
+      <div class="row  justify-content-md-left">
+        {% for item in objects_counters %}
+        <div class="col-lg-6 grid-margin stretch-card-none">
+          <div class="card">
+            <div class="card-body pb-0">
+              <h4 class="card-title text-uppercase ">{{item['name']}}</h4>
+              <div class="row">
+                <div class="col-sm-12 mt-4 mt-lg-0">
+                  <div class="px-4 py-4">
+                    <div class="row">
+                      <div class="col-sm-12 pl-lg-4">
+                        <div id="{{item['index']}}div_id">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock content %}
+
+{% block javascripts %}
+{{ super() }}
+<!-- Datatables -->
+<script src="{{ url_for('map_blueprint.static',filename='utils.js') }}"></script>
+<script>
+
+function getData(url){
+  console.log('this is inside')
+  var customAjaxResponse = $.ajax({
+     type: 'GET',
+     url: url,
+     success  : function(jqXHR, exception) {},
+     error    : function(jqXHR) {},
+     complete : function(jsondata) { }
+     });
+  return customAjaxResponse.promise();
+  }
+
+//keep all promises in here
+promises = []
+
+{% for item in objects_counters %}
+ entry = {{item|tojson|safe}}
+ country = entry['country']
+ pop = entry['pop']
+ target = entry['target']
+ type = entry['type']
+ name = entry['name']
+ capacity = ''
+ index = entry['index']
+
+ url = {{ url_for('map_blueprint.get_graph_data')|tojson }}+'?country='+country+'&pop='+pop+'&target='+target+'&type='+type+'&index='+index+'&name='+name
+ //get data returns a promise
+ get_data = getData(url)
+ //push that to array
+ promises.push(get_data)
+
+{% endfor %}
+
+var arrayLength = promises.length;
+for (var i = 0; i < arrayLength; i++) {
+  promises[i].then(function(data) {
+     graph_aggr(data,'capacity','graph_id','source_cc','target_cc')
+    })
+ }
+
+</script>
+
+{% endblock javascripts %}

@@ -1,0 +1,135 @@
+{% extends "base_site.html" %}
+
+{% block title %} Table Dynamic {% endblock title %}
+
+{% block stylesheets %}
+  {{ super() }}
+
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="container-fluid page-body-wrapper">
+  <div class="main-panel">
+    <div class="content-wrapper">
+      <div class="row">
+        <div class="col-lg-6 grid-margin stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <div class="x_content" id="graph_aggr" style="width:100%; height:600px;" >
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6 grid-margin stretch-card-none">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title">PoP Information</h4>
+              <table id="pop-table"
+                    class="table table-hover table-bordered"
+                    data-toggle="table"
+                    data-search="false"
+                    data-sortable="true"
+                    data-pagination="true"
+                    data-show-columns="true">
+                <thead class="thead-light">
+                  <tr>
+                    <th data-field="name" data-sortable="true">PoP</th>
+                    <th data-field="region" data-sortable="true">REGION</th>
+                    <th data-field="routers" data-sortable="true">ROUTERS</th>
+                    <th data-field="util_out" data-sortable="true">UTIL OUT</th>
+                    <th data-field="util_in" data-sortable="true">UTIL IN</th>
+                    <th data-field="capacity" data-sortable="true">CAPACITY</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    {% for node in values %}
+                    <td>{{node.name}}</td>
+                    <td>{{node.region}}</td>
+                    <td>{{node.routers}}</td>
+                    <td>{{node.util_out}}</td>
+                    <td>{{node.util_in}}</td>
+                    <td>{{node.capacity}}</td>
+                  </tr>
+                    {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+  {{ super() }}
+
+  <script>
+    var east_africa = {{df_ea|tojson|safe}}
+    var south_africa = {{df_sa|tojson|safe}}
+    var europe = {{df_eu|tojson|safe}}
+    var data = [prepData(east_africa,'EA'),prepData(south_africa,'SA'),prepData(europe,'EU')];
+
+    function prepData(rawData,name) {
+    var lat = [];
+    var lon = [];
+    var size = [];
+    var text = [];
+
+    rawData.forEach(function(datum, i) {
+        lat.push(datum['lat']);
+        lon.push(datum['lon']);
+        size.push(datum['capacity']);
+        text.push(datum['text']);
+        });
+    return {
+      type: 'scattergeo',
+        name: name,
+        lat: lat,
+        lon: lon,
+    marker: {
+        "line": {
+          "color1": "rgb(40,40,40)",
+          "width": 0.5
+        },
+        "color1": "rgb(0,116,217)",
+        "size": size ,
+        "sizemode": "area"
+      },
+    text: text,
+    sizemode: 'area',
+    locationmode: "world"
+    };
+}
+
+graph_aggr(data)
+
+function graph_aggr(data) {
+
+  var layout =  {
+    "geo": {
+      "scope": "world",
+      "showland": true,
+      "showcountries": true,
+      "lonaxis": {range: [-50,70]},
+      "lataxis": {range: [-40,60]},
+      "landcolor": "rgb(217, 217, 217)",
+      "projection": {
+        "type": "mercator"
+      },
+      "countrycolor": "rgb(255, 255, 255)",
+      "countrywidth": 1,
+      "subunitcolor": "rgb(255, 255, 255)",
+      "subunitwidth": 1
+    },
+    "title": "ISP Telecom International PoPs Capacity",
+    "showlegend": true,
+  }
+
+Plotly.newPlot('graph_aggr', data, layout , {responsive: true});
+
+}
+</script>
+{% endblock javascripts %}

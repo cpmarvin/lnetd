@@ -1,0 +1,145 @@
+{% extends "base_site.html" %}
+
+{% block title %} Basic App Config {% endblock title %}
+
+{% block stylesheets %}
+  {{ super() }}
+{% endblock stylesheets %}
+
+{% block content %}
+
+<!-- Modal used for loading screen -->
+<div class="modal fade " id="modal-top1" tabindex="-1" role="dialog" aria-labelledby="loadingModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-body" id="modal-body">
+        <div id="PageContent">
+          <div id="loadingIndicatorCtn">
+            <div class="loadingIndicator">
+              <h1><span class="label label-info">
+                <i class="fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:30px;color:"blue""></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Loading...</span>
+              </h1>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--begin site-->
+<div class="container-fluid page-body-wrapper">
+  <div class="main-panel">
+    <div class="content-wrapper">
+      <div class="row">
+        <div class="col-lg-12 col-xs-6 grid-margin stretch-card-none">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title">LnetD Tacacs Accounts</h4>
+              <div class="row justify-content-around grid-margin stretch-card">
+                <div class="col-lg-4 col-xs-6">
+                  <form class="forms-sample" id="app-config-form">
+                    <div class="form-group">
+                      <label for="tacacs-name">Tacacs Name</label>
+                      <input type="text" class="form-control required" id="name" name="" >
+                    </div>
+                    <div class="form-group">
+                      <label for="username">Username</label>
+                      <input type="text" class="form-control" id="username" name="username" placeholder="">
+                    </div>
+                    <div class="form-group">
+                      <label for="password">Password</label>
+                      <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-success mr-2" onclick="app_add_tacacs()">Add Tacacs</button>
+                    <button class="btn btn-light float-right">Cancel</button>
+                  </form>
+                </div>
+                <div class="col-lg-8 col-xs-6">
+                  <h4 class="">Existing LnetD Tacacs Accounts</h4>
+                  <div class="table-responsive bootstrap-table bootstrap4">
+                    <table id="tacacs-table"
+                          class="table table-hover table-bordered"
+                          data-toggle="table"
+                          data-search="false"
+                          data-sortable="true"
+                          data-pagination="true"
+                          data-size="3"
+                          data-page-size="3"
+                          data-show-columns="true">
+                      <thead class="thead-light">
+                        <tr>
+                          <th data-field="id" data-sortable="true">ID</th>
+                          <th data-field="name" data-sortable="true">NAME</th>
+                          <th data-field="username" data-sortable="true">USERNAME</th>
+                          <th data-field="password" data-sortable="true" class="hide-me">PASSWORD</th>
+                          <th data-field="Edit" data-sortable="true">EDIT</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                         {% for node in values %}
+                         {{node.id}}
+                          <tr>
+                            <td>{{node.id}}</td>
+                            <td>{{node.name}}</td>
+                            <td>{{node.username}}</td>
+                            <td>{{node.password}}</td>
+                            <td><button type="button" tacacs_id="{{node.id}}"class="graph2-btn btn btn-danger btn-rounded btn-sm my-0">Delete</button>
+                          </tr>
+                          {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+  {{ super() }}
+
+<script>
+function app_add_tacacs() {
+  if ($('app-config-form')) {
+    $('#modal-top1').modal('toggle');
+    $.ajax({
+      type: 'POST',
+      url: '/admin/app_add_tacacs',
+      dataType: 'json',
+      data: $('#app-config-form').serialize(),
+      error: function(result) { alertify.notify('error', 'error', 5); $('#modal-top1').modal('toggle') },
+      success: function(result) {
+        alertify.notify('Tacacs added', 'success', 5);
+        $('#modal-top1').modal('toggle') ;
+        setTimeout(location.reload.bind(location), 500);
+      }
+    });
+  }}
+
+$(document).ready(function(){
+  $('.graph2-btn').on('click', function (e) {
+    var tacacs_id = $(this).attr('tacacs_id')
+    $('#modal-top1').modal('toggle')
+    url_delete = {{ url_for('admin_blueprint.delete_object')|tojson }}+"?type=Tacacs&id="+tacacs_id
+    console.log(url_delete,{{url_for('admin_blueprint.delete_object')|tojson}})
+    $.ajax({
+      type: 'POST',
+      url: url_delete,
+      dataType: 'json',
+      error: function(result) { alertify.notify('error', 'error', 5); $('#modal-top1').modal('toggle')},
+      success: function(result) {
+        alertify.notify('Tacacs deleted', 'success', 5);
+        setTimeout(location.reload.bind(location), 500);
+      }
+    })
+  })
+})
+</script>
+
+{% endblock javascripts %}

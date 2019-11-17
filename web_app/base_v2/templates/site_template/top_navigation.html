@@ -1,0 +1,152 @@
+  <div class="container-scroller">
+  <!-- partial:partials/_horizontal-navbar.html -->
+    <div class="horizontal-menu">
+      <nav class="navbar top-navbar col-lg-12 col-12 p-0">
+        <div class="container-fluid">
+          <div class="navbar-menu-wrapper d-flex align-items-center justify-content-between">
+            <ul class="navbar-nav navbar-nav-left">
+              <!--logo start-->
+              <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
+                <a class="navbar-brand brand-logo" href="/home/index"><img src="/static/images/lnetd_logo.png" alt="logo">LnetD&nbsp<a>v1.0.2</a>
+                </a>
+                <a class="navbar-brand brand-logo-mini" href="/home/index">LnetD
+                </a>
+              </div>
+              <!--logo end-->
+            </ul>
+            <ul class="navbar-nav navbar-nav-right">
+                <li class="nav-item nav-profile dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
+                    <span class="nav-profile-name">{{ current_user.username }}</span>
+                    <span class="online-status"></span>
+                    <img src= "{{ url_for('base_blueprint.static', filename='images/user.png') }}" alt="profile"/>
+                  </a>
+                  <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
+                      <!--<a class="dropdown-item">
+                        <i class="mdi mdi-settings text-primary"></i>
+                        Settings
+                      </a>-->
+                      <a class="dropdown-item" href="/logout">
+                        <i class="mdi mdi-logout text-primary"></i>
+                        Logout
+                      </a>
+                  </div>
+                </li>
+            </ul>
+            <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="horizontal-menu-toggle">
+              <span class="mdi mdi-menu"></span>
+            </button>
+          </div>
+        </div>
+      </nav>
+<!-- Second nav start -->
+      <nav class="bottom-navbar">
+        <div class="container">
+            <ul class="nav page-navigation">
+              <li class="nav-item">
+                <a class="nav-link" href="/home/index">
+                  <i class="mdi mdi-file-document-box menu-icon"></i>
+                  <span class="menu-title">Dashboard</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                  <a href="#" class="nav-link">
+                    <i class="mdi mdi-cube-outline menu-icon"></i>
+                    <span class="menu-title">Admin</span>
+                    <i class="menu-arrow"></i>
+                  </a>
+                  <div class="submenu">
+                      <ul>
+                          <li class="nav-item"><a class="nav-link" href="/admin/app_config">LnetD Configuration</a></li>
+                          <li class="nav-item"><a class="nav-link" href="/prov/peering_prov">IX BGP Provision</a></li>
+                      </ul>
+                  </div>
+              </li>
+
+              <li class="nav-item">
+                  <a href="#" class="nav-link">
+                    <i class="mdi mdi-finance menu-icon"></i>
+                    <span class="menu-title">Capacity Planning</span>
+                    <i class="menu-arrow"></i>
+                  </a>
+                  <div class="submenu">
+                      <ul>
+                          <li class="nav-item"><a class="nav-link" href="/data/traffic_links">PoP/PoP Capacity</a></li>
+                          <li class="nav-item"><a class="nav-link" href="/map/international_pop">PoP Capacity</a></li>
+                          <li class="nav-item"><a class="nav-link" href="/map/interface_graph">Interface Graph</a></li>
+                          <li class="nav-item"><a class="nav-link" href="/map/edit_international_pop">Edit PoP</a></li>
+                      </ul>
+                  </div>
+              </li>
+              <li class="nav-item">
+                  <a href="#" class="nav-link">
+                    <i class="mdi mdi-grid menu-icon"></i>
+                    <span class="menu-title">Peering and trasit</span>
+                    <i class="menu-arrow"></i>
+                  </a>
+                  <div class="submenu">
+                      <ul>
+                          <li class="nav-item"><a class="nav-link" href="/map/static_map">External Topology</a></li>
+                          <li class="nav-item"><a class="nav-link" href="/map/peer_report">P&T report</a></li>
+                          <li class="nav-item"><a class="nav-link" href="/map/external_flow">External Traffic flows</a></li>
+                          <li class="nav-item"><a class="nav-link" href="/bgp/bgp_map">BGP Topology</a></li>
+                          <li class="nav-item"><a class="nav-link" href="/admin/app_external_netflow">Edit Traffic flows</a></li>
+                          <li class="nav-item"><a class="nav-link" href="/map/edit_static_map">Edit External Topology</a></li>
+                          <li class="nav-item"><a class="nav-link" href="/bgp/edit_peering_points">Edit Peering Points</a></li>
+                      </ul>
+                  </div>
+              </li>
+              <li class="nav-item">
+                  <a href="#" class="nav-link">
+                    <i class="mdi mdi-server menu-icon"></i>
+                    <span class="menu-title">Inventory</span>
+                    <i class="menu-arrow"></i>
+                  </a>
+                  <div class="submenu">
+                      <ul>
+                          <li class="nav-item"><a class="nav-link" href="/inventory/inventory_device">Device Inventory</a></li>
+                          <li class="nav-item"><a class="nav-link" href="/inventory/inventory_network">Network Inventory</a></li>
+                      </ul>
+                  </div>
+              </li>
+<!-- Model -->
+              <li class="nav-item">
+                  <a href="#" class="nav-link">
+                    <i class="mdi mdi-animation menu-icon"></i>
+                    <span class="menu-title">Network Model</span>
+                    <i class="menu-arrow"></i>
+                  </a>
+                  <div class="submenu">
+                      <ul>
+                          <li class="nav-item"><a class="nav-link" href="/data/model_demand">IGP TOPOLOGY MODEL</a></li>
+                          <li class="nav-item"><a class="nav-link" href="/data/model_demand_lsp">IGP LSP SHORTCUTS MODEL</a></li>
+                          <li class="nav-item"><a class="nav-link" href="/data/model_layer1">LAYER1 TOPOLOGY MODEL</a></li>
+                          <li class="nav-item"><a class="nav-link" href="/data/model_edit">NEW NETWORK MODEL</a></li>
+                      </ul>
+                  </div>
+              </li>
+<!-- End Model -->
+              <li class="nav-item">
+                  <a href="#" class="nav-link">
+                    <i class="mdi mdi-codepen menu-icon"></i>
+                    <span class="menu-title">Network Topology</span>
+                    <i class="menu-arrow"></i>
+                  </a>
+                  <div class="submenu">
+                      <ul>
+                          <li class="nav-item"><a id="topo" class="nav-link" href="/data/topology">IGP TOPOLOGY</a></li>
+                          <li class="nav-item"><a class="nav-link" href="/data/topology_time">IGP TIME TOPOLOGY</a></li>
+                          <li class="nav-item"><a class="nav-link" href="/data/topology_nested">IGP NESTED TOPOLOGY</a></li>
+                          <li class="nav-item"><a class="nav-link" href="/data/topology_nested_aggregated">IGP AGGREGATED TOPOLOGY</a></li>
+                          <li class="nav-item"><a class="nav-link" href="/data/filter_topology">IGP TOPOLOGY FILTER</a></li>
+                          <li class="nav-item"><a class="nav-link" href="/data/topology_errors">IGP TOPOLOGY ERRORS</a></li>
+                          <li class="nav-item"><a class="nav-link" href="/data/topology_latency">IGP TOPOLOGY LATENCY</a></li>
+                          <li class="nav-item"><a class="nav-link" href="/data/topology_netbox">NETBOX TOPOLOGY</a></li>
+                          <li class="nav-item"><a class="nav-link" href="/dc/dc_topology">DC EVPN</a></li>
+                      </ul>
+                  </div>
+              </li>
+            </ul>
+        </div>
+      </nav>
+    </div>

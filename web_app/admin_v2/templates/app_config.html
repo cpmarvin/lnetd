@@ -1,0 +1,382 @@
+{% extends "base_site.html" %}
+
+{% block title %} Basic App Config {% endblock title %}
+
+{% block stylesheets %}
+  {{ super() }}
+
+{% endblock stylesheets %}
+
+{% block content %}
+<!-- Modal used for loading screen -->
+<div class="modal fade " id="modal-top1" tabindex="-1" role="dialog" aria-labelledby="loadingModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-body" id="modal-body">
+        <div id="PageContent">
+          <div id="loadingIndicatorCtn">
+            <div class="loadingIndicator">
+              <h1>
+                <span class="label label-info">
+                <i class="fa fa-spinner fa-pulse fa-3x fa-fw" style="font-size:30px"></i>
+                <a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Loading...</a>
+                </span>
+              </h1>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- start main -->
+<div class="container-fluid page-body-wrapper">
+  <div class="main-panel">
+    <div class="content-wrapper">
+      <div class="row">
+        <div class="col-lg-12 grid-margin stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-lg-12">
+                  <h4 class="card-title">LnetD Configuration</h4>
+                  <p class="card-description">
+                    Configuration Options
+                  </p>
+                  <form class="forms-sample" id="app-config-form">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group row">
+                          <label class="col-sm-4 col-form-label font-weight-bold col-form-label-bottom">ASN</label>
+                          <div class="col-sm-8">
+                            <input type="text" class="form-control required" id="asn" name="asn" value={{asn}}>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group row">
+                          <label class="col-sm-4 col-form-label font-weight-bold col-form-label-bottom">WEB_IP</label>
+                          <div class="col-sm-8">
+                            <input type="text" class="form-control required" id="web_ip" name="web_ip" value={{web_ip}}>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group row">
+                          <label class="col-sm-4 col-form-label font-weight-bold col-form-label-bottom">NB_URL</label>
+                          <div class="col-sm-8">
+                            <input type="text" class="form-control required" id="nb_url" name="nb_url" value={{nb_url}}>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group row">
+                          <label class="col-sm-4 col-form-label font-weight-bold col-form-label-bottom">NB_TOKEN</label>
+                          <div class="col-sm-8">
+                            <input type="text" class="form-control required" id="nb_token" name="nb_token" value={{nb_token}}>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group row">
+                          <label class="col-sm-4 col-form-label font-weight-bold col-form-label-bottom">INFLUX_IP</label>
+                          <div class="col-sm-8">
+                            <input type="text" class="form-control required" id="influx_ip" name="influx_ip" value={{influx_ip}}>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group row">
+                          <label class="col-sm-4 col-form-label font-weight-bold col-form-label-bottom">MASTER_KEY</label>
+                          <div class="col-sm-8">
+                            <input type="text" class="form-control required" id="master_key" name="master_key" value={{master_key}}>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-success mr-2" onclick="app_config_save()">Save config</button>
+                    <button class="btn btn-light float-right">Cancel</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-6 mb-3 mb-lg-0">
+          <div class="card grid-margin stretch-card">
+            <div class="card-body pb-2">
+              <h4 class="card-title">LnetD Add Users</h4>
+
+              <form class="forms-sample" id="app-config-form-users">
+                <div class="form-group">
+                  <label class="col-form-label-bottom" for="username">Username</label>
+                  <input type="text" class="form-control required" id="username" name="username" >
+                </div>
+                <div class="form-group">
+                  <label class="col-form-label-bottom" for="email">Email address</label>
+                  <input type="email" class="form-control" id="email" name="email" placeholder="Email">
+                </div>
+                <div class="form-group">
+                  <label class="col-form-label-bottom" for="password">Password</label>
+                  <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                </div>
+                <div class="form-group">
+                  <label class="col-form-label-bottom" for="role">Role</label>
+                  <select class="form-control" name="role">
+                    <option>admin</option>
+                    <option>user</option>
+                  </select>
+                </div>
+                <button type="submit" class="btn btn-primary btn-success mr-2" onclick="app_add_user()">Add User</button>
+                <button class="btn btn-light float-right">Cancel</button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6 mb-3 mb-lg-0">
+          <div class="card grid-margin stretch-card">
+            <div class="card-body pb-2">
+              <h4 class="card-title">LnetD Add Tacacs</h4>
+
+              <form class="forms-sample" id="app-config-form-tacacs">
+                <div class="form-group">
+                  <label class="col-form-label-bottom" for="tacacs_name">Tacacs Name</label>
+                  <input type="text" class="form-control required" id="name" name="name" >
+                </div>
+                <div class="form-group">
+                  <label class="col-form-label-bottom" for="tacacs_username">Username</label>
+                  <input type="username" class="form-control" id="username" name="username" placeholder="username">
+                </div>
+                <div class="form-group">
+                  <label class="col-form-label-bottom" for="password">Password</label>
+                  <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                </div>
+                <br><br><br><br><br>
+                <button type="button" class="btn btn-success" onclick="app_add_tacacs()">Add Tacacs</button>
+                <button class="btn btn-light float-right">Cancel</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-12 grid-margin d-flex stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <div class="d-flex align-items-center justify-content-between">
+                <h4 class="card-title mb-2">LnetD Info
+                </h4>
+                <div class="dropdown">
+                  <a href="#" class="text-primary btn btn-link px-1">
+                    <i class="mdi mdi-refresh"></i>
+                  </a>
+                </div>
+              </div>
+              <div id="menu_and_content">
+                <ul class="nav nav-tabs tab-no-active-fill" role="tablist">
+                  <li class="nav-item">
+                    <a class="nav-link active pl-2 pr-2" id="forecast-tab" data-toggle="tab" href="#forecast" role="tab" aria-controls="forecast" aria-selected="true">Users</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link pl-2 pr-2" id="links-cc-tab" data-toggle="tab" href="#links-cc" role="tab" aria-controls="links-cc" aria-selected="false">Tacacs</a>
+                  </li>
+                </ul>
+                <div class="tab-content tab-no-active-fill-tab-content">
+                  <div class="tab-pane fade show active" id="forecast" role="tabpanel" aria-labelledby="forecast-tab">
+                    <div class="d-flex align-items-center justify-content-between">
+                      <div class="table-responsive">
+                        <table id="users-table"
+                        class="table table-hover table-bordered"
+                        data-toggle="table"
+                        data-search="false"
+                        data-sortable="true"
+                        data-pagination="true"
+                        data-show-columns="true">
+                        <thead class="thead-light">
+                          <tr>
+                            <th data-field="id" data-sortable="true">ID</th>
+                            <th data-field="username" data-sortable="true">USERNAME</th>
+                            <th data-field="email" data-sortable="true">EMAIL</th>
+                            <th data-field="password" data-sortable="true">PASSWORD</th>
+                            <th data-field="role" data-sortable="true">ROLE</th>
+                            <th data-field="edit" data-sortable="true">EDIT</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            {% for node in users_list %}
+                            <td>{{node.id}}</td>
+                            <td>{{node.username}}</td>
+                            <td>{{node.email}}</td>
+                            <td>{{node.password}}</td>
+                            <td>{{node.role}}</td>
+                            <td>
+                              <button type="button"
+                              id="get_plotly"
+                              source="{{node.source}}" interface="{{node.l_int}}"
+                              capacity="{{node.capacity}}"
+                              user_id="{{node.id}}"
+                              class="delete-users-btn btn btn-danger btn-rounded btn-sm my-0">Delete
+                            </button>
+                          </td>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <div id="graph_forecast"></div>
+              </div>
+              <div class="tab-pane fade" id="links-cc" role="tabpanel" aria-labelledby="links-cc-tab">
+                <div class="d-lg-flex justify-content-between">
+                  <div class="table-responsive">
+                    <table id="tacacs-table"
+                    class="table table-hover table-bordered"
+                    data-toggle="table"
+                    data-search="true"
+                    data-sortable="true"
+                    data-pagination="true"
+                    data-show-columns="true">
+                    <thead class="thead-light">
+                      <tr>
+                        <th data-field="id" data-sortable="true">ID</th>
+                        <th data-field="name" data-sortable="true">NAME</th>
+                        <th data-field="username" data-sortable="true">USERNAME</th>
+                        <th data-field="password" data-sortable="true">PASSWORD</th>
+                        <th data-field="edit" data-sortable="true">EDIT</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        {% for node in lnetd_tacacs %}
+                        <td>{{node.id}}</td>
+                        <td>{{node.name}}</td>
+                        <td>{{node.username}}</td>
+                        <td>{{node.password}}</td>
+                        <td>
+                          <button type="button"
+                          id="get_plotly"
+                          source="{{node.source}}" interface="{{node.l_int}}"
+                          capacity="{{node.capacity}}"
+                          tacacs_id="{{node.id}}" class="delete-tacacs-btn btn btn-danger btn-rounded btn-sm my-0">Delete
+                        </button>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+{% endblock content %}
+
+{% block javascripts %}
+  {{ super() }}
+
+<script>
+
+function app_config_save() {
+  if ($('app-config-form')) {
+    event.preventDefault();
+    $.ajax({
+      type: 'POST',
+      url: '/admin/app_config_save',
+      dataType: 'json',
+      data: $('#app-config-form').serialize(),
+      error: function(result) { alertify.notify('error', 'error', 5) ;},
+      complete: function(result) { alertify.notify('Config Saved', 'success', 5);}
+    });
+  }
+}
+//add user
+function app_add_user() {
+  if ($('app-config-form-users')) {
+    event.preventDefault();
+    $.ajax({
+      type: 'POST',
+      url: '/admin/app_add_user',
+      dataType: 'json',
+      data: $('#app-config-form-users').serialize(),
+      error: function(result) { alertify.notify('error', 'error', 5); $('#modal-top1').modal('toggle') },
+      success: function(result) {
+        alertify.notify('User added', 'success', 5);
+        $('#modal-top1').modal('toggle')
+        setTimeout(location.reload.bind(location), 500);
+      }
+    });
+  }
+}
+//add tacacs
+function app_add_tacacs() {
+  event.preventDefault();
+  if ($('app-config-form-tacacs')) {
+    $('#modal-top1').modal('toggle');
+    $.ajax({
+      type: 'POST',
+      url: '/admin/app_add_tacacs',
+      dataType: 'json',
+      data: $('#app-config-form-tacacs').serialize(),
+      error: function(result) { alertify.notify('error', 'error', 5); $('#modal-top1').modal('toggle') },
+      success: function(result) {
+        alertify.notify('Tacacs added', 'success', 5);
+        $('#modal-top1').modal('toggle') ;
+        setTimeout(location.reload.bind(location), 500);
+      }
+    });
+  }}
+$(document).ready(function(){
+//delete tacacs
+  $('.delete-tacacs-btn').on('click', function (e) {
+    var tacacs_id = $(this).attr('tacacs_id')
+    $('#modal-top1').modal('toggle')
+    url_delete = {{ url_for('admin_blueprint.delete_object')|tojson }}+"?type=Tacacs&id="+tacacs_id
+    console.log(url_delete,{{url_for('admin_blueprint.delete_object')|tojson}})
+    $.ajax({
+      type: 'POST',
+      url: url_delete,
+      dataType: 'json',
+      error: function(result) { alertify.notify('error', 'error', 5); $('#modal-top1').modal('toggle')},
+      success: function(result) {
+        alertify.notify('Tacacs deleted', 'success', 5);
+        setTimeout(location.reload.bind(location), 500);
+      }
+    })
+  })
+//delete users
+$('.delete-users-btn').on('click', function (e) {
+    var user_id = $(this).attr('user_id')
+    $('#modal-top1').modal('toggle')
+    url_delete = {{ url_for('admin_blueprint.delete_object')|tojson }}+"?type=Users&id="+user_id
+    $.ajax({
+      type: 'POST',
+      url: url_delete,
+      dataType: 'json',
+      error: function(result) { alertify.notify('error', 'error', 5); $('#modal-top1').modal('toggle')},
+      success: function(result) {
+        alertify.notify('User deleted', 'success', 5);
+        setTimeout(location.reload.bind(location), 500);
+      }
+    })
+  })
+})
+//end
+</script>
+
+{% endblock javascripts %}

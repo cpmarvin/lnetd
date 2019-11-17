@@ -1,0 +1,58 @@
+{% extends "base_site.html" %}
+
+{% block title %} Login {% endblock title %}
+
+{% block stylesheets %}
+  {{ super() }}
+  <!-- Animate.css -->
+  <link href="{{ url_for('static', filename='vendors/animate.css/animate.min.css') }}" rel="stylesheet">
+{% endblock stylesheets %}
+
+{% block body_class %}login{% endblock body_class %}
+
+{% block body %}
+
+<div class="container py-5">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="row">
+        <div class="col-md-6 mx-auto">
+          <div class="card rounded-0">
+            <div class="card-header">
+              <h3 class="mb-0">LnetD Login</h3>
+            </div>
+            <div class="card-body">
+              <section class="login_content">
+                <form method="post">
+                  {% for field in login_form if field.widget.input_type != 'hidden'  %}
+                  <div>
+                    {{ field(class="form-control", placeholder=field.label.text) }}
+                  </div>
+                  {% endfor %}
+                  <div>
+                    <div>
+                      <label class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input">
+                        <span class="custom-control-indicator"></span>
+                        <span class="custom-control-description small text-dark"></span>
+                      </label>
+                    </div>
+                    <button type="submit" class="btn btn-success btn-lg float-right" id="btnLogin" name="login" >Login</button>
+                    <img width="48" height="48" src="/static/images/lnetd_logo.png" alt="logo">
+                  </div>
+                  <div class="clearfix"></div>
+                  <div class="clearfix"></div>
+                  <div class="row align-items-center d-flex h-100">
+                  </div>
+                </form>
+              </section>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock body %}
+
+

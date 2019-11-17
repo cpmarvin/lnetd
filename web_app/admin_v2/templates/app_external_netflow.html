@@ -1,0 +1,209 @@
+{% extends "base_site.html" %}
+
+{% block title %} App Admin Exteral Netflow {% endblock title %}
+
+{% block stylesheets %}
+  {{ super() }}
+
+{% endblock stylesheets %}
+
+{% block content %}
+<!--Edit links Modal-->
+<div id="add-link" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-xs">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true></span>
+        </button>
+        <h4 class="modal-title" id="title">Add Netflow Interfaces </h4>
+      </div>
+      <form id="add-link-form" data-parsley-validate class="form-horizontal form-label-left" method="post">
+        <div class="modal-body">
+          <div class="form-group" style="height: 350px">
+            <label class="control-label col-md-4 col-sm-4 col-xs-12">Name:</label>
+            <div class="col-md-6">
+              <input class="form-control validate" id="name_add" name="name_add" placeholder="Name" required autofocus>
+              <div class="help-block with-errors"></div>
+            </div>
+            <label class="control-label col-md-4 col-sm-4 col-xs-12">Router:</label>
+            <div class="col-md-6">
+              <input class="form-control validate" id="router_add" name="router_add" placeholder="Router" required autofocus>
+              <div class="help-block with-errors"></div>
+            </div>
+            <label class="control-label col-md-4 col-sm-4 col-xs-12">IfIndex</label>
+            <div class="col-md-6">
+              <input class="form-control validate" id="if_index_add" name="if_index_add" placeholder="IfIndex" required autofocus>
+              <div class="help-block with-errors"></div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-success" onclick="editObject()">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!--Edit links Modal-->
+<!--Main Page -->
+<div class="container-fluid page-body-wrapper">
+  <div class="main-panel">
+    <div class="content-wrapper">
+      <div class="row">
+        <div class="col-lg-6 grid-margin stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title">Edit Netflow Interfaces</h4>
+              <p class="card-description pb-3">
+                    Add netflow links. This is the input for
+                    <code>Sankey diagram</code> in <code>External Traffic flows</code> <br>
+              </p>
+              <div class="row justify-content-left pb-5">
+                <form class="form-inline" onsubmit="save_topology();return false;">
+                  <div class="form-group input-group"></div>
+                  <div class="form-group mx-sm-3 input-group">
+                    <span class="input-group-btn">
+                      <button class="btn btn-primary btn-success" type="submit" name="run_model">Save Netflow Info</button>
+                    </span>
+                  </div>
+                  <div class="form-group mx-sm-3 input-group">
+                    <span class="input-group-btn">
+                      <button type="button" class="btn btn-primary btn-success" data-toggle="modal" data-target="#add-link">Add Links</button>
+                    </span>
+                  </div>
+                  <div class="form-group mx-sm-3 input-group">
+                    <span class="input-group-btn">
+                      <button type="button" class="btn btn-warning" onclick="reset_changes()">Cancel changes</button>
+                    </span>
+                  </div>
+                </form>
+              </div>
+              <div class="row justify-content-left ">
+                <div class="table-responsive">
+                        <table id="table" data-toggle="false"
+                          data-search= "false"
+                          data-show-columes="true"
+                          data-pagination="false"
+                          data-click-to-select="true"
+                          class="table table-hover table-bordered">
+                        </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+  {{ super() }}
+
+<script>
+
+function save_topology(){
+  event.preventDefault();
+        $('#table').bootstrapTable('resetSearch', '');
+        var jsonTable = new JSONTable($("#table"))
+        var new_data= jsonTable.toJSON()
+        var new_data = encodeURIComponent(JSON.stringify(new_data));
+        url = {{ url_for('admin_blueprint.app_external_netflow_save')|tojson }}+'?arr='+new_data
+        var saveData = $.ajax({
+              type: 'POST',
+              url: url,
+              dataType: "text",
+              success: function(resultData) { alertify.notify("Netflow Interfaces Saved ", 'success', 5) },
+              error: function(){ alertify.notify("Something went wrong",'error',5); }
+        });
+}
+
+//delete row if button with .ibtnDel click
+$("#table").on("click", ".ibtnDel", function (e, value, row, index) {
+        //$(this).closest("tr").remove();
+        alertify.notify("Link removed ..... ", 'error', 5)
+
+            var $table = $('#table')
+            var ids = $.map($table.bootstrapTable('getSelections'), function (row) {
+                return row.id;
+            });
+
+            $('#table').bootstrapTable('remove', {
+                field: 'id',
+                values: ids
+            });
+
+
+
+})
+
+//function to add another row ( add both the form and reverse )
+function editObject() {
+        if ($('#add-link-form').parsley().validate() ) {
+        var entry = $('#add-link-form').serializeArray()
+        var newRow = $("<tr>");
+        var cols = "";
+        cols += '<td>' + Math.floor(Math.random() * 900) + '</td>';
+        cols += '<td>' + Math.floor(Math.random() * 900) + '</td>';
+        cols += '<td>' + Math.floor(Math.random() * 900) + '</td>';
+        cols += '<td>' + entry[0].value + '</td>'; //Name
+        cols += '<td>' + entry[1].value + '</td>'; //Routers
+        cols += '<td>' + entry[2].value + '</td>'; //IfIndex
+        cols += '<td><input type="button" class="ibtnDel btn btn-sm btn-danger "  value="Delete"></td>';
+        cols += '</tr>'
+        newRow.append(cols);
+        console.log('new row',newRow)
+        $("#table").append(newRow);
+
+//reload data into the table to allow modify of the metric
+        var jsonTable = new JSONTable($("#table"))
+        var new_data= jsonTable.toJSON()
+                        $('#table').bootstrapTable("load", new_data);
+        alertify.notify("Link added ..... ", 'success', 5)
+
+}
+}
+
+
+  // bootstrap table from flask variables
+ $(window).on('load', function () {
+    var data = {{values|tojson}};
+    console.log(data)
+    var columns = {{columns|tojson}};
+   $(function() {
+     $('#table').bootstrapTable ({
+        data: data,
+        columns: columns,
+                });
+           });
+        });
+
+
+//insert delete button for all rows
+function TableActions (value, row, index) {
+            return [
+                '<input type="button" class=" ibtnDel btn btn-sm btn-danger "  value="Delete">'
+            ].join('');
+        }
+
+
+   // reset table and remove existing demand or metric change
+   function reset_changes() {
+     var data = {{values|tojson}};
+     //console.log('-----data is : ' , data.length)
+     if ( data.length == null) {
+          $('#table').bootstrapTable('removeAll')
+     }
+     else {
+     $('#table').bootstrapTable("load", data);
+     }
+   }
+
+$.fn.editableform.buttons  = '<button type="submit" class="btn btn-success btn-sm editable-submit">OK</button><button type="button" class="btn btn-warning btn-sm editable-cancel">cancel</button>'
+
+</script>
+
+{% endblock javascripts %}

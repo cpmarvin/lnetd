@@ -1,0 +1,457 @@
+{% extends "base_site.html" %}
+
+{% block title %} LnetD Overview {% endblock title %}
+
+{% block stylesheets %}
+  {{ super() }}
+{% endblock stylesheets %}
+
+{% block content %}
+<!--Edit links Modal-->
+<div id="edit-router" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true"></span>
+        </button>
+        <h4 class="modal-title" id="title">Edit Router </h4>
+      </div>
+      <form id="app-config-form" data-parsley-validate class="form-horizontal form-label-left" method="post">
+        <div class="modal-body">
+          <div class="form-group float-label-control">
+            <label for="">Router</label>
+            <input type="text" name='router_name' class="form-control required" readonly value=
+          </div>
+          <div class="form-group float-label-control">
+            <br><label for="">TACACS</label><br>
+            <select class="form-control" name="tacacs">
+              {% for n in tacacs_id %}
+              <option value={{n.id}} >{{n.name}}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div id = 'replace' class="form-group float-label-control">
+            <label for="">Tags</label><br>
+            <select class="form-control" name="id_tags" id="id_tags" style="width: 100%"></select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-success" onclick="app_edit_router()">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+</div>
+<!--Edit links Modal-->
+
+<div class="container-fluid page-body-wrapper">
+  <div class="main-panel">
+    <div class="content-wrapper">
+      <div class="row">
+      <!--
+      <div class="col-sm-12 grid-margin">
+      <nav aria-label="breadcrumb">
+      <ol class="breadcrumb breadcrumb hide-phone float-right p-0 m-0">
+        <li class="breadcrumb-item"><a href="#">LnetD</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+      </ol>
+      </nav>
+      </div>
+      -->
+<div class="col-lg-2 col-xs-6 grid-margin stretch-card-none">
+  <div class="card">
+    <div class="card-body panel">
+      <h4 class="card-title text-center">Total IGP Routers</h4>
+      <div class="row justify-content-around grid-margin stretch-card">
+        <div class="col-xs-6 mt-4 mt-lg-0">
+          <h2 class="text-primary font-weight-bold">{{counters['routers']}}</h2>
+        </div>
+        <div class="col-xs-6 mt-4 mt-lg-0">
+          <i class="fas fa-chart-bar fa-2x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="col-lg-2 col-xs-6 grid-margin stretch-card-none">
+  <div class="card">
+    <div class="card-body panel">
+      <h4 class="card-title text-center">Total IGP Links</h4>
+      <div class="row justify-content-around grid-margin stretch-card">
+        <div class="col-xs-6 mt-4 mt-lg-0">
+          <h2 class="text-primary font-weight-bold">{{counters['links']}}</h2>
+        </div>
+        <div class="col-xs-6 mt-4 mt-lg-0">
+          <i class="fas fa-th-list fa-2x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="col-lg-2 col-xs-6 grid-margin stretch-card-none">
+  <div class="card">
+    <div class="card-body">
+      <h4 class="card-title text-center">Total IGP Prefies</h4>
+      <div class="row justify-content-around grid-margin stretch-card">
+        <div class="col-xs-6 mt-4 mt-lg-0">
+          <h2 class="text-primary font-weight-bold">{{counters['prefixes']}}</h2>
+        </div>
+        <div class="col-xs-6 mt-4 mt-lg-0">
+          <i class="fab fa-hubspot fa-2x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="col-lg-2 col-xs-6 grid-margin stretch-card-none">
+  <div class="card">
+    <div class="card-body">
+      <h4 class="card-title text-center">Total BGP Peers</h4>
+      <div class="row justify-content-around grid-margin stretch-card">
+        <div class="col-xs-6 mt-4 mt-lg-0">
+          <h2 class="text-primary font-weight-bold">{{counters['peers']}}</h2>
+        </div>
+        <div class="col-xs-6 mt-4 mt-lg-0">
+          <i class="fas fa-globe-europe fa-2x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="col-lg-4 grid-margin stretch-card">
+  <div class="card">
+    <div class="card-body pb-0">
+      <h4 class="card-title">Network Distribution</h4>
+      <canvas id="network_vendors"></canvas>
+    </div>
+  </div>
+</div>
+
+</div><!--end row-->
+
+<div class="row">
+
+  <div class="col-lg-6 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body pb-0">
+        <h4 class="card-title text-center">Routers per Country</h4>
+        <canvas id="ARouter_per_country"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-6 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body pb-0">
+        <h4 class="card-title text-center">Prefixes per Country</h4>
+        <canvas id="BPrefix_per_country"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-6 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body pb-0">
+        <h4 class="card-title text-center">Prefixes per Routers( top 5 )</h4>
+        <canvas id="CPrefix_per_router"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-6 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body pb-0">
+        <h4 class="card-title text-center">Links per Router( top 5 )</h4>
+        <canvas id="DLinks_per_router"></canvas>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="row">
+  <div class="col-sm-12 flex-column d-flex stretch-card">
+    <div class="row">
+    </div>
+    <div class="row">
+      <div class="col-sm-12 grid-margin d-flex stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between">
+              <h4 class="card-title mb-2">Network Data</h4>
+              <div class="dropdown">
+                <a href="#" class="text-primary btn btn-link  px-1">
+                  <i class="mdi mdi-refresh"></i>
+                </a>
+              </div>
+            </div>
+            <div>
+              <ul class="nav nav-tabs tab-no-active-fill" role="tablist">
+                <li class="nav-item">
+                  <a class="nav-link active pl-2 pr-2" id="revenue-for-last-month-tab" data-toggle="tab" href="#revenue-for-last-month" role="tab" aria-controls="revenue-for-last-month" aria-selected="true">Routers</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link pl-2 pr-2" id="server-loading-tab" data-toggle="tab" href="#server-loading" role="tab" aria-controls="server-loading" aria-selected="false">Links</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link pl-2 pr-2" id="data-managed-tab" data-toggle="tab" href="#data-managed" role="tab" aria-controls="data-managed" aria-selected="false">Prefixes</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link pl-2 pr-2" id="sales-by-traffic-tab" data-toggle="tab" href="#sales-by-traffic" role="tab" aria-controls="sales-by-traffic" aria-selected="false">Peers</a>
+                </li>
+              </ul>
+              <div class="tab-content tab-no-active-fill-tab-content">
+                <div class="tab-pane fade show active" id="revenue-for-last-month" role="tabpanel" aria-labelledby="revenue-for-last-month-tab">
+                  <div class="d-lg-flex justify-content-between">
+                    <!--table here -->
+                    <div class="table-responsive">
+                      <table id="routers_table" class="table table-hover table-bordered"
+                      data-toggle="table"
+                      data-search="true"
+                      data-sortable="true"
+                      data-pagination="true"
+                      data-show-columns="true">
+                      <thead class="thead-light">
+                        <tr>
+                          <th data-field="name" data-sortable="true">NAME</th>
+                          <th data-field="ip" data-sortable="true">IP</th>
+                          <th data-field="country" data-sortable="true">LOCATION</th>
+                          <th data-field="vendor" data-sortable="true">VENDOR</th>
+                          <th data-field="model" data-sortable="true">MODEL</th>
+                          <th data-field="version" data-sortable="true">VERSION</th>
+                          <th data-field="tacacs_id" data-sortable="true">TACACS</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          {% for node in routers %}
+                          <td>{{node.name}}<br><br>
+                            {% for tag in node.tags %}
+                            <span class="badge badge-warning">{{tag.name}}</span>
+                            {% endfor %}
+                          </td>
+                          <td>{{node.ip}}</td>
+                          <td>{{node.country}}</td>
+                          <td>{{names[node.vendor]}}</td>
+                          <td>{{node.model}}</td>
+                          <td>{{node.version}}</td>
+                          <td>
+                           <a href="#edit-router" data-toggle="modal"
+                           data-val={{node.name}} data-tags = "{%- for tag in node.tags -%}{{tag.name}},{%- endfor -%}"
+                           data-target="#edit-router"
+                           class="badge badge-light">{{node.tacacs}}
+                         </a>
+                       </td>
+                     </tr>
+                     {% endfor %}
+                   </tbody>
+                 </table>
+               </div>
+               <!--end table here -->
+             </div>
+           </div>
+           <div class="tab-pane fade" id="server-loading" role="tabpanel" aria-labelledby="server-loading-tab">
+                  <div class="d-lg-flex justify-content-between">
+                    <!--table here -->
+                    <div class="table-responsive">
+                      <table id="links_table" class="table table-hover table-bordered"
+                      data-toggle="table"
+                      data-search="true"
+                      data-sortable="true"
+                      data-pagination="true"
+                      data-show-columns="true">
+                      <thead class="thead-light">
+                        <tr>
+                          <th data-field="source" data-sortable="true">SOURCE</th>
+                          <th data-field="l_ip" data-sortable="true">L-IP</th>
+                          <th data-field="target" data-sortable="true">TARGET</th>
+                          <th data-field="r_ip" data-sortable="true">R-IP</th>
+                          <th data-field="metric" data-sortable="true">METRIC</th>
+                          <th data-field="capacity" data-sortable="true">CAPACITY</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          {% for node in links %}
+                          <td>{{node.source}}</td>
+                          <td>{{node.l_ip}}</td>
+                          <td>{{node.target}}</td>
+                          <td>{{node.r_ip}}</td>
+                          <td>{{node.metric}}</td>
+                          <td>{{node.capacity}}</td>
+                       </td>
+                     </tr>
+                     {% endfor %}
+                   </tbody>
+                 </table>
+               </div>
+               <!--end table here -->
+             </div>
+          </div>
+          <div class="tab-pane fade" id="data-managed" role="tabpanel" aria-labelledby="data-managed-tab">
+                  <div class="d-lg-flex justify-content-between">
+                    <!--table here -->
+                    <div class="table-responsive">
+                      <table id="prefixes_table" class="table table-hover table-bordered"
+                      data-toggle="table"
+                      data-search="true"
+                      data-sortable="true"
+                      data-pagination="true"
+                      data-show-columns="true">
+                      <thead class="thead-light">
+                        <tr>
+                          <th data-field="name" data-sortable="true">RTR-NAME</th>
+                          <th data-field="ip" data-sortable="true">IP</th>
+                          <th data-field="country" data-sortable="true">LOCATION</th>
+                          <th data-field="version" data-sortable="true">VERSION</th>
+
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          {% for node in prefixes %}
+                          <td>{{node.name}}</td>
+                          <td>{{node.ip}}</td>
+                          <td>{{node.country}}</td>
+                          <td>{{node.version}}</td>
+                     </tr>
+                     {% endfor %}
+                   </tbody>
+                 </table>
+               </div>
+               <!--end table here -->
+             </div>
+          </div>
+          <div class="tab-pane fade" id="sales-by-traffic" role="tabpanel" aria-labelledby="sales-by-traffic-tab">
+                  <div class="d-lg-flex justify-content-between">
+                    <!--table here -->
+                    <div class="table-responsive">
+                      <table id="peers_table" class="table table-hover table-bordered"
+                      data-toggle="table"
+                      data-search="true"
+                      data-sortable="true"
+                      data-pagination="true"
+                      data-show-columns="true">
+                      <thead class="thead-light">
+                        <tr>
+                          <th data-field="router" data-sortable="true">RTR-NAME</th>
+                          <th data-field="neighbour" data-sortable="true">BGP-PEER</th>
+                          <th data-field="neighbour_ip" data-sortable="true">BGP-PEER-IP</th>
+                          <th data-field="remote_as" data-sortable="true">ASN</th>
+                          <th data-field="is_up" data-sortable="true">STATUS</th>
+                          <th data-field="type" data-sortable="true">TYPE</th>
+                          <th data-field="accepted_prefixes" data-sortable="true">PXL</th>
+                          <th data-field="ix_name" data-sortable="true">IX-NAME</th>
+                          <th data-field="uptime" data-sortable="true">UPTIME</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          {% for node in bgp_peers %}
+                          <td>{{node.router}}</td>
+                          <td>{{node.neighbour}}</td>
+                          <td>{{node.neighbour_ip}}</td>
+                          <td>{{node.remote_as}}</td>
+                          <td>{{names[node.is_up]}}</td>
+                          <td>{{node.type}}</td>
+                          <td>{{node.accepted_prefixes}}</td>
+                          <td>{{node.ix_name}}</td>
+                          <td>{{node.uptime}}</td>
+                     </tr>
+                     {% endfor %}
+                   </tbody>
+                 </table>
+               </div>
+               <!--end table here -->
+             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+{% endblock content %}
+
+{% block javascripts %}
+{{ super() }}
+<script src="https://unpkg.com/chartjs-plugin-colorschemes"></script>
+<script src="{{ url_for('home_blueprint.static', filename='home.js') }}"></script>
+<script>
+//create pie graphs
+
+{% for property, counters in objects_counters.items() %}
+
+  var div_id = '{{ property }}'
+  var data_labels = []
+  var data_values = []
+
+ {% for labels, values in counters.items() %}
+   data_labels.push('{{ labels }}')
+   data_values.push({{ values }})
+ {% endfor %}
+generate_pie(div_id,data_values,data_labels)
+{% endfor %}
+//create tables
+var $table = $('#routers_table')
+$table.bootstrapTable()
+
+  //edit router
+  //get all tag values
+  var tag_values = {{tag_values|tojson|safe}}
+
+  $('#edit-router').on('show.bs.modal', function(e) {
+    //get all tags already assign to this device
+    var existing_tags = $(e.relatedTarget).data('tags').split(',');
+    var ownerData = JSON.parse(JSON.stringify(tag_values))
+    ownerData.filter(function(value) {
+        if (existing_tags.includes(value['text'])) {
+            value['selected'] = true;
+          }
+        return value;
+       }
+    )
+    //make sure no previous selection
+    $('#id_tags').find('option').remove()
+    $('#id_tags').select2({
+        dropdownParent: $('#edit-router'),
+        theme: "classic",
+        width: "resolve",
+        tags: true,
+        data: ownerData,
+        multiple: true,
+        allowClear: true,
+        placeholder: "Tags",})
+    //get data-val attribute of the clicked element
+    var router_name = $(e.relatedTarget).data('val');
+    //populate the textbox
+    $(e.currentTarget).find('input[name="router_name"]').val(router_name);
+  });
+
+  function app_edit_router() {
+    if ($('app-config-form')) {
+      $.ajax({
+        type: 'POST',
+        url: '/admin/app_edit_router',
+        dataType: 'json',
+        data: $('#app-config-form').serialize() + "&all_tags="+ $("#id_tags").val() ,
+        error: function(result) { alertify.notify('error', 'error', 5);},
+        success: function(result) {
+          alertify.notify('Router Changed', 'success', 5);
+          $('#edit-router').modal('toggle') ;
+          setTimeout(location.reload.bind(location), 1000);
+        }
+      });
+    }
+  }
+
+</script>
+
+{% endblock javascripts %}

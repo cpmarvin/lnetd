@@ -1,0 +1,28 @@
+<div class="modal fade" id="modal-topology" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-full" role="document">
+    <div class="modal-content">
+      <div class="modal-header justify-content-between">
+          <h5 class="modal-title w-100 float-right" id="exampleModalLabel">Model Topology
+           <button onclick="javascript:node_position_save();" class="float-right btn btn-success mr-auto ">Save Layout</button>
+          </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+           <span aria-hidden="true">&times;</span>
+          </button>
+      </div>
+      <div class="modal-body" id="modal-topology-body">
+        <div id="legend_div"></div>
+        <div class="checkbox" id="spf_div">
+          <label>
+           <input type="checkbox" id="spf_check" value="">Activate SPF
+         </label>
+       </div>
+       <div class="spf_results x_content" id="sfp_div1"></div>
+       <div id="topology"></div>
+     </div>
+     <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+    </div>
+  </div>
+</div>
+</div>
+<!-- End Modal used for topology-->

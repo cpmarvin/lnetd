@@ -1,0 +1,245 @@
+{% extends "base_site.html" %}
+
+{% block title %} ISIS Topology {% endblock title %}
+
+{% block stylesheets %}
+  {{ super() }}
+
+{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="container-fluid page-body-wrapper">
+  <div class="main-panel">
+    <div class="content-wrapper">
+      <div class="row">
+            <div class="col-lg-5 grid-margin">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">Interface Graph</h4>
+                  <p class="card-description">
+                    Use this form to select the router and interface.This will produce a graph <br> for last 24h ( 5 minutes aggregate)
+                    <code>traffic</code> for both <code>input</code> and <code>output</code>
+                  </p><br>
+                  <form class="form-inline" id="interface_graph_form" onsubmit="get_interface_graph();return false;">
+                    <input type="text" class="form-control mb-2 mr-sm-2 typeahead" id="router" name="router" placeholder="Router">
+                    <div class="input-group mb-2 mr-sm-2">
+                      <input type="text" class="form-control typeahead" id="interface" name="interface" placeholder="interface_name">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-success btn-sm mb-2">Get Data</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+<!--second form with options -->
+            <div class="col-lg-7 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">Interface Graph</h4>
+                  <form class="form-sample">
+                    <div class="row">
+                      <div class="col-lg-12">
+                        <div id="interface_graph">
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+{% endblock content %}
+
+{% block javascripts %}
+  {{ super() }}
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/corejs-typeahead/1.2.1/typeahead.bundle.js"></script>
+
+<script>
+
+ //node position
+
+ var web_ip = {{app_config|tojson|safe}}
+
+
+
+ var router_name = {{router_name|tojson}}
+ var router_name = new Bloodhound({
+      datumTokenizer: Bloodhound.tokenizers.whitespace,
+      queryTokenizer: Bloodhound.tokenizers.whitespace,
+      local: router_name
+  });
+
+$('.typeahead').typeahead({
+    hint: true,
+    highlight: true,
+    minLength: 1
+  },
+  {
+    name: 'router_name',
+    source: router_name
+  }
+);
+
+//on button click this is run
+function get_interface_graph(){
+  event.preventDefault();
+  var entry = $('#interface_graph_form').serializeArray()
+  router = entry[0]['value']
+  interface = entry[1]['value']
+  url = {{ url_for('map_blueprint.get_graph_data_interface')|tojson }}+'?router='+router+'&interface='+interface
+  $.ajax({
+        url: url,
+        beforeSend: function(){
+          alertify.notify("Request Data ", 'warning', 5)
+        },
+        success: function(data) {
+            interface_graph(data,router,interface)
+            alertify.notify("Done", 'success', 5)
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+          alertify.notify(errorThrown, 'error', 5);
+          $( "#interface_graph" ).empty();
+        }
+  });
+}
+
+
+//graph function
+function interface_graph(data,router,interface) {
+    var rawDataURL = data
+    //pop last interval from array , it's mostly 0 in not exactly on the hours due to aggregataion
+    //rawDataURL.pop()
+    //lame , promise issues
+    div_id = 'interface_graph'
+    //console.log('this is the div_id inside graph_aggr',div_id)
+    $( "#interface_graph" ).empty();
+    title = 'Traffic for ' + router + ' Interface: ' + interface
+    // / create selector
+    var selectorOptions = {
+        visible: true,
+        buttons: [{
+            step: 'minute',
+            stepmode: 'backward',
+            count: 30,
+            label: '30m'
+        }, {
+            step: 'hour',
+            stepmode: 'backward',
+            count: 1,
+            label: '1h'
+        }, {
+            step: 'hour',
+            stepmode: 'backward',
+            count: 6,
+            label: '6h'
+        }, {
+            step: 'hour',
+            stepmode: 'backward',
+            count: 12,
+            label: '12h'
+        }, {
+            step: 'all',
+            label: 'all'
+        }],
+    };
+    // //prepare the graph
+    var data = [ prepData(data), prepDataIn(data) ];
+    var layout = {
+        showlegend: true,
+        legend: {
+           y: 0.5,
+           font: {
+            size: 12
+           }
+        },
+        autoresize: true,
+        width: document.getElementById(div_id).clientWidth,
+        height: 380,
+        margin: {
+         l: 90,
+         r: 0,
+         b: 0,
+         t: 80,
+         pad: 0,
+        },
+        title: title,
+        xaxis: {
+            fixedrange: true,
+            rangeselector: selectorOptions,
+            rangeslider: {},
+            type: 'date',
+            title: 'Time',
+        },
+        yaxis: {
+            fixedrange: true,
+            autotick: true,
+            autorange: true,
+            tickformat: ".3s",
+            title: 'Mbps'
+        }
+    };
+
+    Plotly.newPlot(div_id, data, layout);
+    // //prepare the data
+    function prepData(rawData) {
+        //map the fields
+        var xField = 'time';
+        var yField = 'bps_out';
+        var x = [];
+        var y = [];
+        rawData.forEach(function(datum, i) {
+
+            x.push(new Date(datum[xField]));
+            y.push(datum[yField]); });
+
+        return {
+            mode: 'lines',
+            connectgaps: 'false',
+            fill: 'tonexty',
+            fillcolor: '#99CCFF',
+            line: {width: 1, shape: 'spline', color: '#99CCFF'},
+            name: 'OUT',
+            x: x,
+            y: y
+        }; }
+     //prepare the data trace2 bps_in
+    function prepDataIn(rawData) {
+        //map the fields
+        var xField = 'time';
+        var yField = 'bps_in';
+        var x = [];
+        var y = [];
+        //pop last interval as it's going to be 0 if not exactly on the outer
+        rawData.forEach(function(datum, i) {
+
+            x.push(new Date(datum[xField]));
+            y.push(-datum[yField]); });
+
+        return {
+            mode: 'lines',
+            connectgaps: 'false',
+            fill: 'tozeroy',
+            fillcolor: '#57b88f',
+            line: {width: 1, shape: 'spline', color: '#57b88f'},
+            name: 'IN',
+            x: x,
+            y: y
+        }; }
+
+}
+
+
+
+
+///
+</script>
+
+
+{% endblock javascripts %}
+
