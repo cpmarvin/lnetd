@@ -1,13 +1,15 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, session
 from flask_login import login_required
 from base_v2.basic_role import requires_roles
 
 from database import db
-from objects_v2.models import App_config, App_external_flows, Tacacs, Routers, Tag
+from objects_v2.models import App_config, App_external_flows, Tacacs, Routers, Tag,Links, Node_position
 from base_v2.models import User
 
 import pandas as pd
 import json
+
+from .mutils import generate_network_report
 
 blueprint = Blueprint(
     'admin_blueprint',
@@ -17,6 +19,49 @@ blueprint = Blueprint(
     static_folder='static'
 )
 
+
+@blueprint.route('/admin_report_failed', methods=['POST','GET'])
+@login_required
+@requires_roles('admin')
+def admin_report_failed():
+    rvalue = request
+    rvalue_dict = rvalue.args.to_dict(flat=False)
+    type = rvalue_dict['type'][0]
+    failed_links = json.loads(rvalue_dict['links'][0])
+
+    current_user = str(session['user_id'])
+    node_position = pd.read_sql(db.session.query(Node_position).filter(Node_position.user == current_user ).statement,db.session.bind)
+    node_position = node_position.to_dict(orient='records')
+
+    df = pd.read_sql(db.session.query(Links).statement,db.session.bind)
+    df['status']='up'
+    network_initial = df.to_dict(orient='records')
+
+    #failed_links = ['10.2.3.2','10.22.33.22']
+    df_failed = pd.read_sql(db.session.query(Links).statement,db.session.bind)
+    df_failed['status']='up'
+    df_failed.loc[ (df_failed['l_ip'].isin(failed_links)) | (df_failed['r_ip'].isin(failed_links)) , 'status'] = 'down'
+    network_failed = df_failed.to_dict(orient='records')
+
+    network_report = generate_network_report(initial_network=df,failed_network=df_failed,compare=True)
+    initial_netowrk_paths = pd.DataFrame(network_report['initial_network']['paths'])
+    failed_network_paths = pd.DataFrame(network_report['failed_network']['paths'])
+    change_paths_df = initial_netowrk_paths.merge(failed_network_paths, suffixes=['_initial','_failed'],indicator=True, how='outer' , on=['source','target'])
+    print(change_paths_df)
+    change_paths = change_paths_df.to_dict(orient='records')
+
+    return render_template('admin_report_failed.html',network_report=network_report,change_paths=change_paths,
+		network_initial=network_initial, network_failed=network_failed,node_position=node_position)
+
+@blueprint.route('/admin_report')
+@login_required
+@requires_roles('admin')
+def admin_report():
+    df = pd.read_sql(db.session.query(Links).statement,db.session.bind)
+    df['status']='up'
+    network_report = generate_network_report(initial_network=df,failed_network=None,compare=False)
+    print(network_report)
+    return render_template('admin_report.html',network_report=network_report)
 
 @blueprint.route('/app_config')
 @login_required

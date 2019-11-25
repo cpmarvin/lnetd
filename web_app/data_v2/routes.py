@@ -21,6 +21,22 @@ blueprint = Blueprint(
     static_folder = 'static'
     )
 
+@blueprint.route('/add_layer1')
+@login_required
+def add_layer1():
+    df = pd.read_sql(db.session.query(Layer1Topology).filter(Layer1Topology.id >=0).statement,db.session.bind)
+    layer1_links = df.to_dict(orient='records')
+    columns = [
+            { "field": "state","checkbox":True},
+            { "field": "id","title":"id","sortable":False,"class":"hide_me"},
+            { "field": "source","title":"Source","sortable":True,"editable":True},
+            { "field": "target","title":"Target","sortable":False,"editable":True},
+            { "field": "layer3_mapping","title":"Layer3 Mapping","sortable":True,"editable":True},
+            { "field": "status","title":"Status","sortable":False},
+            { "field": "Action","title":"Action","formatter":"TableActions"},
+            ]
+    return render_template('add_layer1_topology.html', values=layer1_links,columns=columns)
+
 @blueprint.route('/model_layer1')
 @login_required
 def topology_layer1():
@@ -343,9 +359,9 @@ def topology_netbox():
     node_position = pd.read_sql(db.session.query(Node_position).filter(
         Node_position.user == current_user).statement, db.session.bind)
     node_position = node_position.to_dict(orient='records')
-    #df1 = get_netbox_connections(nb_token,nb_url)
-    #df1['capacity'] = 1000
-    #df1['util'] = 100
-    #isis_links = df1.to_dict(orient='records')
-    isis_links = [{'source': 'ke-pe3-nbi', 'target': 'ke-pe2-nbi', 'l_ip': 'ge-0/0/3', 'r_ip': 'ge-0/0/3', 'l_ip_r_ip': "('ge-0/0/3', 'ge-0/0/3')"}, {'source': 'ke-pe3-nbi', 'target': 'ke-pe2-nbi', 'l_ip': 'ge-0/0/0', 'r_ip': 'ge-0/0/1', 'l_ip_r_ip': "('ge-0/0/0', 'ge-0/0/1')"}, {'source': 'ke-pe2-nbi', 'target': 'ke-pe3-nbi', 'l_ip': 'ge-0/0/3', 'r_ip': 'ge-0/0/3', 'l_ip_r_ip': "('ge-0/0/3', 'ge-0/0/3')"}, {'source': 'ke-pe2-nbi', 'target': 'ke-pe3-nbi', 'l_ip': 'ge-0/0/1', 'r_ip': 'ge-0/0/0', 'l_ip_r_ip': "('ge-0/0/0', 'ge-0/0/1')"}]
+    df1 = get_netbox_connections(nb_token,nb_url)
+    df1['capacity'] = 1000
+    df1['util'] = 100
+    isis_links = df1.to_dict(orient='records')
+    #isis_links = [{'source': 'ke-pe3-nbi', 'target': 'ke-pe2-nbi', 'l_ip': 'ge-0/0/3', 'r_ip': 'ge-0/0/3', 'l_ip_r_ip': "('ge-0/0/3', 'ge-0/0/3')"}, {'source': 'ke-pe3-nbi', 'target': 'ke-pe2-nbi', 'l_ip': 'ge-0/0/0', 'r_ip': 'ge-0/0/1', 'l_ip_r_ip': "('ge-0/0/0', 'ge-0/0/1')"}, {'source': 'ke-pe2-nbi', 'target': 'ke-pe3-nbi', 'l_ip': 'ge-0/0/3', 'r_ip': 'ge-0/0/3', 'l_ip_r_ip': "('ge-0/0/3', 'ge-0/0/3')"}, {'source': 'ke-pe2-nbi', 'target': 'ke-pe3-nbi', 'l_ip': 'ge-0/0/1', 'r_ip': 'ge-0/0/0', 'l_ip_r_ip': "('ge-0/0/0', 'ge-0/0/1')"}]
     return render_template('topology_netbox.html', values=isis_links, node_position=node_position)

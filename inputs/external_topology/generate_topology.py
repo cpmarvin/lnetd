@@ -18,6 +18,7 @@ def main():
     df['capacity'] = df.apply(lambda row: get_capacity_ifname(
         row['node'], row['interface'], 0), axis=1)
     # write to sql db
+    print(df)
     disk_engine = create_engine('sqlite:////opt/lnetd/web_app/database.db')
     df.to_sql('External_topology', disk_engine, if_exists='replace')
 

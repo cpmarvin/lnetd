@@ -1,0 +1,151 @@
+{% extends "base_site.html" %}
+
+{% block title %} IGP Network Report {% endblock title %}
+
+{% block stylesheets %}
+  {{ super() }}
+
+{% endblock stylesheets %}
+
+{% block content %}
+<!-- start main -->
+<div class="container-fluid page-body-wrapper">
+  <div class="main-panel">
+    <div class="content-wrapper">
+      <div class="row">
+        <div class="col-lg-3 grid-margin stretch-card-none">
+          <div class="card">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-lg-9">
+                <h4 class="card-title mb-2">Is Network Connected</h4>
+                </div>
+                <div class="col-lg-3">
+                 <a class="text-primary"> {{network_report['initial_network']['Connected Network']}}</a>
+                </div>
+             </div>
+              <div class="row">
+                <div class="col-lg-9">
+                <h4 class="card-title mb-2">Number of Links</h4>
+                </div>
+                <div class="col-lg-3">
+                 <a class="text-primary"> {{network_report['initial_network']['Number of Links']}}</a>
+                </div>
+             </div>
+             <div class="row">
+              <div class="col-lg-9">
+                <h4 class="card-title mb-2">Number of Nodes</h4>
+              </div>
+                <div class="col-lg-3">
+                 <a class="text-primary"> {{network_report['initial_network']['Number of Nodes']}}</a>
+                </div>
+             </div>
+             <div class="row">
+              <div class="col-lg-9">
+                <h4 class="card-title mb-2">Network Density
+                  <!--
+                  <i class="fas fa-info-circle"
+                  id = 'network_density' href="#"
+                  data-toggle="tooltip"
+                  title="shortest distance between the two most distant nodes in the network">
+                  </i>
+                -->
+                </h4>
+              </div>
+              <div class="col-lg-3">
+                <a class="text-primary"> {{network_report['initial_network']['Network Density'] | round(4, 'floor') }}</a>
+              </div>
+             </div>
+              <div class="row">
+                <div class="col-lg-9">
+              <h4 class="card-title mb-2">Network Diameter
+                <i class="fas fa-info-circle"
+                id = 'network_diameter' href="#"
+                data-toggle="tooltip"
+                title="shortest distance between the two most distant nodes in the network">
+                </i>
+              </h4>
+            </div>
+            <div class="col-lg-3">
+               <a class="text-primary"> {{network_report['initial_network']['Network Diameter']}}</a>
+             </div>
+             </div>
+            </div>
+          </div>
+        </div>
+          <div class="col-lg-3 grid-margin stretch-card-none">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title mb-2">Node Degree (top 10)
+                <i class="fas fa-info-circle"
+                id = 'network_diameter' href="#"
+                data-toggle="tooltip"
+                title="the degree of a node in a network is the number of connections it has to other nodes">
+                </i>
+              </h4>
+              {% for node,degree in network_report['initial_network']['Connectivity Node Degree'][:10] %}
+              <div class="row pt-2">
+                <div class="col-lg-10">
+                  {{node}}
+                </div>
+                <div class="col-lg-2">
+                  {{degree}}
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6 grid-margin stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title mb-2">IGP SHORTEST PATHS</h4>
+              <div class="table-responsive">
+                <table id="routers_table" class="table table-hover table-bordered"
+                data-toggle="table"
+                data-search="false"
+                data-sortable="true"
+                data-pagination="true"
+                data-page-size="4"
+                data-total-rows="4"
+                data-show-columns="true">
+                <thead class="thead-light">
+                  <tr>
+                    <th data-field="source" data-sortable="true">SOURCE</th>
+                    <th data-field="target" data-sortable="true">TARGET</th>
+                    <th data-field="ecmp_paths" data-sortable="true">TOTAL PATHS</th>
+                    <th data-field="path_metric" data-sortable="true">PATH METRIC</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    {% for path in network_report['initial_network']['paths'] %}
+                    <td>{{path.source}}</td>
+                    <td>{{path.target}}</td>
+                    <td>{{path.ecmp_paths}}</td>
+                    <td>{{path.path_metric}}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+          </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
+
+{% block javascripts %}
+  {{ super() }}
+
+<script>
+
+$('.fa-info-circle').tooltip()
+
+</script>
+
+{% endblock javascripts %}

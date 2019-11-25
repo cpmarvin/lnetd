@@ -12,5 +12,6 @@ numpy
 nornir
 argon2_cffi
 simple-crypt
+pycryptodome
 pynetbox
 redis

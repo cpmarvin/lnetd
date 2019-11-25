@@ -50,7 +50,7 @@
 <div class="container-fluid page-body-wrapper">
   <div class="main-panel">
     <div class="content-wrapper">
-      <div class="row">
+      <div class="row sortable">
       <!--
       <div class="col-sm-12 grid-margin">
       <nav aria-label="breadcrumb">
@@ -63,7 +63,10 @@
       -->
 <div class="col-lg-2 col-xs-6 grid-margin stretch-card-none">
   <div class="card">
-    <div class="card-body panel">
+    <div class="d-flex flex-row-reverse">
+      <i class="mdi mdi-close-circle text-primary"></i>
+    </div>
+    <div class="card-body pt-0">
       <h4 class="card-title text-center">Total IGP Routers</h4>
       <div class="row justify-content-around grid-margin stretch-card">
         <div class="col-xs-6 mt-4 mt-lg-0">
@@ -78,7 +81,10 @@
 </div>
 <div class="col-lg-2 col-xs-6 grid-margin stretch-card-none">
   <div class="card">
-    <div class="card-body panel">
+    <div class="d-flex flex-row-reverse">
+      <i class="mdi mdi-close-circle text-primary"></i>
+    </div>
+    <div class="card-body pt-0">
       <h4 class="card-title text-center">Total IGP Links</h4>
       <div class="row justify-content-around grid-margin stretch-card">
         <div class="col-xs-6 mt-4 mt-lg-0">
@@ -93,7 +99,10 @@
 </div>
 <div class="col-lg-2 col-xs-6 grid-margin stretch-card-none">
   <div class="card">
-    <div class="card-body">
+    <div class="d-flex flex-row-reverse">
+      <i class="mdi mdi-close-circle text-primary"></i>
+    </div>
+    <div class="card-body pt-0">
       <h4 class="card-title text-center">Total IGP Prefies</h4>
       <div class="row justify-content-around grid-margin stretch-card">
         <div class="col-xs-6 mt-4 mt-lg-0">
@@ -108,7 +117,10 @@
 </div>
 <div class="col-lg-2 col-xs-6 grid-margin stretch-card-none">
   <div class="card">
-    <div class="card-body">
+    <div class="d-flex flex-row-reverse">
+      <i class="mdi mdi-close-circle text-primary"></i>
+    </div>
+    <div class="card-body pt-0">
       <h4 class="card-title text-center">Total BGP Peers</h4>
       <div class="row justify-content-around grid-margin stretch-card">
         <div class="col-xs-6 mt-4 mt-lg-0">
@@ -123,7 +135,10 @@
 </div>
 <div class="col-lg-4 grid-margin stretch-card">
   <div class="card">
-    <div class="card-body pb-0">
+    <div class="d-flex flex-row-reverse">
+      <i class="mdi mdi-close-circle text-primary"></i>
+    </div>
+    <div class="card-body pt-0">
       <h4 class="card-title">Network Distribution</h4>
       <canvas id="network_vendors"></canvas>
     </div>
@@ -132,11 +147,14 @@
 
 </div><!--end row-->
 
-<div class="row">
+<div class="row sortable">
 
   <div class="col-lg-6 grid-margin stretch-card">
     <div class="card">
-      <div class="card-body pb-0">
+      <div class="d-flex flex-row-reverse">
+        <i class="mdi mdi-close-circle text-primary"></i>
+      </div>
+      <div class="card-body pt-2 pb-0">
         <h4 class="card-title text-center">Routers per Country</h4>
         <canvas id="ARouter_per_country"></canvas>
       </div>
@@ -145,7 +163,10 @@
 
   <div class="col-lg-6 grid-margin stretch-card">
     <div class="card">
-      <div class="card-body pb-0">
+      <div class="d-flex flex-row-reverse">
+        <i class="mdi mdi-close-circle text-primary"></i>
+      </div>
+      <div class="card-body pt-2 pb-0">
         <h4 class="card-title text-center">Prefixes per Country</h4>
         <canvas id="BPrefix_per_country"></canvas>
       </div>
@@ -154,7 +175,10 @@
 
   <div class="col-lg-6 grid-margin stretch-card">
     <div class="card">
-      <div class="card-body pb-0">
+      <div class="d-flex flex-row-reverse">
+        <i class="mdi mdi-close-circle text-primary"></i>
+      </div>
+      <div class="card-body pt-2 pb-0">
         <h4 class="card-title text-center">Prefixes per Routers( top 5 )</h4>
         <canvas id="CPrefix_per_router"></canvas>
       </div>
@@ -163,7 +187,10 @@
 
   <div class="col-lg-6 grid-margin stretch-card">
     <div class="card">
-      <div class="card-body pb-0">
+      <div class="d-flex flex-row-reverse">
+        <i class="mdi mdi-close-circle text-primary"></i>
+      </div>
+      <div class="card-body pt-2 pb-0">
         <h4 class="card-title text-center">Links per Router( top 5 )</h4>
         <canvas id="DLinks_per_router"></canvas>
       </div>
@@ -172,7 +199,7 @@
 
 </div>
 
-<div class="row">
+<div class="row sortable">
   <div class="col-sm-12 flex-column d-flex stretch-card">
     <div class="row">
     </div>
@@ -384,6 +411,7 @@
 {{ super() }}
 <script src="https://unpkg.com/chartjs-plugin-colorschemes"></script>
 <script src="{{ url_for('home_blueprint.static', filename='home.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 <script>
 //create pie graphs
 
@@ -452,6 +480,22 @@ $table.bootstrapTable()
     }
   }
 
+
+
+    $( ".sortable" ).sortable({
+        stop: function( ) {
+            var order = $("#sortable").sortable("serialize", {key:'order[]'});
+            $( "p" ).html( order );
+        }
+    });
+
+    $('.mdi-close-circle').click(function(e){
+        row_ = $(e.target).parents('.row')
+        console.log(row_)
+        row_size = row_.children().length
+        console.log(row_size)
+        $(e.target).closest('.card').remove()
+    });
 </script>
 
 {% endblock javascripts %}

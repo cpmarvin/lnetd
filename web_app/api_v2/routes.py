@@ -242,6 +242,18 @@ def get_links_interval():
     values = df['timestamp'].astype(str).unique().tolist()
     return jsonify(values)
 
+
+@blueprint.route('/save_layer1_topology',methods=['POST'])
+@login_required
+def save_layer1_topology():
+    arr = request.args['arr']
+    df = pd.DataFrame(eval(arr))
+    df.set_index("id", inplace = True)
+    #df = df.drop(['','index','Action','id'], axis=1)
+    df.to_sql(name='Layer1Topology', con=db.engine, if_exists='replace' )
+    print(df)
+    return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
+
 @blueprint.route('/save_international_pop',methods=['POST'])
 @login_required
 def save_international_pop():

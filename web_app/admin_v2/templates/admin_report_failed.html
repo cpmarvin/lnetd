@@ -1,0 +1,280 @@
+<!--
+<html>
+<body>
+    <head>
+      <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.15.5/dist/bootstrap-table.min.css">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    </head>
+  -->
+{% extends "base_site.html" %}
+
+{% block title %} ISIS Topology {% endblock title %}
+
+{% block stylesheets %}
+  {{ super() }}
+{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="container-fluid page-body-wrapper">
+  <div class="main-panel">
+    <div class="content-wrapper">
+      <div class="row">
+        <div class="col-sm-12 grid-margin d-flex stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <div class="d-flex align-items-center justify-content-between">
+                <h2>LnetD Model Analysis</h2>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-6 grid-margin d-flex stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <div class="col-lg-12 grid-margin stretch-card-none">
+                <h4 class="card-title mb-2">Initial Network</h4>
+                <div class="row">
+                  <div class="col-lg-12">
+                    <div id="topology">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6 grid-margin d-flex stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <div class="mx-auto" style="width: 200px;">
+                <h4 class="card-title mb-2">Model Network</h4>
+              </div>
+              <div class="topology_failed" id="topology_failed">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-6 grid-margin stretch-card-none">
+          <div class="card">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-lg-9">
+                  <h4 class="card-title mb-2">Is Network Connected</h4>
+                </div>
+                <div class="col-lg-3">
+                  <a class="text-primary"> {{network_report['initial_network']['Connected Network']}}</a>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-9">
+                  <h4 class="card-title mb-2">Number of Links</h4>
+                </div>
+                <div class="col-lg-3">
+                  <a class="text-primary"> {{network_report['initial_network']['Number of Links']}}</a>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-9">
+                  <h4 class="card-title mb-2">Number of Nodes</h4>
+                </div>
+                <div class="col-lg-3">
+                  <a class="text-primary"> {{network_report['initial_network']['Number of Nodes']}}</a>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-9">
+                  <h4 class="card-title mb-2">Network Density
+                  </h4>
+                </div>
+                <div class="col-lg-3">
+                  <a class="text-primary"> {{network_report['initial_network']['Network Density'] | round(4, 'floor') }}</a>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-9">
+                  <h4 class="card-title mb-2">Network Diameter
+                  </h4>
+                </div>
+                <div class="col-lg-3">
+                  <a class="text-primary"> {{network_report['initial_network']['Network Diameter']}}</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="card">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-lg-9">
+                  <h4 class="card-title mb-2">Is Network Connected</h4>
+                </div>
+                <div class="col-lg-3">
+                  <a class="text-primary"> {{network_report['failed_network']['Connected Network']}}</a>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-9">
+                  <h4 class="card-title mb-2">Number of Links</h4>
+                </div>
+                <div class="col-lg-3">
+                  <a class="text-primary"> {{network_report['failed_network']['Number of Links']}}</a>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-9">
+                  <h4 class="card-title mb-2">Number of Nodes</h4>
+                </div>
+                <div class="col-lg-3">
+                  <a class="text-primary"> {{network_report['failed_network']['Number of Nodes']}}</a>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-9">
+                  <h4 class="card-title mb-2">Network Density
+                  </h4>
+                </div>
+                <div class="col-lg-3">
+                  <a class="text-primary"> {{network_report['failed_network']['Network Density'] | round(4, 'floor') }}</a>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-9">
+                  <h4 class="card-title mb-2">Network Diameter
+                </h4>
+              </div>
+              <div class="col-lg-3">
+                <a class="text-primary"> {{network_report['failed_network']['Network Diameter']}}</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6 pt-2">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title mb-2">Node Degree (top 10)
+            </h4>
+            {% for node,degree in network_report['failed_network']['Connectivity Node Degree'][:10] %}
+            <div class="row pt-2">
+              <div class="col-lg-10">
+                {{node}}
+              </div>
+              <div class="col-lg-2">
+                {{degree}}
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6 pt-2">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title mb-2">Node Degree (top 10)
+            </h4>
+            {% for node,degree in network_report['failed_network']['Connectivity Node Degree'][:10] %}
+            <div class="row pt-2">
+              <div class="col-lg-10">
+                {{node}}
+              </div>
+              <div class="col-lg-2">
+                {{degree}}
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row pt-2">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title mb-2">IGP SHORTEST PATHS ANALYSIS</h4>
+            <div class="table-responsive">
+              <table id="routers_table" class="table table-hover table-bordered"
+              data-toggle="table"
+              data-search="true"
+              data-sortable="true"
+              data-pagination="true"
+              data-show-columns="true">
+              <thead class="thead-light">
+                <tr>
+                  <th data-field="source" data-sortable="true">SOURCE</th>
+                  <th data-field="target" data-sortable="true">TARGET</th>
+                  <th data-field="ecmp_paths_initial" data-sortable="true">TOTAL PATHS INITIAL</th>
+                  <th data-field="ecmp_paths_failed" data-sortable="true">TOTAL PATHS MODEL</th>
+                  <th data-field="path_metric_initial" data-sortable="true">PATH METRIC INITIAL</th>
+                  <th data-field="path_metric_failed" data-sortable="true">PATH METRIC MODEL</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  {% for path in change_paths %}
+                  <td>{{path.source}}</td>
+                  <td>{{path.target}}</td>
+                  <td>{{path.ecmp_paths_initial}}</td>
+                  {% if path.ecmp_paths_initial != path.ecmp_paths_failed %}
+                  <td class="bg-warning"> {{path.ecmp_paths_failed}}</td>
+                  {% else %}
+                  <td class=""> {{path.ecmp_paths_failed}}</td>
+                  {% endif %}
+
+                  <td>{{path.path_metric_initial}}</td>
+
+                  {% if path.path_metric_initial != path.path_metric_failed %}
+                  <td class="bg-warning"> {{path.path_metric_failed}}</td>
+                  {% else %}
+                  <td class=""> {{path.path_metric_failed}}</td>
+                  {% endif %}
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+  {{ super() }}
+        <!-- jQuery -->
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+        <script src="{{ url_for('admin_blueprint.static', filename='d3js_v5_utils.js') }}"></script>
+        <script src="{{ url_for('admin_blueprint.static', filename='lnet_d3js.js') }}"></script>
+        <script src="{{ url_for('admin_blueprint.static', filename='lnet_failed_d3js.js') }}"></script>
+
+    <script>
+        var node_position = {{node_position | tojson | safe}}
+        var network_initial = JSON.parse('{{ network_initial | tojson | safe}}');
+        var network_failed = JSON.parse('{{ network_failed | tojson | safe}}');
+        var web_ip = {{app_config|tojson|safe}}
+        var source = "" // filter source target if neede
+        var target = source
+        var re_source = new RegExp (source);
+        var re_target = re_source
+
+        result = data_prepare(network_initial,re_source,re_target) //this returns the correct link and nodes
+        var run_it = new lnet_d3js(web_ip,result,'traffic') //run lnet_d3js
+        run_it.restart(result[1],result[0],result[0]) //draw
+
+        result_failed = data_prepare(network_failed,re_source,re_target) //this returns the correct link and nodes
+        var run_it_failed = new lnet_failed_d3js(web_ip,result_failed,'traffic') //run lnet_d3js
+        run_it_failed.restart(result_failed[1],result_failed[0],result_failed[0]) //draw
+
+    </script>
+    {% endblock javascripts %}
+    <!--
+</body>
+</html>
+//
+-->

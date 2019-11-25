@@ -258,9 +258,9 @@ function node_position_save(){
           type: 'POST',
           url: url,
           dataType: "text",
-          success: function(resultData) { alertify.notify("Node Position Saved ", 'success', 5) }
+          success: function(resultData) { alertify.notify("Node Position Saved ", 'success', 5) },
+          error: function(){ alertify.notify("Something went wrong",'error',5) }
     });
-    saveData.error(function() { alertify.notify("Something went wrong",'error',5); });
 }
 
  //console.log(node_position)
@@ -396,13 +396,13 @@ function reset_demand() {
                                  beforeSend: function (xhr) {
                                                 alertify.notify("Running demand ..... ", 'warning', 5)
                                                 $('#modal-top1').modal('show')
-                                                             }
-                                 }).done(function (jsondata) {
+                                                             },
+                                 success: function (jsondata) {
                                                 alertify.notify("Demand Deployed OK", 'success', 5)
-                                                $('#modal-top1').modal('toggle')
-                                 }).error(function (jqXHR, exception) {
+                                                $('#modal-top1').modal('toggle')},
+                                 error: function (jqXHR, exception) {
                                                 alertify.notify("Error Demand not deployed...not sure why but it's you!!! ", 'error', 15)
-                                                $('#modal-top1').modal('toggle')
+                                                $('#modal-top1').modal('toggle') }
 
                                 });
           return customAjaxResponse.promise();
