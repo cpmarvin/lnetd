@@ -15,3 +15,5 @@ simple-crypt
 pycryptodome
 pynetbox
 redis
+cryptography==2.5
+flask_httpauth

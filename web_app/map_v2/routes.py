@@ -164,7 +164,7 @@ def get_graph_data_interface():
     df['name'] = rvalue['interface']
     df = df.fillna(0)
     result = df.reindex(columns=["time","bps_in","bps_out","name","capacity"]).to_dict(orient='records')
-    print('888888888888888------',query,result,df)
+    #print('888888888888888------',query,result,df)
     return jsonify(result)
 
 @blueprint.route('/get_graph_data',methods=['GET', 'POST'])
@@ -180,7 +180,7 @@ def get_graph_data():
     else:
         query = f'''select sum(cir) as cir, sum(capacity) as capacity, sum(bps_out) as bps_out ,sum(bps_in) as bps_in from h_transit_statistics where country =~/{rvalue['country']}/
         and pop =~/{rvalue['pop']}/
-        and type =~ /{rvalue['type']}/
+        and target =~ /{rvalue['target']}/
         AND time >= now()- 7d and time < now()
                         GROUP BY time(1h)'''
     result = client.query(query)

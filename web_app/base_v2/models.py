@@ -28,3 +28,7 @@ class User(Base, UserMixin):
 
     def __repr__(self):
         return str(self.username)
+
+    def verify_password(self,password):
+        if argon2.verify(password, self.password):
+            return True

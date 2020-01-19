@@ -24,6 +24,17 @@ from api_v2.mutils import *
 #test new lsp demands
 from .lsp_deploy_demands import lsp_demands
 
+from base_v2.models import User
+from flask_httpauth import HTTPBasicAuth
+auth = HTTPBasicAuth()
+
+@auth.verify_password
+def verify_password(username, password):
+    user = User.query.filter_by(username = username).first()
+    if not user or not user.verify_password(password):
+        return False
+    return True
+
 blueprint = Blueprint(
     'api_blueprint', 
     __name__, 
@@ -31,6 +42,21 @@ blueprint = Blueprint(
     template_folder = 'templates',
     static_folder = 'static'
     )
+
+@blueprint.route('/get_topology',methods=['GET'])
+@auth.login_required
+def get_topology():
+    df = pd.read_sql(db.session.query(Links).filter(Links.index >=0).statement,db.session.bind)
+    df.drop(['util','index','l_int', 'l_ip_r_ip', 'errors'], axis=1, inplace=True)
+    df.rename({'l_ip': 'local_ip', 'r_ip': 'remote_ip'}, axis=1,inplace=True)
+    df_node = pd.read_sql(db.session.query(Node_position).filter(Node_position.id >=0).statement,db.session.bind)
+    df_node.rename({'id':'name'}, axis=1,inplace=True)
+    df_node['x'] = df_node['x'].astype(float)
+    df_node['y'] = df_node['y'].astype(float)
+    topology_dict = {}
+    topology_dict['links'] = df.to_dict(orient='records')
+    topology_dict['nodes'] = df_node.to_dict(orient='records')
+    return jsonify(topology_dict)
 
 @blueprint.route('/ifName',methods=['GET', 'POST'])
 @login_required
