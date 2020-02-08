@@ -53,7 +53,7 @@ def get_lnetd_external():
     #connect to sqllite lnetd
     conn = sqlite3.connect("/opt/lnetd/web_app/database.db")
     #create pandas frame
-    sql='''SELECT source,target,node,cir,type from External_topology'''
+    sql='''SELECT source,target,node,cir,type from External_topology where type !='backbone' '''
     df = pd.read_sql(sql, conn)
     return df
 

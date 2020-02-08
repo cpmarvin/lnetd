@@ -20,7 +20,7 @@ def write_influx(df, host='localhost', port=8086):
 
 def main():
     conn = sqlite3.connect("/opt/lnetd/web_app/database.db")
-    sql = '''SELECT interface,source,target,node,cir,type from External_topology '''
+    sql = '''SELECT interface,source,target,node,cir,type from External_topology where type !='backbone' '''
     df = pd.read_sql(sql, conn)
     print(df)
     df = df[df['source'] == df['node']]

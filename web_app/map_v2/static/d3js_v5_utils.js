@@ -53,8 +53,9 @@ function calcTranslationExact(debug,targetDistance, point0, point1) {
   };
 }
 
-function data_prepare(grapheDatas1,re_source,re_target) {
+function data_prepare(grapheDatasInitial,re_source,re_target) {
   //console.log('inside data_prepare data is :' ,grapheDatas1)
+  grapheDatas1 = JSON.parse(JSON.stringify(grapheDatasInitial));
 
   function returnX (source) {
   //result is none at first 

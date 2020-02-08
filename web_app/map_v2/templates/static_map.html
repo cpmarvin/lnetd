@@ -142,16 +142,11 @@
                       <div id="topology">
                             <!-- SPF div and checkbox !-->
                             <div class="checkbox" id="spf_div">
-                              <!--
-                                <form>
-                                    <label class="checkbox-inline">
-                                        <input type="radio" name="group" id="spf_check" value=""> Activate SPF
-                                    </label>
-                                    <label class="checkbox-inline">
-                                        <input type="radio" name="group" id="dynamic_topology" value=""> Dynamic Topology
-                                    </label>
-                                </form>
-                              -->
+                                    <form>
+                                        <label class="checkbox-inline">
+                                            <input type="radio" name="group1" id="external_topology" value=""> External Only
+                                        </label>
+				    </form>
                             </div>
                             <!-- Div for SPF results -->
                             <div class="spf_results x_content" id="sfp_div1"></div>
@@ -182,6 +177,9 @@
   var web_ip = {{app_config|tojson|safe}}
   var node_position = {{node_position|tojson|safe}}
   var graphData = JSON.parse('{{ values | tojson | safe}}');
+  var graphData_external = JSON.parse('{{ values | tojson | safe}}');
+  var graphData_external_only = graphData_external.filter(function(itm){if (itm.type !='backbone') {return itm}})
+
   var source = ''
   var target = ''
 
@@ -216,6 +214,14 @@ function node_position_save(){
       console.log('do i run here result?',result)
   		var run_it = new lnet_d3js(web_ip,result,'traffic') //run lnet_d3js
       run_it.restart(result[1],result[0],result[0]) //draw
+
+$('#external_topology').on('click change', function(e) {
+                var re_source = new RegExp (source);
+                var re_target = new RegExp (target);
+                result = data_prepare(graphData_external_only,re_source,re_target) //this returns the correct link and nodes
+                console.log(result)
+                run_it.restart(result[1],result[0],result[0]) //draw
+});
 
     //dynamic nodes
       $('#dynamic_topology').change(function() {
