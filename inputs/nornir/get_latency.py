@@ -65,7 +65,7 @@ def parse_output(output, pattern_res):
 
 def collect_ping_results(task, remote_ip):
     # collect ping result based on platform
-    print(f'this is {task.host.name} with {remote_ip} running {task.host.platform}')
+    #print(f'this is {task.host.name} with {remote_ip} running {task.host.platform}')
     if task.host.platform == 'junos':
         command_req = f'ping {remote_ip} count 5 rapid'
         pattern_res = r'min/avg/max.+ = (\S+)'
@@ -77,7 +77,7 @@ def collect_ping_results(task, remote_ip):
         if task.host.platform == 'junos':
             command_req = f'ping {ip_address} count 5 rapid'
             pattern_res = r'min/avg/max.+ = (\S+)'
-        print('command_req is: on host:', command_req, task.host.name)
+        #print('command_req is: on host:', command_req, task.host.name)
         r = task.run(task=netmiko_send_command, command_string=command_req,
                      delay_factor=10)
         # print_result(r)
