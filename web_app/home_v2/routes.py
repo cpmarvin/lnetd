@@ -29,8 +29,12 @@ def index():
         'routers': len(Routers.query.all()),
         'links': int(len(Links.query.all()) / 2),
         'prefixes': len(Prefixes.query.all()),
+        'prefixes_v4': len(Prefixes.query.filter_by(version = '4').all()),
+        'prefixes_v6': len(Prefixes.query.filter_by(version = '6').all()),
         'users': len(User.query.all()),
         'peers': len(Bgp_peers.query.all()),
+        'peers_v4': len(Bgp_peers.query.filter_by(version = '4').all()),
+        'peers_v6': len(Bgp_peers.query.filter_by(version = '6').all()),
     }
     # get counters for routers
     routers = Routers.query.all()

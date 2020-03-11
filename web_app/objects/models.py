@@ -583,6 +583,7 @@ class Bgp_peers(Base):
     accepted_prefixes = Column(String(120), unique=False)
     ix_name = Column(String(120), unique=False)
     uptime = Column(String(120), unique=False)
+    version = Column(String(120), unique=False)
 
     def __init__(self, **kwargs):
         for property, value in kwargs.items():
