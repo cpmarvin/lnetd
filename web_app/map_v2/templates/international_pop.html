@@ -85,7 +85,7 @@
         text.push(datum['text']);
         });
     return {
-      type: 'scattergeo',
+      type: 'scattermapbox',
         name: name,
         lat: lat,
         lon: lon,
@@ -128,7 +128,13 @@ function graph_aggr(data) {
     "showlegend": true,
   }
 
-Plotly.newPlot('graph_aggr', data, layout , {responsive: true});
+  var layout_open_street_map = {
+			dragmode: "zoom",
+			mapbox: { style: "open-street-map", center: { lat: -0.0, lon: -0.0 }, zoom: 1 },
+			margin: { r: 0, t: 0, b: 0, l: 0 }
+		};
+
+Plotly.newPlot('graph_aggr', data, layout_open_street_map , {responsive: true,displayModeBar: false});
 
 }
 </script>
