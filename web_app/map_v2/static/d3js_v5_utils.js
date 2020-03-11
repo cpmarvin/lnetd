@@ -215,11 +215,11 @@ function on_node_click(d) {
 function get_util(d,start) {
   var legend = [
           {'id':'black','low':0,'high':0},
-          {'id':'blue','low':0,'high':20},
-          {'id':'green','low':20,'high':40},
-          {'id':'yellow','low':40,'high':60},
-          {'id':'orange','low':60,'high':85},
-          {'id':'red','low':85,'high':100},
+          {'id':'blue','low':0,'high':1},
+          {'id':'green','low':1,'high':30},
+          {'id':'yellow','low':30,'high':50},
+          {'id':'orange','low':50,'high':70},
+          {'id':'red','low':70,'high':100},
           {'id':'fuchsia','low':100,'high':9991050}
         ]
   util = d.util
