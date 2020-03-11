@@ -13,6 +13,7 @@ function lnet_d3js(web_ip,result,type){
                     .attr("id","main_svg")
 		    .attr("preserveAspectRatio", "xMinYMin meet")
 		    .attr("viewBox", "0 0 1900 1001")
+                    .attr("class", "lnetd_topology_class")
                     .call(zoom)
 
   var simulation = d3.forceSimulation(nodes)
