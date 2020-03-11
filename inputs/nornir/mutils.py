@@ -158,3 +158,78 @@ def get_ix_name(ip,version,ix_lans):
     except Exception as e:
         print('error',e)
         return default
+
+
+def get_cards_huawei(display_version):
+  cards = {}
+  line = 0
+
+  try:
+    for i in display_version.splitlines():
+      #print('this is i in splitlines',i)
+      if re.match("^(LPU|MPU.+|SRU|ETH).[0-9].", i):
+        print(i).split(":")[0]
+        slot_nr = i.split(":")[0].split()[1]
+        slot_nr1 = i.split(":")[0]
+        print(slot_nr)
+        #slot_description = i.split(":")[0].split()[0]
+        # print(slot_description)
+        cards[line] = [slot_nr]
+        cards[line].append('0')
+        cards[line].append(slot_nr1)
+        # cards[line].append(slot_description)
+        line = line + 1
+     #try power
+    for i in display_version.splitlines():
+       if re.match("^[5-6]",i):
+        print('This is i',i)
+        print(i.split(" "))
+        slot_nr = i.split(" ")
+        card_status = slot_nr[10]
+        if card_status != "Normal":
+            card_status = 'FAILED'
+        else:
+            card_status = 'OPERATIONAL'
+        print('slot_nr',slot_nr[0])
+        cards[line] = [slot_nr[0]]
+        cards[line].append('0')
+        cards[line].append('POWER')
+        cards[line].append(card_status)
+        line = line + 1
+
+    labels = ['slot_nr', 'pic_nr', 'card_name','card_status']
+    #t = [(2,0,"ETH_4x10GE_16xGE_8xGE")]
+    df_cards = pd.DataFrame(list(cards.values()), columns=labels)
+    #df_cards = pd.DataFrame(t)
+  except Exception as e:
+    print(e)
+
+    # print(df_cards)
+  pics = {}
+  line = 0
+  try:
+    for i in display_version.splitlines():
+      if re.search("Registered", i):
+        #print('this is the pics',i.split())
+        pics[line] = i.split()
+        line = line + 1
+    labels = ['slot_nr', 'status', 'card_name', 'nr_ports', 'status1']
+    df_pics = pd.DataFrame(list(pics.values()), columns=labels)
+    df_pics['pic_nr'] = '0'
+    df_pics = df_pics.drop(['status', 'nr_ports', 'status1'], axis=1)
+    df_pics['card_status'] = 'OPERATIONAL'
+  except Exception as e:
+    print('exception in pics parse',e)
+
+  try:
+    df_final = pd.concat([df_cards, df_pics], ignore_index=True)
+    df_final['slot_nr'] = df_final['slot_nr'].astype(int)
+    df_final = df_final.sort_values('slot_nr')
+    df_final['slot_nr'] = df_final['slot_nr'].astype(str)
+    df_final['card_slot'] = df_final['slot_nr'].str.cat(df_final['pic_nr'], sep='/')
+    #df_final['card_status'] = 'online'
+    df_final = df_final.sort_values('slot_nr')
+    df_final = df_final[['card_name', 'card_slot', 'card_status']]
+    return df_final
+  except Exception as e:
+    print(e)

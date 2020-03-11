@@ -8,7 +8,7 @@ import re
 
 from sqlalchemy import create_engine,text
 
-from mutils import get_cards_jnp,get_cards_xr
+from mutils import get_cards_jnp,get_cards_xr,get_cards_huawei
 
 #disable warnings
 import warnings
@@ -24,6 +24,10 @@ def core_device_jnp(host):
 
 def core_device_xr(host):
     return bool(re.search('.',host.name) and (host['type'] == 'cisco-xr'))
+
+def core_device_huawei(host):
+    return bool(re.search('.',host.name) and (host['type'] == 'huawei'))
+
 #load the config
 print('init Nornir')
 nr = InitNornir(config_file="config.yaml")
@@ -59,8 +63,41 @@ def get_cisco_xr():
                 pass
     print('failed XR hosts:\n{}\n'.format(show_platform_xr.failed_hosts.keys()))
 
+def huawei_multiple(task):
+    temp = task.run(task=netmiko_send_command, command_string="screen-length 0 temporary")
+    r = task.run(task=netmiko_send_command, command_string=f'display version')
+    p = task.run(task=netmiko_send_command, command_string='display device pic-status')
+    #pow = task.run(task=netmiko_send_command, command_string='display power')
+    #print(r.result)
+    #print(p.result)
+    return(r.result + p.result)
+
+def get_huawei():
+    print('runing display version and display device pic-status')
+    all_xr = nr.filter(filter_func=core_device_huawei)
+    #all_xr = nr.filter(name='acc1.pru.lon')
+    show_platform_xr = all_xr.run(task=huawei_multiple)
+    print_result(show_platform_xr)
+    for i in show_platform_xr.keys():
+        print('i in show plat',i)
+        if i not in show_platform_xr.failed_hosts.keys():
+            try:
+                print(show_platform_xr[i][0].result)
+                #df = get_cards_huawei(i,show_platform_xr[i][0].result)
+                df = get_cards_huawei(show_platform_xr[i][0].result)
+                df['router_name'] = i
+                print(df)
+                all_cards.append(df)
+                #print('this is the all_jnp_cards inside xr',all_jnp_cards)
+            except Exception as e:
+                print(e)
+                pass
+    print('failed huawei hosts:\n{}\n'.format(show_platform_xr.failed_hosts.keys()))
+
 get_cisco_xr()
 get_juniper()
+get_huawei()
+
 try:
     #dummy data
     dummy =[
