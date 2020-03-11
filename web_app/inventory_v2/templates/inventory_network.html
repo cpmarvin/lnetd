@@ -125,6 +125,7 @@
                                       data-show-columns="true">
                                 <thead class="thead-light">
                                   <tr>
+                                    <th data-field="router_name" data-sortable="true">ROUTER NAME</th>
                                     <th data-field="card_slot" data-sortable="true">CARD SLOT</th>
                                     <th data-field="card_name" data-sortable="true">CARD TYPE</th>
                                   </tr>
@@ -132,6 +133,7 @@
                                 <tbody>
                                   <tr>
                                     {% for node in cards %}
+                                    <td>{{node.router_name}}</td>
                                     <td>{{node.card_slot}}</td>
                                     <td>{{node.card_name}}</td>
                                   </tr>

@@ -73,7 +73,7 @@ def get_capacity_router(lst):
         for link in links:
             # print(link)
             capacity = capacity + link['capacity']
-    return capacity / 1000  # 1000 #demo uses 100 real data is 1000
+    return capacity / 1000 #demo uses 100 real data is 1000
 
 
 def get_max_util(hostname, interface, start):

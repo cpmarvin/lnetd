@@ -144,7 +144,7 @@
                             <div class="checkbox" id="spf_div">
                                     <form>
                                         <label class="checkbox-inline">
-                                            <input type="radio" name="group1" id="external_topology" value=""> External Only
+                                            <input type="radio" name="group1" id="full_topology" value=""> Full Topology
                                         </label>
 				    </form>
                             </div>
@@ -213,15 +213,15 @@ function node_position_save(){
       create_legend('traffic',div_width)
       var re_source = new RegExp (source);
       var re_target = new RegExp (target);
-  		result = data_prepare(graphData,re_source,re_target) //this returns the correct link and nodes
+  		result = data_prepare(graphData_external_only,re_source,re_target) //this returns the correct link and nodes
       console.log('do i run here result?',result)
   		var run_it = new lnet_d3js(web_ip,result,'traffic') //run lnet_d3js
       run_it.restart(result[1],result[0],result[0]) //draw
 
-$('#external_topology').on('click change', function(e) {
+$('#full_topology').on('click change', function(e) {
                 var re_source = new RegExp (source);
                 var re_target = new RegExp (target);
-                result = data_prepare(graphData_external_only,re_source,re_target) //this returns the correct link and nodes
+                result = data_prepare(graphData,re_source,re_target) //this returns the correct link and nodes
                 console.log(result)
                 run_it.restart(result[1],result[0],result[0]) //draw
 });

@@ -289,48 +289,55 @@ function node_weight(d) {
   }
 
 //tier of connectivity
+
+//tier of connectivity
 $('#level_topology').change(function() {
       if(this.checked){
           var pathCoord = function(node, index, num_nodes, level){
                   var circumference = level.node().getTotalLength(); //path lenght
                   var pointAtLength = function(l){return level.node().getPointAtLength(l)}; //function to get the point on the path
-                  var sectionLength = (circumference)/num_nodes; // distance between nodes
+                  var sectionLength = (circumference)/num_nodes ; // distance between nodes
                   var position = sectionLength*index+sectionLength/2; // split the nodes
                   return pointAtLength(circumference-position)
                       }
                   var level1 = d3.select("#main_svg").select("#main_g").append("path")
-                      .attr("d","M 5 450 L 1500 450")
+                      .attr("d","M 5 1500 L 3500 1500")
 
                   var level2 = d3.select("#main_svg").select("#main_g").append("path")
-                      .attr("d","M 5 350 L 2000 350")
+                      .attr("d","M 5 1100 L 3500 1100")
                       .attr("fill","none")
 
                   var level3 = d3.select("#main_svg").select("#main_g").append("path")
-                      .attr("d","M 5 250 L 1000 250")
+                      .attr("d","M 5 750 L 3500 750")
 
                   var level4 = d3.select("#main_svg").select("#main_g").append("path")
-                      .attr("d","M 5 150 L 1000 150")
+                      .attr("d","M 5 450 L 3500 450")
 
                   var level5 = d3.select("#main_svg").select("#main_g").append("path")
-                      .attr("d","M 5 80 L 1000 80")
+                      .attr("d","M 5 200 L 3500 200")
 
                   var level6 = d3.select("#main_svg").select("#main_g").append("path")
-                      .attr("d","M 5 10 L 1000 10")
+                      .attr("d","M 5 10 L 3500 10")
 
 var re_source_pe = new RegExp ('L..-P[E,1-8]');
 var link_number1 = 0
-var total_number1 = nodes.filter(function(d) { return d.weight ==1 & !re_source_pe.test(d.name)}).length
+var total_number1 = nodes.filter(function(d) { return d.weight >=1 & d.weight < 5 & !re_source_pe.test(d.name)}).length
+console.log(total_number1)
 var link_number2 = 0
-var total_number2 = nodes.filter(function(d) { return d.weight ==2 & !re_source_pe.test(d.name)}).length
+var total_number2 = nodes.filter(function(d) { return d.weight >=5 & d.weight < 10 & !re_source_pe.test(d.name)}).length
+console.log(total_number2)
 var link_number3 = 0
-var total_number3 = nodes.filter(function(d) { return d.weight ==3 & !re_source_pe.test(d.name)}).length
+var total_number3 = nodes.filter(function(d) { return d.weight >=10 & d.weight < 15  & !re_source_pe.test(d.name)}).length
+console.log(total_number3)
 var link_number4 = 0
-var total_number4 = nodes.filter(function(d) { return d.weight ==4 & !re_source_pe.test(d.name)}).length
+var total_number4 = nodes.filter(function(d) { return d.weight >=15 & d.weight < 20  & !re_source_pe.test(d.name)}).length
+console.log(total_number4)
 var link_number5 = 0
-var total_number5 = nodes.filter(function(d) { return d.weight >=5 & !re_source_pe.test(d.name) }).length
+var total_number5 = nodes.filter(function(d) { return d.weight >=20 & !re_source_pe.test(d.name) }).length
+console.log(total_number5)
 var link_pe = 0
 var total_pe = nodes.filter(function(d) { return re_source_pe.test(d.name) }).length
-
+console.log(total_pe)
           d3.selectAll(".node").data().forEach(function(d,i) {
                 var valueToUse
                 if (re_source_pe.test(d.name)){
@@ -340,35 +347,35 @@ var total_pe = nodes.filter(function(d) { return re_source_pe.test(d.name) }).le
                               d.fx = coord.x
                               d.fy = coord.y
                 }
-                else if (d.weight == 1){ //at least 1 link
+                else if (d.weight >=1 & d.weight < 5){ //at least 1 link
                   valueToUse = level1
                   link_number1 = link_number1 + 1
                   var coord = pathCoord(d,link_number1 , total_number1 ,valueToUse)
                               d.fx = coord.x
                               d.fy = coord.y
                 }
-                else if (d.weight == 2){
+                else if (d.weight >=5 & d.weight < 10){
                   valueToUse = level2
                   link_number2 = link_number2 + 1
                   var coord = pathCoord(d,link_number2 , total_number2 ,valueToUse)
                               d.fx = coord.x
                               d.fy = coord.y
                 }
-                else if (d.weight == 3){
+                else if (d.weight >=10 & d.weight < 15){
                   valueToUse = level3
                   link_number3 = link_number3 + 1
                   var coord = pathCoord(d,link_number3 , total_number3 ,valueToUse)
                               d.fx = coord.x
                               d.fy = coord.y
                 }
-                else if (d.weight == 4){
+                else if (d.weight >=15 & d.weight < 20){
                   valueToUse = level4
                   link_number4 = link_number4 + 1
                   var coord = pathCoord(d,link_number4 , total_number4 ,valueToUse)
                               d.fx = coord.x
                               d.fy = coord.y
                 }
-                else if (d.weight >=5){
+                else if (d.weight >=20 ){
                   valueToUse = level5
                   link_number5 = link_number5 + 1
                   var coord = pathCoord(d,link_number5 , total_number5 ,valueToUse)
@@ -378,7 +385,7 @@ var total_pe = nodes.filter(function(d) { return re_source_pe.test(d.name) }).le
                 var temp_sel = d3.selectAll(".node").selectAll('text')
                     temp_sel.attr("dy", "1.5em")
                             .attr("x","-35")
-                            .text(function(d) { return d.name.substring(4,24); })
+                            .text(function(d) { return d.name; })
           })
       }
   });
