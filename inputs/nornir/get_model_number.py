@@ -87,9 +87,27 @@ def get_cisco_ios():
         print('failed IOS hosts:\n{}\n'.format(show_ios_facts.failed_hosts.keys()))
 
 
-#get_huawei()
-#get_cisco_ios()
+def collect_xr_multiple(task):
+       task.run(task=netmiko_send_command, command_string=f"show inventory", use_genie=True)
+       task.run(task=netmiko_send_command, command_string=f"show version", use_genie=True)
+
+def get_cisco_xr_genie():
+        print('Find XR model and version using Genie')
+        show_facts = all_cisco_xr.run(task=collect_xr_multiple)
+        for i in show_facts.keys():
+                if i not in show_facts.failed_hosts.keys():
+                        try:
+                                version = show_facts[i][2].result['software_version']
+                                model = show_facts[i][1].result['module_name']['Rack 0']['pid']
+                                update_routers_sqlite3('Routers',i,version,model,'cisco-xr')
+                                print(f'update with version {version} and model {model}')
+                        except Exception as e:
+                                pass
+
+get_huawei()
+get_cisco_ios()
 get_cisco_xr()
+get_cisco_xr_genie()
 get_juniper()
 
 #insert dummy devices 

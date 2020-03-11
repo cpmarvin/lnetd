@@ -2,7 +2,6 @@
 core:
     num_workers: 20
 inventory:
-    plugin: nornir.plugins.inventory.simple.SimpleInventory
-    options:
-        host_file: "inventory/hosts.yaml"
-        group_file: "inventory/groups.yaml"
+  plugin: lnetd_nornir_inventory.LnetDInventory
+  options:
+    lnetd_db: '/opt/lnetd/web_app/database.db'
