@@ -58,7 +58,7 @@
             </div>
             <label class="control-label col-md-4 col-sm-4 col-xs-4">Node</label>
             <div class="col-md-6">
-              <input class="form-control validate" id="node" name="node" placeholder="node" required autofocus>
+              <input class="form-control validate typeahead" id="node" name="node" placeholder="node" required autofocus>
               <div class="help-block with-errors"></div>
             </div>
           </div>
@@ -181,9 +181,31 @@
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/corejs-typeahead/1.2.1/typeahead.bundle.js"></script>
+
 <script>
   var web_ip = {{app_config|tojson|safe}};
   var igp_links = {{igp_links|tojson|safe}}
+
+
+ var router_name = {{router_name|tojson}}
+ var router_name = new Bloodhound({
+      datumTokenizer: Bloodhound.tokenizers.whitespace,
+      queryTokenizer: Bloodhound.tokenizers.whitespace,
+      local: router_name
+  });
+
+$('.typeahead').typeahead({
+    hint: true,
+    highlight: true,
+    minLength: 1
+  },
+  {
+    name: 'router_name',
+    source: router_name
+  }
+);
+
 
   function editObject() {
    if ($('#add-link-form').parsley().validate() ) {
@@ -264,7 +286,8 @@ function save_topology(){
   event.preventDefault();
   var noc_table = $('#noc_table')
   noc_table.bootstrapTable("resetSearch","");
-  var all_data = noc_table.bootstrapTable('getData', false)
+  var all_data_pre = noc_table.bootstrapTable('getData', false)
+  var all_data = JSON.parse(JSON.stringify(all_data_pre))
   validKeys = ['id','source','target','interface','graph_status','alert_status','node']
   all_data.forEach( function (d) { 
    Object.keys(d).forEach((key) => validKeys.includes(key) || delete d[key] );

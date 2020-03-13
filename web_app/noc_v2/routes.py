@@ -29,6 +29,9 @@ blueprint = Blueprint(
 @login_required
 def edit_topology():
     current_user = str(session['_user_id'])
+    df_router_name = pd.read_sql(db.session.query(Links.source.distinct()).statement,db.session.bind)
+    router_name = df_router_name['anon_1'].values.tolist()
+
     node_position = pd.read_sql(db.session.query(Node_position).filter(Node_position.user == current_user ).statement,db.session.bind)
     node_position = node_position.to_dict(orient='records')
     df = pd.read_sql(db.session.query(Noc_Topology_Edit).filter(Noc_Topology_Edit.id >=0).statement,db.session.bind)
@@ -36,7 +39,7 @@ def edit_topology():
     #layer1_links = Layer1Topology.query.all()
     igp_links_df = generate_from_igp()
     igp_links = igp_links_df.to_dict(orient='records')
-    return render_template('edit_topology.html', noc_links=noc_links, igp_links=igp_links)
+    return render_template('edit_topology.html', noc_links=noc_links, igp_links=igp_links,router_name=router_name)
 
 @blueprint.route('/core_dashboard')
 @login_required
