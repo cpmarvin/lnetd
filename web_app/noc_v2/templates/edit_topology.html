@@ -108,7 +108,7 @@
                   data-pagination="true"
                   data-page-size="4"
                   data-total-rows="4"
-                  data-click-to-select="true"
+                  data-click-to-select="false"
                   data-single-select="true"
                   data-show-columns="true">
                   <thead class="thead-light">
@@ -117,12 +117,12 @@
                       <th data-field="id" data-class="hide_me1" data-sortable="false">ID</th>
                       <th data-field="source" data-sortable="true">SOURCE</th>
                       <th data-field="target" data-sortable="true">TARGET</th>
+                      <th data-field="node" data-class="hide_me1" data-sortable="true">NODE</th>
                       <th data-field="interface"  data-escape="true" data-sortable="false">INTERFACE</th>
-                      <th data-field="graph_button" data-class="toggle-event1" data-sortable="true">GRAPH</th>
-                      <th data-field="alert_button" data-sortable="true">ALERT</th>
+                      <th data-field="graph_button" data-formatter="graph_formated" data-sortable="true">GRAPH</th>
+                      <th data-field="alert_button" data-formatter="alert_formated" data-sortable="true">ALERT</th>
                       <th data-field="graph_status" data-class="hide_me" data-sortable="true">GRAPH VAL</th>
                       <th data-field="alert_status" data-class="hide_me" data-sortable="true">ALERT VAL</th>
-                      <th data-field="node" data-class="hide_me" data-sortable="true">NODE</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -132,20 +132,14 @@
                       <td>{{node.id}}</td>
                       <td>{{node.source}}</td>
                       <td>{{node.target}}</td>
+                      <td>{{node.node}}</td>
                       <td>{{node.interface}}
                         <td>
-                          <input class="toggle-event" type="checkbox" data-on="UP" data-off="DOWN"
-                          data-onstyle="success" {% if node.graph_status == '1' %} checked {% endif %} data-toggle="toggle"
-                          id="toggle-event-graph-status" data-size="mini" data-width="60">
                         </td>
                         <td>
-                          <input class="toggle-event" type="checkbox" data-on="UP" data-off="DOWN"
-                          data-onstyle="success" {% if node.alert_status == '1' %} checked {% endif %} data-toggle="toggle"
-                          id="toggle-event-alert-status" data-size="mini" data-width="60">
                         </td>
                         <td>{{node.graph_status}}</td>
                         <td>{{node.alert_status}}</td>
-                        <td>{{node.node}}</td>
                       </tr>
                       {% endfor %}
                     </tbody>
@@ -188,6 +182,41 @@
   var igp_links = {{igp_links|tojson|safe}}
 
 
+//
+function alert_formated(value,row){
+ if (row.alert_status ==1){
+  return `<input class="toggle-event"
+                         type="checkbox" data-on="UP" data-off="DOWN"
+                         data-onstyle="success" checked
+                         data-toggle="toggle" id="toggle-event-alert-status"
+                         data-size="mini" data-width="60">`
+  }
+ else{
+  return `<input class="toggle-event"
+                         type="checkbox" data-on="UP" data-off="DOWN"
+                         data-onstyle="success" 
+                         data-toggle="toggle" id="toggle-event-alert-status"
+                         data-size="mini" data-width="60">`
+ }
+}
+function graph_formated(value, row){
+  console.log('graph_formated',row.graph_status,value)
+  if (row.graph_status == 1){
+   return `<input class="toggle-event"
+                         type="checkbox" data-on="UP" data-off="DOWN"
+                         data-onstyle="success" checked
+                         data-toggle="toggle" id="toggle-event-graph-status"
+                         data-size="mini" data-width="60">`
+   }
+  else{
+   return `<input class="toggle-event"
+                         type="checkbox" data-on="UP" data-off="DOWN"
+                         data-onstyle="success" 
+                         data-toggle="toggle" id="toggle-event-graph-status"
+                         data-size="mini" data-width="60">`
+  }
+}
+
  var router_name = {{router_name|tojson}}
  var router_name = new Bloodhound({
       datumTokenizer: Bloodhound.tokenizers.whitespace,
@@ -217,23 +246,13 @@ $('.typeahead').typeahead({
     interface = entry[2].value
     node = entry[3].value
     id = count + 1
-    graph_button =`<input class="toggle-event"
-                         type="checkbox" data-on="UP" data-off="DOWN"
-                         data-onstyle="success" checked
-                         data-toggle="toggle" id="toggle-event-graph-status"
-                         data-size="mini" data-width="60">` ;
-    alert_button =`<input class="toggle-event"
-                         type="checkbox" data-on="UP" data-off="DOWN"
-                         data-onstyle="success" checked
-                         data-toggle="toggle" id="toggle-event-alert-status"
-                         data-size="mini" data-width="60">`    
     row = {'id': id, 
           'state':'false',
           'source':source,
           'target':target,
           'interface':interface,
-          'graph_button':graph_button,
-          'alert_button':alert_button,
+          'graph_button':'graph_button',
+          'alert_button':'alert_button',
           'graph_status':'1',
           'alert_status':'1',
           'node':node}
@@ -259,21 +278,7 @@ $('.typeahead').typeahead({
   function generate_from_igp(){
    console.log('generate from IGP',igp_links)
    var noc_table = $('#noc_table')
-   igp_links.forEach(function(d) {
-       d['graph_button'] =`<input class="toggle-event"
-                         type="checkbox" data-on="UP" data-off="DOWN"
-                         data-onstyle="success" checked
-                         data-toggle="toggle" id="toggle-event-graph-status"
-                         data-size="mini" data-width="60">` ; 
-       d['alert_button'] =`<input class="toggle-event"
-                         type="checkbox" data-on="UP" data-off="DOWN"
-                         data-onstyle="success" checked
-                         data-toggle="toggle" id="toggle-event-alert-status"
-                         data-size="mini" data-width="60">`
-   })
-
    var noc_table_data = noc_table.bootstrapTable('load', igp_links);
-
    $('.toggle-event').bootstrapToggle()
   }
 
@@ -303,6 +308,7 @@ function save_topology(){
         success: function(resultData) { alertify.notify("Noc Topology Saved ", 'success', 5) },
         error: function() { alertify.notify("Something went wrong",'error',5)  }
   });
+  noc_table.bootstrapTable('refresh')
 }
 
 
@@ -312,7 +318,7 @@ function save_topology(){
     var noc_table_data = noc_table.bootstrapTable('getData');
     console.log('this is the date before result_layer1',noc_table_data)
 
-    $("#noc_table").delegate("input", "change", function() {
+    $("#noc_table").delegate(".toggle-event", "change", function() {
       //like this better
       down_links =[]
 
@@ -323,19 +329,23 @@ function save_topology(){
       console.log('this is the row_id',row_id)
       console.log('this is the values this',this.id)
       if ($(this).is(':checked')){
+        //$(this).bootstrapToggle('on')
+        console.log('CHECK')
         if (this.id == 'toggle-event-graph-status'){
-           noc_table.bootstrapTable('updateCell', {index: row_id , field: 'graph_status', value: '1' , reinit: false })
+           noc_table.bootstrapTable('updateCell', {index: row_id , field: 'graph_status', value: '1' , reinit: true })
         }
         if (this.id == 'toggle-event-alert-status'){
-           noc_table.bootstrapTable('updateCell', {index: row_id , field: 'alert_status', value: '1' , reinit: false })
+           noc_table.bootstrapTable('updateCell', {index: row_id , field: 'alert_status', value: '1' , reinit: true })
         }
       }
       else {
+        console.log('NO CHECK')
+        //$(this).bootstrapToggle('off')
         if (this.id == 'toggle-event-graph-status'){
-          noc_table.bootstrapTable('updateCell', {index: row_id , field: 'graph_status', value: '0' , reinit: false })
+          noc_table.bootstrapTable('updateCell', {index: row_id , field: 'graph_status', value: '0' , reinit: true })
         }
         if (this.id == 'toggle-event-alert-status'){
-          noc_table.bootstrapTable('updateCell', {index: row_id , field: 'alert_status', value: '0' , reinit: false })
+          noc_table.bootstrapTable('updateCell', {index: row_id , field: 'alert_status', value: '0' , reinit: true })
         }
       }
 
