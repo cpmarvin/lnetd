@@ -120,9 +120,9 @@
                       <th data-field="interface"  data-escape="true" data-sortable="false">INTERFACE</th>
                       <th data-field="graph_button" data-class="toggle-event1" data-sortable="true">GRAPH</th>
                       <th data-field="alert_button" data-sortable="true">ALERT</th>
-                      <th data-field="graph_status" data-class="hide_me" data-sortable="true">GRAPH VAL</th>
-                      <th data-field="alert_status" data-class="hide_me" data-sortable="true">ALERT VAL</th>
-                      <th data-field="node" data-class="hide_me" data-sortable="true">NODE</th>
+                      <th data-field="graph_status" data-class="hide_me1" data-sortable="true">GRAPH VAL</th>
+                      <th data-field="alert_status" data-class="hide_me1" data-sortable="true">ALERT VAL</th>
+                      <th data-field="node" data-class="hide_me1" data-sortable="true">NODE</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -140,7 +140,7 @@
                         </td>
                         <td>
                           <input class="toggle-event" type="checkbox" data-on="UP" data-off="DOWN"
-                          data-onstyle="success" {% if node.graph_status == '1' %} checked {% endif %} data-toggle="toggle"
+                          data-onstyle="success" {% if node.alert_status == '1' %} checked {% endif %} data-toggle="toggle"
                           id="toggle-event-alert-status" data-size="mini" data-width="60">
                         </td>
                         <td>{{node.graph_status}}</td>
