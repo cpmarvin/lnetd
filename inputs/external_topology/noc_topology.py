@@ -33,11 +33,14 @@ df_external['util'] = df_external.apply(lambda row: get_util_interface(
 
 print(df_external)
 
-if alarms:
-   for entry in df_external.to_dict(orient='records'):
-       if entry['util'] <= 0 and entry['alert_status'] == "1":
-           #print('alert',entry)
-           send_slack_notification(entry['source'],entry['interface'])
+try:
+    if alarms:
+        for entry in df_external.to_dict(orient='records'):
+            if entry['util'] <= 0 and entry['alert_status'] == "1":
+               send_slack_notification(entry['source'],entry['interface'])
+except Exception as e:
+    pass
+
 
 df_external = df_external.drop(['alert_status', 'graph_status'], axis = 1)
 
