@@ -34,7 +34,7 @@ def register_extensions(app):
 
 
 def register_blueprints(app):
-    for module_name in ('api_v2', 'objects_v2', 'home_v2', 'data_v2', 'base_v2', 'admin_v2','map_v2', 'inventory_v2', 'bgp_v2', 'dc_v2', 'prov_v2'):
+    for module_name in ('api_v2', 'objects_v2', 'home_v2', 'data_v2', 'base_v2', 'admin_v2','map_v2', 'inventory_v2', 'bgp_v2', 'dc_v2', 'prov_v2','noc_v2'):
         module = import_module('{}.routes'.format(module_name))
         app.register_blueprint(module.blueprint)
 

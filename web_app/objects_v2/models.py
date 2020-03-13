@@ -14,6 +14,53 @@ tags = Table('tags',Base.metadata,
                 Column('router_name', Integer, ForeignKey('Routers.name')),
                 )
 
+
+class Noc_Topology(Base):
+    __tablename__ = 'Noc_Topology'
+
+    id = Column(Integer, primary_key=True)
+    source = Column(String(120), unique=False)
+    node = Column(String(120), unique=False)
+    interface = Column(String(120), unique=False)
+    target = Column(String(120), unique=False)
+    direction = Column(String(120), unique=False)
+    src_icon = Column(String(120), unique=False)
+    tar_icon = Column(String(120), unique=False)
+    l_ip_r_ip = Column(String(120), unique=False)
+    util = Column(String(120), unique=False)
+
+    def __init__(self, **kwargs):
+        for property, value in kwargs.items():
+            if hasattr(value, '__iter__') and not isinstance(value, str):
+                value, = value
+            setattr(self, property, value)
+
+    def __repr__(self):
+        return str(self.id)
+
+class Noc_Topology_Edit(Base):
+    __tablename__ = 'Noc_Topology_Edit'
+
+    id = Column(String(120), primary_key=True)
+    source = Column(String(120), primary_key=True)
+    target = Column(String(120), unique=False)
+    interface = Column(String(120), unique=False)
+    node = Column(String(120), unique=False)
+    graph_status = Column(String(120), unique=False)
+    alert_status = Column(String(120), unique=False)
+
+    def __init__(self, **kwargs):
+        for property, value in kwargs.items():
+            if hasattr(value, '__iter__') and not isinstance(value, str):
+                value, = value
+            setattr(self, property, value)
+
+    def __repr__(self):
+        return str(self.id)
+
+
+
+
 class Node_position_global(Base):
     __tablename__ = 'Node_position_global'
 

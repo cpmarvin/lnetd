@@ -1,0 +1,332 @@
+{% extends "base_site.html" %}
+
+{% block title %} ISIS Topology {% endblock title %}
+
+{% block stylesheets %}
+  {{ super() }}
+  <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+{% endblock stylesheets %}
+
+{% block content %}
+<!-- Modal used for graphs-->
+<div class="modal fade" id="modal-top" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Plotly based Graphs</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal -->
+
+<!--Add Link -->
+<div id="add-link" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true></span>
+        </button>
+        <h4 class="modal-title" id="title">Add link</h4>
+      </div>
+      <form id="add-link-form" data-parsley-validate class="form-horizontal form-label-left" method="post">
+        <div class="modal-body">
+          <div class="form-group" style="height: 350px">
+            <label class="control-label col-md-4 col-sm-4 col-xs-4">Source</label>
+            <div class="col-md-6">
+              <input class="form-control validate" id="source_add" name="source" placeholder="source" required autofocus>
+              <div class="help-block with-errors"></div>
+            </div>
+            <label class="control-label col-md-4 col-sm-4 col-xs-4">Target</label>
+            <div class="col-md-6">
+              <input class="form-control validate" id="target" name="target" placeholder="target" required autofocus>
+              <div class="help-block with-errors"></div>
+            </div>
+            <label class="control-label col-md-4 col-sm-4 col-xs-4">Interface</label>
+            <div class="col-md-6">
+              <input class="form-control validate" id="interface" name="interface" placeholder="r_ip" required autofocus>
+              <div class="help-block with-errors"></div>
+            </div>
+            <label class="control-label col-md-4 col-sm-4 col-xs-4">Node</label>
+            <div class="col-md-6">
+              <input class="form-control validate" id="node" name="node" placeholder="node" required autofocus>
+              <div class="help-block with-errors"></div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-success" onclick="editObject()">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- End Link -->
+
+<!--Begin main content -->
+<div class="container-fluid page-body-wrapper">
+  <div class="main-panel">
+    <div class="content-wrapper">
+      <div class="row">
+        <div class="col-lg-6 pb-2">
+          <div class="d-flex align-items-center justify-content-between">
+            <button class="btn btn-primary btn-success mb-2" onclick="javascript:generate_from_igp();">Generate from IGP</button>
+            <button class="btn btn-primary btn-success mb-2" onclick="javascript:add_entry();">Add Entry</button>
+            <button class="btn btn-primary btn-error mb-2" onclick="javascript:delete_from_table();">Delete Selected</button>
+            <button class="btn btn-primary btn-success mb-2" onclick="javascript:save_topology();">Save Noc Topology</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+      <div class="col-sm-12 grid-margin d-flex stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between">
+              <h4 class="card-title mb-2">NOC Topology </h4>
+            </div>
+
+
+            <div class="row">
+              <div class="col-lg-12 col-xs-12">
+                <div class="table-responsive">
+                  <table id="noc_table" class="table table-hover table-bordered"
+                  data-unique-id="id"
+                  data-toggle="table"
+                  data-search="true"
+                  data-sortable="true"
+                  data-pagination="true"
+                  data-page-size="4"
+                  data-total-rows="4"
+                  data-click-to-select="true"
+                  data-single-select="true"
+                  data-show-columns="true">
+                  <thead class="thead-light">
+                    <tr>
+                      <th data-field="state" data-class="hide_me1" data-checkbox="true" data-sortable="false">State</th>
+                      <th data-field="id" data-class="hide_me1" data-sortable="false">ID</th>
+                      <th data-field="source" data-sortable="true">SOURCE</th>
+                      <th data-field="target" data-sortable="true">TARGET</th>
+                      <th data-field="interface"  data-escape="true" data-sortable="false">INTERFACE</th>
+                      <th data-field="graph_button" data-class="toggle-event1" data-sortable="true">GRAPH</th>
+                      <th data-field="alert_button" data-sortable="true">ALERT</th>
+                      <th data-field="graph_status" data-class="hide_me1" data-sortable="true">GRAPH VAL</th>
+                      <th data-field="alert_status" data-class="hide_me1" data-sortable="true">ALERT VAL</th>
+                      <th data-field="node" data-class="hide_me1" data-sortable="true">NODE</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      {% for node in noc_links %}
+                      <td></td>
+                      <td>{{node.id}}</td>
+                      <td>{{node.source}}</td>
+                      <td>{{node.target}}</td>
+                      <td>{{node.interface}}
+                        <td>
+                          <input class="toggle-event" type="checkbox" data-on="UP" data-off="DOWN"
+                          data-onstyle="success" {% if node.graph_status == '1' %} checked {% endif %} data-toggle="toggle"
+                          id="toggle-event-graph-status" data-size="mini" data-width="60">
+                        </td>
+                        <td>
+                          <input class="toggle-event" type="checkbox" data-on="UP" data-off="DOWN"
+                          data-onstyle="success" {% if node.graph_status == '1' %} checked {% endif %} data-toggle="toggle"
+                          id="toggle-event-alert-status" data-size="mini" data-width="60">
+                        </td>
+                        <td>{{node.graph_status}}</td>
+                        <td>{{node.alert_status}}</td>
+                        <td>{{node.node}}</td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+
+
+<!-- End main content -->
+
+{% endblock content %}
+
+{% block javascripts %}
+  {{ super() }}
+<script src="{{ url_for('static', filename='custom/topology/create_graph.js') }}"></script>
+<script src="{{ url_for('static', filename='custom/topology/getSPF.js') }}"></script>
+<script src="{{ url_for('static', filename='custom/topology/create_legend.js') }}"></script>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="{{ url_for('data_blueprint.static', filename='d3js_v5_utils.js') }}"></script>
+<script src="{{ url_for('data_blueprint.static', filename='lnet_d3js.js') }}"></script>
+<script src="{{ url_for('data_blueprint.static', filename='lnet_layer1_d3js.js') }}"></script>
+<!-- Plotly JS -->
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+
+<script>
+  var web_ip = {{app_config|tojson|safe}};
+  var igp_links = {{igp_links|tojson|safe}}
+
+  function editObject() {
+   if ($('#add-link-form').parsley().validate() ) {
+    var noc_table = $('#noc_table')
+    count = noc_table.bootstrapTable('getOptions').totalRows
+    var entry = $('#add-link-form').serializeArray()
+    source = entry[0].value
+    target = entry[1].value
+    interface = entry[2].value
+    node = entry[3].value
+    id = count + 1
+    graph_button =`<input class="toggle-event"
+                         type="checkbox" data-on="UP" data-off="DOWN"
+                         data-onstyle="success" checked
+                         data-toggle="toggle" id="toggle-event-graph-status"
+                         data-size="mini" data-width="60">` ;
+    alert_button =`<input class="toggle-event"
+                         type="checkbox" data-on="UP" data-off="DOWN"
+                         data-onstyle="success" checked
+                         data-toggle="toggle" id="toggle-event-alert-status"
+                         data-size="mini" data-width="60">`    
+    row = {'id': id, 
+          'state':'false',
+          'source':source,
+          'target':target,
+          'interface':interface,
+          'graph_button':graph_button,
+          'alert_button':alert_button,
+          'graph_status':'1',
+          'alert_status':'1',
+          'node':node}
+    noc_table.bootstrapTable('insertRow', {index: id , row: row})
+    alertify.notify("Entry Added - Entry id is: " + id , 'success', 5)
+    noc_table.bootstrapTable('scrollTo', 'bottom')
+   }
+   
+  } 
+  function add_entry(){
+   //modal up
+   $('#add-link').modal('toggle')
+  }
+  function delete_from_table(){
+   //get selection
+   var noc_table = $('#noc_table')
+   selected = noc_table.bootstrapTable('getSelections')
+   if (selected.length >0) {
+    //delete entry
+    noc_table.bootstrapTable('removeByUniqueId', selected[0]['id'])
+    }
+  }
+  function generate_from_igp(){
+   console.log('generate from IGP',igp_links)
+   var noc_table = $('#noc_table')
+   igp_links.forEach(function(d) {
+       d['graph_button'] =`<input class="toggle-event"
+                         type="checkbox" data-on="UP" data-off="DOWN"
+                         data-onstyle="success" checked
+                         data-toggle="toggle" id="toggle-event-graph-status"
+                         data-size="mini" data-width="60">` ; 
+       d['alert_button'] =`<input class="toggle-event"
+                         type="checkbox" data-on="UP" data-off="DOWN"
+                         data-onstyle="success" checked
+                         data-toggle="toggle" id="toggle-event-alert-status"
+                         data-size="mini" data-width="60">`
+   })
+
+   var noc_table_data = noc_table.bootstrapTable('load', igp_links);
+
+   $('.toggle-event').bootstrapToggle()
+  }
+
+
+$('#noc_table').on('all.bs.table', function () {
+  $('.toggle-event').bootstrapToggle()
+})
+
+function save_topology(){
+  event.preventDefault();
+  var noc_table = $('#noc_table')
+  noc_table.bootstrapTable("resetSearch","");
+  var all_data = noc_table.bootstrapTable('getData', false)
+  validKeys = ['id','source','target','interface','graph_status','alert_status','node']
+  all_data.forEach( function (d) { 
+   Object.keys(d).forEach((key) => validKeys.includes(key) || delete d[key] );
+  })
+  console.log('this is the save data',all_data)
+  var all_data_json = encodeURIComponent(JSON.stringify(all_data));
+
+  url = {{ url_for('noc_blueprint.save_noc_topology')|tojson }}+'?arr='+all_data_json
+  var saveData = $.ajax({
+        type: 'POST',
+        url: url,
+        dataType: "text",
+        success: function(resultData) { alertify.notify("Noc Topology Saved ", 'success', 5) },
+        error: function() { alertify.notify("Something went wrong",'error',5)  }
+  });
+}
+
+
+  $( document ).ready(function() {
+
+    var noc_table = $('#noc_table')
+    var noc_table_data = noc_table.bootstrapTable('getData');
+    console.log('this is the date before result_layer1',noc_table_data)
+
+    $("#noc_table").delegate("input", "change", function() {
+      //like this better
+      down_links =[]
+
+      var row = $(this).closest("tr");
+      var row_id = row.data('index')
+
+      console.log('this is the row',row)
+      console.log('this is the row_id',row_id)
+      console.log('this is the values this',this.id)
+      if ($(this).is(':checked')){
+        if (this.id == 'toggle-event-graph-status'){
+           noc_table.bootstrapTable('updateCell', {index: row_id , field: 'graph_status', value: '1' , reinit: false })
+        }
+        if (this.id == 'toggle-event-alert-status'){
+           noc_table.bootstrapTable('updateCell', {index: row_id , field: 'alert_status', value: '1' , reinit: false })
+        }
+      }
+      else {
+        if (this.id == 'toggle-event-graph-status'){
+          noc_table.bootstrapTable('updateCell', {index: row_id , field: 'graph_status', value: '0' , reinit: false })
+        }
+        if (this.id == 'toggle-event-alert-status'){
+          noc_table.bootstrapTable('updateCell', {index: row_id , field: 'alert_status', value: '0' , reinit: false })
+        }
+      }
+
+      var noc_table_data = noc_table.bootstrapTable('getData');
+      noc_table.bootstrapTable('refresh');
+      console.log('this is the date after ',noc_table_data[3])
+
+  })
+});
+
+$('#noc_table').on('page-change.bs.table', function () {
+  $('.toggle-event').bootstrapToggle()
+})
+
+</script>
+
+{% endblock javascripts %}

@@ -19,3 +19,4 @@ cryptography==2.5
 flask_httpauth
 genie
 pyats
+slackclient
