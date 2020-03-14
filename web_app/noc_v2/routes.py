@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request ,session
 from flask_login import login_required
 
-from objects_v2.models import Routers,Links,Links_latency,Node_position,Links_Model,App_config,Layer1Topology,Noc_Topology_Edit,Noc_Topology
+from objects_v2.models import Routers,Links,Links_latency,Node_position,Links_Model,App_config,Layer1Topology,Noc_Topology_Edit,Noc_Topology,Node_position_global
 from database import db
 from collections import Counter,OrderedDict
 import pandas as pd
@@ -50,7 +50,8 @@ def core_dashboard():
 @login_required
 def noc_topology():
     current_user = str(session['_user_id'])
-    node_position = pd.read_sql(db.session.query(Node_position).filter(Node_position.user == current_user ).statement,db.session.bind)
+    node_position = pd.read_sql(db.session.query(Node_position_global).filter(
+        Node_position_global.user == current_user).filter(Node_position_global.map_type == 'noc').statement, db.session.bind)
     node_position = node_position.to_dict(orient='records')
     df = pd.read_sql(db.session.query(Noc_Topology).filter(Noc_Topology.id >=0).statement,db.session.bind)
     noc_links = df.to_dict(orient='records')

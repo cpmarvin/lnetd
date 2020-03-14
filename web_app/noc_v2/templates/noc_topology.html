@@ -100,19 +100,18 @@ $(window).resize(function(){
 })
 
 function node_position_save(){
-        node_position_save = []
-        d3.selectAll(".link").data().forEach( function (d) {
-          var entry = {'id':d.source.name,'x':d.source.x,'y':d.source.y};
-          node_position_save.push(entry) })
-          var demandArrStr = encodeURIComponent(JSON.stringify(node_position_save));
-          url = {{ url_for('api_blueprint.save_external_position')|tojson }}+'?arr='+demandArrStr
-          var saveData = $.ajax({
-                type: 'POST',
-                url: url,
-                dataType: "text",
-                success: function(resultData) { alertify.notify("Node Position Saved ", 'success', 5) }
-          });
-          saveData.error(function() { alertify.notify("Something went wrong",'error',5); });
+	node_postion_save =[]
+	d3.selectAll(".node").data().forEach( function (d) { var entry = {'id':d.name,'x':d.x,'y':d.y} ; node_postion_save.push(entry) })
+	var demandArrStr = encodeURIComponent(JSON.stringify(node_postion_save));
+        url = {{ url_for('api_blueprint.save_node_position_global')|tojson }}+'?arr='+demandArrStr+'&map_type=noc'
+	var saveData = $.ajax({
+	      type: 'POST',
+	      url: url,
+	      dataType: "text",
+	      success: function(resultData) { alertify.notify("Node Position Saved ", 'success', 5) },
+              error: function(resultData) { alertify.notify("Something went wrong ", 'error', 5) },
+	});
+
   }
 
 	$(document).ready(function() {
