@@ -138,9 +138,14 @@ grapheDatas1.forEach(function(link) {
 
 Object.values(nodes).forEach(function(d){
       //console.log(d.name)
-      d.weight = grapheDatas1.filter(function(l) {
-      return l.source.name == d.name // || l.target.index == d.index
+      down_links = grapheDatas1.filter(function(l) {
+      return (l.source.name == d.name && l.util <= 0)
     }).length
+      total_links = grapheDatas1.filter(function(l) {
+      return (l.source.name == d.name)
+    }).length
+      if (down_links == total_links){ d.down = 1 }
+      else { d.down = 0 }
 })
 
     return [ Object.values(grapheDatas1) , Object.values(nodes)  ]
@@ -261,14 +266,14 @@ function check_link(id) {
 
 
 
-//use to calculated node_weight
+//use to calculated node_weight in this case it's used for up down
 function node_weight(d) {
     d.weight = links.filter(function(l) {
-      return l.source.index == d.index // || l.target.index == d.index 
+      return (l.source.index == d.index  && l.target.util <=0)
     }).length
     return d.weight
   }
-  
+
 //tier of connectivity 
 $('#level_topology').change(function() {
       if(this.checked){

@@ -126,8 +126,8 @@ const mouseOutFunction = function () {
         .attr('class', 'circle')
         //.attr('fill', 'red');
   nodeEnter.append("image").attr("class","image")
-        .attr("xlink:href", function (d) { if (d.src_icon === 'cloud')
-						{ return "/static/images/cloud.png" }
+        .attr("xlink:href", function (d) { if (d.down == 1 )
+						{ return "/static/images/router_down.png" }
 					   else { return "/static/images/router.png" }
 						})
         .attr("x", "-42px")
