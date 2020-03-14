@@ -34,7 +34,7 @@ def generate_alarm_text(rtr,interface):
 
 def send_slack_notification(rtr,interface):
     try:
-        client = slack.WebClient(token='xoxb-3738957452-1000578228822-xouk7yjHeKz2OEm16XjYRudb11111')
+        client = slack.WebClient(token='slack-token')
         #print(generate_alarm_text(rtr,interface))
         response = client.chat_postMessage(
             channel='UTF656E8K',
