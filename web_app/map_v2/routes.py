@@ -151,10 +151,17 @@ def get_graph_data_interface():
     INFLUXDB_NAME = 'telegraf'
     client = InfluxDBClient(INFLUXDB_HOST, '8086', '', '', INFLUXDB_NAME)
     rvalue = request.args
-    query = f"""select non_negative_derivative(last(ifHCOutOctets), 1s) *8  as bps_out , non_negative_derivative(last(ifHCInOctets), 1s) *8 as bps_in , last(ifHighSpeed) as capacity
+    if rvalue['time'] == '24h':
+        query = f"""select non_negative_derivative(last(ifHCOutOctets), 1s) *8  as bps_out , non_negative_derivative(last(ifHCInOctets), 1s) *8 as bps_in , last(ifHighSpeed) as capacity
 		from interface_statistics where hostname =~/{rvalue['router']}/ and ifName ='{rvalue['interface']}' 
-		AND time >= now()- 1d and time < now()
+		AND time >= now()- 24h and time < now()
                 GROUP BY time(5m) """
+    else:
+        query = f"""select non_negative_derivative(last(ifHCOutOctets), 1s) *8  as bps_out , non_negative_derivative(last(ifHCInOctets), 1s) *8 as bps_in , last(ifHighSpeed) as capacity
+                from interface_statistics where hostname =~/{rvalue['router']}/ and ifName ='{rvalue['interface']}'
+                AND time >= now()- 365d and time < now()
+                GROUP BY time(1h) """
+    #print(query)
     result = client.query(query)
     t = list(result.get_points(measurement='interface_statistics'))
     df = pd.DataFrame(t)
