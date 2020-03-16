@@ -88,44 +88,9 @@ $('.typeahead').typeahead({
   }
 );
 
-//on button click this is run
-function get_interface_graph(){
-  event.preventDefault();
-  var entry = $('#interface_graph_form').serializeArray()
-  console.log(entry)
-  router = entry[0]['value']
-  interface = entry[1]['value']
-  time = entry[2]['value']
-  url = {{ url_for('map_blueprint.get_graph_data_interface')|tojson }}+'?router='+router+'&interface='+interface+'&time='+time
-  $.ajax({
-        url: url,
-        beforeSend: function(){
-          alertify.notify("Request Data ", 'warning', 5)
-        },
-        success: function(data) {
-            interface_graph(data,router,interface)
-            alertify.notify("Done", 'success', 5)
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-          alertify.notify(errorThrown, 'error', 5);
-          $( "#interface_graph" ).empty();
-        }
-  });
-}
 
-
-//graph function
-function interface_graph(data,router,interface) {
-    var rawDataURL = data
-    //pop last interval from array , it's mostly 0 in not exactly on the hours due to aggregataion
-    //rawDataURL.pop()
-    //lame , promise issues
-    div_id = 'interface_graph'
-    //console.log('this is the div_id inside graph_aggr',div_id)
-    $( "#interface_graph" ).empty();
-    title = 'Traffic for ' + router + ' Interface: ' + interface
-    // / create selector
-    var selectorOptions = {
+//define selector_24h
+    var selectorOptions_24h = {
         visible: true,
         buttons: [{
             step: 'minute',
@@ -152,6 +117,80 @@ function interface_graph(data,router,interface) {
             label: 'all'
         }],
     };
+
+//year
+
+    var selectorOptions_year = {
+        visible: true,
+        buttons: [{
+            step: 'month',
+            stepmode: 'backward',
+            count: 1,
+            label: '1 Month'
+        }, {
+            step: 'month',
+            stepmode: 'backward',
+            count: 3,
+            label: '3 Months'
+        }, {
+            step: 'month',
+            stepmode: 'backward',
+            count: 6,
+            label: '6 Months'
+        }, {
+            step: 'month',
+            stepmode: 'backward',
+            count: 9,
+            label: '9 Months'
+        }, {
+            step: 'all',
+            label: 'all'
+        }],
+    };
+
+//
+
+//on button click this is run
+function get_interface_graph(){
+  event.preventDefault();
+  var entry = $('#interface_graph_form').serializeArray()
+  console.log(entry)
+  router = entry[0]['value']
+  interface = entry[1]['value']
+  time = entry[2]['value']
+  url = {{ url_for('map_blueprint.get_graph_data_interface')|tojson }}+'?router='+router+'&interface='+interface+'&time='+time
+  $.ajax({
+        url: url,
+        beforeSend: function(){
+          alertify.notify("Request Data ", 'warning', 5)
+        },
+        success: function(data) {
+            if (time =='24h'){
+            interface_graph(data,router,interface,selectorOptions_24h)
+            }
+            else {
+            interface_graph(data,router,interface,selectorOptions_year)
+            }
+            alertify.notify("Done", 'success', 5)
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+          alertify.notify(errorThrown, 'error', 5);
+          $( "#interface_graph" ).empty();
+        }
+  });
+}
+
+
+//graph function
+function interface_graph(data,router,interface,selectorOptions) {
+    var rawDataURL = data
+    //pop last interval from array , it's mostly 0 in not exactly on the hours due to aggregataion
+    //rawDataURL.pop()
+    //lame , promise issues
+    div_id = 'interface_graph'
+    //console.log('this is the div_id inside graph_aggr',div_id)
+    $( "#interface_graph" ).empty();
+    title = 'Traffic for ' + router + ' Interface: ' + interface
     // //prepare the graph
     var data = [ prepData(data), prepDataIn(data) ];
     var layout = {
