@@ -220,7 +220,7 @@ function interface_graph(data,router,interface,selectorOptions) {
             title: 'Time',
         },
         yaxis: {
-            fixedrange: true,
+            fixedrange: false,
             autotick: true,
             autorange: true,
             tickformat: ".3s",
@@ -228,7 +228,7 @@ function interface_graph(data,router,interface,selectorOptions) {
         }
     };
 
-    Plotly.newPlot(div_id, data, layout);
+    Plotly.newPlot(div_id, data, layout,{scrollZoom: true});
     // //prepare the data
     function prepData(rawData) {
         //map the fields

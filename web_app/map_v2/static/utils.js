@@ -149,7 +149,7 @@ function graph_aggr(data,capacity,graph_id,source_cc,target_cc) {
             title: 'Time',
         },
         yaxis: {
-            fixedrange: true,
+            fixedrange: false,
             autotick: true,
             autorange: true,
             tickformat: ".3s",
@@ -157,7 +157,7 @@ function graph_aggr(data,capacity,graph_id,source_cc,target_cc) {
         }
     };
 
-    Plotly.newPlot(div_id, data, layout);
+    Plotly.newPlot(div_id, data, layout, {scrollZoom: true} );
     // //prepare the data
     function prepData(rawData) {
         //map the fields
