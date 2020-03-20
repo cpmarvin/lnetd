@@ -147,7 +147,7 @@ const mouseOutFunction = function () {
       node = nodeEnter.merge(node); // enter + update
 
   // Apply the general update pattern to the links.
-  link = link.data(links, function(d) { return d.source.name + "-" + d.target.name + "-" + d.interface; });
+  link = link.data(links, function(d) { return d.source.name + "-" + d.target.name + "-" + d.interface + "-" + d.util ; });
 
   // Keep the exiting links connected to the moving remaining nodes.
   link.exit().transition()
@@ -174,7 +174,7 @@ const mouseOutFunction = function () {
         .on("click",function(d) { return link_click(web_ip,d)} )
         .merge(link);
 
-  linktext = linktext.data(linkstext, function(d) { return d.source.name + "-" + d.target.name + "-" + d.interface; });
+  linktext = linktext.data(linkstext, function(d) { return d.source.name + "-" + d.target.name + "-" + d.interface + "-" + d.util ; });
   linktext.exit().transition().remove()
   var linktextEnter = linktext.enter()
                   .append("g")
