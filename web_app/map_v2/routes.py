@@ -42,15 +42,22 @@ def static_map():
     current_user = session['user_id']
     node_position = pd.read_sql(db.session.query(External_position).filter(External_position.user == current_user).statement,db.session.bind)
     node_position = node_position.to_dict(orient='records')
-    #source_filter = request.form.get('source_filter')
-    #target_filter = request.form.get('source_filter')
-    #print source_filter
     df = pd.read_sql(db.session.query(External_topology).filter(External_topology.index >=0).statement,db.session.bind)
     isis_links = df.to_dict(orient='records')
     traffic_values = generate_traffic_util(df)
     return render_template(
                            'static_map.html',values=isis_links,
                                 node_position=node_position,traffic_values=traffic_values)
+
+@blueprint.route('/static_time')
+@login_required
+def static_time():
+    current_user = session['user_id']
+    node_position = pd.read_sql(db.session.query(External_position).filter(External_position.user == current_user).statement,db.session.bind)
+    node_position = node_position.to_dict(orient='records')
+    df = pd.read_sql(db.session.query(External_topology).filter(External_topology.index >=0).statement,db.session.bind)
+    isis_links = df.to_dict(orient='records')
+    return render_template('static_time.html',values=isis_links, node_position=node_position)
 
 @blueprint.route('/edit_static_map',methods=['GET', 'POST'])
 @login_required

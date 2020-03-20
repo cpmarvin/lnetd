@@ -418,6 +418,34 @@ class rpc_links(Base, UserMixin):
         return str(self.l_ip)
 
 
+class External_topology_time(Base, UserMixin):
+
+    __tablename__ = 'External_topology_time'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    index = Column(Integer, unique=False)
+    cir = Column(String(120), unique=False)
+    direction = Column(String(120), unique=False)
+    interface = Column(String(120), unique=False)
+    l_ip_r_ip = Column(String(120), unique=False)
+    node = Column(String(120), unique=False)
+    source = Column(String(120), unique=False)
+    src_icon = Column(String(120), unique=False)
+    tar_icon = Column(String(120), unique=False)
+    target = Column(String(120), unique=False)
+    type = Column(String(120), unique=False)
+    util = Column(String(120), unique=False)
+    capacity = Column(String(120), unique=False)
+    timestamp = Column(DateTime, nullable=False, default=func.now())
+
+    def __init__(self, **kwargs):
+        for property, value in kwargs.items():
+            if hasattr(value, '__iter__') and not isinstance(value, str):
+                value, = value
+            setattr(self, property, value)
+
+    def __repr__(self):
+        return str(self.index)
+
 class External_topology_temp(Base, UserMixin):
 
     __tablename__ = 'External_topology_temp'
@@ -435,9 +463,6 @@ class External_topology_temp(Base, UserMixin):
 
     def __init__(self, **kwargs):
         for property, value in kwargs.items():
-            # depending on whether value is an iterable or not, we must
-            # unpack it's value (when **kwargs is request.form, some values
-            # will be a 1-element list)
             if hasattr(value, '__iter__') and not isinstance(value, str):
                 value, = value
             setattr(self, property, value)

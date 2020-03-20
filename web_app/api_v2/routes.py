@@ -17,7 +17,7 @@ from .model_demand import model_demand_get
 from database import db
 from objects_v2.models import Routers,Links,Links_latency,Node_position
 from objects_v2.models import External_topology_temp,External_position
-from objects_v2.models import Links_time,Links_Model
+from objects_v2.models import Links_time,Links_Model,External_topology_time
 
 from api_v2.mutils import *
 
@@ -246,7 +246,15 @@ def save_topology():
 def get_isis_links_time():
     start_time = request.args['time']
     df = pd.read_sql(db.session.query(Links_time).filter(Links_time.timestamp == start_time).statement,db.session.bind)
-    print(df)
+    #print(df)
+    isis_links = df.to_dict(orient='records')
+    return jsonify(isis_links)
+
+@blueprint.route('/get_external_links_time',methods=['GET'])
+@login_required
+def get_external_links_time():
+    start_time = request.args['time']
+    df = pd.read_sql(db.session.query(External_topology_time).filter(External_topology_time.timestamp == start_time).statement,db.session.bind)
     isis_links = df.to_dict(orient='records')
     return jsonify(isis_links)
 
@@ -265,6 +273,14 @@ def get_isis_links_model():
 def get_links_interval():
     start_time = request.args['time']
     df = pd.read_sql(db.session.query(Links_time.timestamp).filter(Links_time.timestamp >= start_time).distinct(Links_time.timestamp).limit(20).statement,db.session.bind)
+    values = df['timestamp'].astype(str).unique().tolist()
+    return jsonify(values)
+
+@blueprint.route('/get_external_interval',methods=['GET'])
+@login_required
+def get_external_interval():
+    start_time = request.args['time']
+    df = pd.read_sql(db.session.query(External_topology_time.timestamp).filter(External_topology_time.timestamp >= start_time).distinct(External_topology_time.timestamp).limit(20).statement,db.session.bind)
     values = df['timestamp'].astype(str).unique().tolist()
     return jsonify(values)
 

@@ -148,20 +148,20 @@ Object.values(nodes).forEach(function(d){
 
 function getData(url){
   var customAjaxResponse = $.ajax({
-                                   type: 'GET',
-                                   url: url,
-                                   beforeSend: function (xhr) {
-                                                  alertify.notify("Refreshing Data", 'warning', 5)
+     type: 'GET',
+     url: url,
+     beforeSend: function (xhr) {
+                    alertify.notify("Refreshing Data", 'warning', 5)
+                                 },
 
-                                                               }
-                                   }).done(function (jsondata) {
-                                                  alertify.notify("Data Refreshed", 'success', 5)
+     success: function (jsondata) {
+                    alertify.notify("Data Refreshed", 'success', 5)
 
-                                   }).error(function (jqXHR, exception) {
-                                                  alertify.notify("Data Refresh error", 'error',15)
-
-
-                                  });
+     },
+     error: function (jqXHR, exception) {
+                    alertify.notify("Data Refresh error", 'error',15)
+     },
+     });
   return customAjaxResponse.promise();
   }
 

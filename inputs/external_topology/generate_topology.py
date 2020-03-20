@@ -38,6 +38,19 @@ df['util'] = df.apply(lambda row: get_util_interface(
         row['node'], row['interface'], row['direction']), axis=1)
 df['capacity'] = df.apply(lambda row: get_capacity_ifname(
         row['node'], row['interface'], 0), axis=1)
+
+#reset index
+df.reset_index(drop=True, inplace=True)
+
 disk_engine = create_engine('sqlite:////opt/lnetd/web_app/database.db')
 df.to_sql('External_topology', disk_engine, if_exists='replace')
 print(df)
+
+#keep external topology for look back in time
+add_to_table = disk_engine.execute(text(
+        '''insert into External_topology_time select null,"index",cir,direction,interface,l_ip_r_ip,node,source,src_icon,tar_icon,target,type,util,capacity,DATETIME('now','localtime') 
+		from External_topology where type !='backbone' ''').execution_options(autocommit=True))
+#delete old entries
+delete_old_values = disk_engine.execute(text(
+        '''DELETE FROM External_topology_time WHERE timestamp <= datetime('now','-7 days','localtime')''').execution_options(autocommit=True))
+
