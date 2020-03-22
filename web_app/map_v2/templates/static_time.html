@@ -240,14 +240,11 @@
     }
 
     function play_button (data_values) {
-        console.log('data inside play_button function:',data_values)
-            //play
-    $('#play')
-    .on("click", function() {
-
-        var button =  $('#play')
-
-        if (button.text() == "Restart") {
+     console.log('data inside play_button function:',data_values)
+     $('#play')
+     .on("click", function() {
+      var button =  $('#play')
+      if (button.text() == "Restart") {
           button.text("Play");
         } else {
               moving = true;
@@ -258,25 +255,11 @@
                     if (i < data_values.length -1 ){ button.text("Restart") }
                     else { button.text("Play") ; alert('all done') }
                 }, i * 3000);
-
-                //
-              //button.text("Restart");
               }
-          /*
-          data_values.forEach(function(obj,index,collection) {
-            setTimeout(function(){
-                console.log(obj,index,collection);
-                //updateData(obj)
-                }, index * 5000);
-            });
-          */
-          //console.log(moving)
-          //timer = setInterval(step, 100);
         }
-        //console.log("Slider moving: " + moving);
       })
-//end play
     }
+
     //end slider
     //update data
     function updateData(time) {

@@ -17,6 +17,9 @@ warnings.filterwarnings(action='ignore', module='.*paramiko.*')
 print('init Nornir')
 nr = InitNornir(config_file="config.yaml")
 
+# allow dummy
+add_dummy = True
+
 all_interfaces = []
 
 #filter function
@@ -80,7 +83,8 @@ try:
         ]
     labels = ['interface_name', 'interface_status','interface_speed','router_name']
     df = pd.DataFrame(dummy, columns=labels)
-    all_interfaces.append(df)
+    if add_dummy:
+        all_interfaces.append(df)
     #end dummy
     df = pd.concat(all_interfaces, ignore_index=True)
     #print(df)

@@ -19,7 +19,7 @@ blueprint = Blueprint(
 @blueprint.route('/dc_topology')
 @login_required
 def dc_topology():
-    current_user = str(session['user_id'])
+    current_user = str(session['_user_id'])
     node_position = pd.read_sql(db.session.query(Node_position).filter(Node_position.user == current_user ).statement,db.session.bind)
     node_position = node_position.to_dict(orient='records')
     df = pd.read_sql(db.session.query(Fabric_links).filter(Fabric_links.index >=0).statement,db.session.bind)

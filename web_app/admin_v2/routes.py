@@ -29,7 +29,7 @@ def admin_report_failed():
     type = rvalue_dict['type'][0]
     failed_links = json.loads(rvalue_dict['links'][0])
 
-    current_user = str(session['user_id'])
+    current_user = str(session['_user_id'])
     node_position = pd.read_sql(db.session.query(Node_position).filter(Node_position.user == current_user ).statement,db.session.bind)
     node_position = node_position.to_dict(orient='records')
 

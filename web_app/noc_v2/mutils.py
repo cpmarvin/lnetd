@@ -54,28 +54,21 @@ def get_util_interface(hostname, interface, direction):
 
 def generate_from_igp():
     conn = sqlite3.connect("/opt/lnetd/web_app/database.db")
-
-    df_links = pd.read_sql("SELECT * FROM Links", conn)
-    df_links = df_links.drop(['index'], axis=1)
-    df_links = df_links.drop(['metric','l_ip','r_ip','capacity', 'errors','util'], axis = 1)
-    df_links['node'] = df_links['source']
-    df_links['graph_status'] = '1'
-    df_links['alert_status'] = '1'
-    #df_links['direction'] = 'out'
-    df_links['interface'] = df_links.apply(lambda row: get_interface_ifName(
+    try:
+        df_links = pd.read_sql("SELECT * FROM Links", conn)
+        df_links = df_links.drop(['index'], axis=1)
+        df_links = df_links.drop(['metric','l_ip','r_ip','capacity', 'errors','util'], axis = 1)
+        df_links['node'] = df_links['source']
+        df_links['graph_status'] = '1'
+        df_links['alert_status'] = '1'
+        df_links['interface'] = df_links.apply(lambda row: get_interface_ifName(
             row['node'], row['l_int']), axis=1)
-    df_links = df_links.drop(['l_int'], axis = 1)
-    #df_links['type'] = 'backbone'
-    #df_links['cir'] = 0
-    #print(df_links)
+        df_links = df_links.drop(['l_int'], axis = 1)
+        df_final = df_links
 
-    df_final = df_links
-
-    df_final['l_ip_r_ip'] = df_final['l_ip_r_ip'].astype(str)
-    #df_final['util'] = df_final.apply(lambda row: get_util_interface(
-            #row['node'], row['interface'], row['direction']), axis=1)
-    df_final = df_final.reset_index(drop=True)
-    df_final['id'] = df_final.index
-
-    print(df_final)
-    return df_final
+        df_final['l_ip_r_ip'] = df_final['l_ip_r_ip'].astype(str)
+        df_final = df_final.reset_index(drop=True)
+        df_final['id'] = df_final.index
+        return df_final
+    except:
+        return pd.DataFrame()

@@ -160,7 +160,7 @@ def spf_and_latency():
 @login_required
 def save_node_position_global():
   try:
-    current_user = session['user_id']
+    current_user = session['_user_id']
     map_type = request.args['map_type']
     arr = request.args['arr']
     df_node_position = pd.DataFrame(eval(arr))
@@ -181,7 +181,7 @@ def save_node_position_global():
 @blueprint.route('/save_node_position',methods=['POST'])
 @login_required
 def save_node_position():
-    current_user = session['user_id']
+    current_user = session['_user_id']
     arr = request.args['arr']
     df_node_position = pd.DataFrame(eval(arr))
     df_node_position=df_node_position.drop_duplicates()
@@ -216,7 +216,7 @@ def get_isis_nested_links():
 @blueprint.route('/save_external_position',methods=['POST'])
 @login_required
 def save_external_position():
-    current_user = session['user_id']
+    current_user = session['_user_id']
     arr = request.args['arr']
     df_node_position = pd.DataFrame(eval(arr))
     df_node_position=df_node_position.drop_duplicates()
@@ -331,7 +331,7 @@ def save_bgp_peering():
 @login_required
 def save_links_model():
     print('this is the request',request)
-    current_user = str(session['user_id'])
+    current_user = str(session['_user_id'])
     model_name = str(request.args['model_name'])
     arr = request.args['arr']
     df = pd.DataFrame(eval(arr))

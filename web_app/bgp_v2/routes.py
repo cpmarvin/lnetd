@@ -31,7 +31,7 @@ def bgp_peers():
 @blueprint.route('/bgp_map')
 @login_required
 def bgp_map():
-    current_user = session['user_id']
+    current_user = session['_user_id']
     node_position = pd.read_sql(db.session.query(Node_position_global).filter(
         Node_position_global.user == current_user).filter(Node_position_global.map_type == 'bgp').statement, db.session.bind)
     node_position = node_position.to_dict(orient='records')

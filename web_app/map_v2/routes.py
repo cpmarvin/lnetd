@@ -39,7 +39,7 @@ def interface_graph():
 @blueprint.route('/static_map',methods=['GET', 'POST'])
 @login_required
 def static_map():
-    current_user = session['user_id']
+    current_user = session['_user_id']
     node_position = pd.read_sql(db.session.query(External_position).filter(External_position.user == current_user).statement,db.session.bind)
     node_position = node_position.to_dict(orient='records')
     df = pd.read_sql(db.session.query(External_topology).filter(External_topology.index >=0).statement,db.session.bind)
@@ -52,7 +52,7 @@ def static_map():
 @blueprint.route('/static_time')
 @login_required
 def static_time():
-    current_user = session['user_id']
+    current_user = session['_user_id']
     node_position = pd.read_sql(db.session.query(External_position).filter(External_position.user == current_user).statement,db.session.bind)
     node_position = node_position.to_dict(orient='records')
     df = pd.read_sql(db.session.query(External_topology).filter(External_topology.index >=0).statement,db.session.bind)
@@ -62,7 +62,7 @@ def static_time():
 @blueprint.route('/edit_static_map',methods=['GET', 'POST'])
 @login_required
 def edit_static_map():
-    current_user = session['user_id']
+    current_user = session['_user_id']
     df = pd.read_sql(db.session.query(External_topology_temp).filter(External_topology_temp.index >=0).statement,db.session
 .bind)
     df['id'] = df['index']

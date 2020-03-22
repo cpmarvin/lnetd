@@ -17,7 +17,7 @@ def update_redis(key_name, data):
     conn = redis.Redis("localhost")
     redis_data = pickle.dumps(data)
     conn.set(key_name, redis_data)
-    conn.expire(key_name, 180)
+    conn.expire(key_name, 600)
 
 
 def check_redis(key_name):
@@ -26,7 +26,8 @@ def check_redis(key_name):
     if redis_data:
         data = pickle.loads(redis_data)
         return data
-    return {}
+    else:
+        return {}
 
 
 def reverse_password(master_key, password):

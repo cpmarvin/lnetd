@@ -40,7 +40,7 @@ def add_layer1():
 @blueprint.route('/model_layer1')
 @login_required
 def topology_layer1():
-    current_user = str(session['user_id'])
+    current_user = str(session['_user_id'])
     node_position = pd.read_sql(db.session.query(Node_position).filter(Node_position.user == current_user ).statement,db.session.bind)
     node_position = node_position.to_dict(orient='records')
     df = pd.read_sql(db.session.query(Links).filter(Links.index >=0).statement,db.session.bind)
@@ -51,7 +51,7 @@ def topology_layer1():
 @blueprint.route('/topology')
 @login_required
 def topology():
-    current_user = str(session['user_id'])
+    current_user = str(session['_user_id'])
     node_position = pd.read_sql(db.session.query(Node_position).filter(Node_position.user == current_user ).statement,db.session.bind)
     node_position = node_position.to_dict(orient='records')
     df = pd.read_sql(db.session.query(Links).filter(Links.index >=0).statement,db.session.bind)
@@ -61,7 +61,7 @@ def topology():
 @blueprint.route('/topology_region1')
 @login_required
 def topology_region1():
-    current_user = str(session['user_id'])
+    current_user = str(session['_user_id'])
     node_position = pd.read_sql(db.session.query(Node_position).filter(Node_position.user == current_user ).statement,db.session.bind)
     node_position = node_position.to_dict(orient='records')
     df = pd.read_sql(db.session.query(Links).filter(Links.index >=0).statement,db.session.bind)
@@ -71,7 +71,7 @@ def topology_region1():
 @blueprint.route('/topology_nested')
 @login_required
 def topology_nested():
-    current_user = session['user_id']
+    current_user = session['_user_id']
     node_position = pd.read_sql(db.session.query(Node_position).filter(Node_position.user == current_user).statement,db.session.bind)
     node_position = node_position.to_dict(orient='records')
     try:
@@ -89,7 +89,7 @@ def topology_nested():
 @blueprint.route('/topology_nested_aggregated')
 @login_required
 def topology_nested_aggregated():
-    current_user = session['user_id']
+    current_user = session['_user_id']
     node_position = pd.read_sql(db.session.query(Node_position).filter(Node_position.user == current_user).statement,db.session.bind)
     node_position = node_position.to_dict(orient='records')
     try:
@@ -108,7 +108,7 @@ def topology_nested_aggregated():
 @blueprint.route('/topology_errors')
 @login_required
 def topology_errors():
-    current_user = str(session['user_id'])
+    current_user = str(session['_user_id'])
     node_position = pd.read_sql(db.session.query(Node_position).filter(Node_position.user == current_user).statement,db.session.bind)
     node_position = node_position.to_dict(orient='records')
     df = pd.read_sql(db.session.query(Links).filter(Links.index >=0).statement,db.session.bind)
@@ -119,7 +119,7 @@ def topology_errors():
 @blueprint.route('/topology_latency')
 @login_required
 def topology_latency():
-    current_user = session['user_id']
+    current_user = session['_user_id']
     node_position = pd.read_sql(db.session.query(Node_position).filter(Node_position.user == current_user).statement,db.session.bind)
     node_position = node_position.to_dict(orient='records')
     df = pd.read_sql(db.session.query(Links_latency).filter(Links_latency.index >=0).statement,db.session.bind)
@@ -129,7 +129,7 @@ def topology_latency():
 @blueprint.route('/filter_topology',methods=['GET', 'POST'])
 @login_required
 def filter_topology():
-    current_user = session['user_id']
+    current_user = session['_user_id']
     node_position = pd.read_sql(db.session.query(Node_position).filter(Node_position.user == current_user).statement,db.session.bind)
     node_position = node_position.to_dict(orient='records')
     source_filter = request.form.get('source_filter')
@@ -145,7 +145,7 @@ def filter_topology():
 @blueprint.route('/model_demand', methods=['GET', 'POST'])
 @login_required
 def model_demand():
-    current_user = session['user_id']
+    current_user = session['_user_id']
     node_position = pd.read_sql(db.session.query(Node_position).filter(Node_position.user == current_user).statement,db.session.bind)
     node_position = node_position.to_dict(orient='records')
     netflow_demands = get_demand_netflow()
@@ -185,7 +185,7 @@ def model_demand():
 @blueprint.route('/model_edit')
 @login_required
 def model_edit():
-    current_user = session['user_id']
+    current_user = session['_user_id']
     node_position = pd.read_sql(db.session.query(Node_position).filter(Node_position.user == current_user).statement,db.session.bind)
     node_position = node_position.to_dict(orient='records')
     netflow_demands = get_demand_netflow()
@@ -291,7 +291,7 @@ def traffic_links():
 @blueprint.route('/topology_time')
 @login_required
 def topology_time():
-    current_user = str(session['user_id'])
+    current_user = str(session['_user_id'])
     node_position = pd.read_sql(db.session.query(Node_position).filter(Node_position.user == current_user ).statement,db.session.bind)
     node_position = node_position.to_dict(orient='records')
     df = pd.read_sql(db.session.query(Links).filter(Links.index >=0).statement,db.session.bind)
@@ -301,7 +301,7 @@ def topology_time():
 @blueprint.route('/model_demand_lsp', methods=['GET', 'POST'])
 @login_required
 def model_demand_lsp():
-    current_user = session['user_id']
+    current_user = session['_user_id']
     node_position = pd.read_sql(db.session.query(Node_position).filter(Node_position.user == current_user).statement,db.session.bind)
     node_position = node_position.to_dict(orient='records')
     netflow_demands = get_demand_netflow()
@@ -355,7 +355,7 @@ def topology_netbox():
     app_config_current = App_config.query.all()
     nb_url = app_config_current[0].nb_url
     nb_token = app_config_current[0].nb_token
-    current_user = str(session['user_id'])
+    current_user = str(session['_user_id'])
     node_position = pd.read_sql(db.session.query(Node_position).filter(
         Node_position.user == current_user).statement, db.session.bind)
     node_position = node_position.to_dict(orient='records')
