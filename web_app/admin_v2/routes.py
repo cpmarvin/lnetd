@@ -192,6 +192,29 @@ def app_edit_router():
     except Exception as e:
         return 'e'
 
+@blueprint.route('/app_edit_routers', methods=['POST'])
+@login_required
+@requires_roles('admin')
+def app_edit_routers():
+    try:
+        app_add_tacacs = request.form.to_dict()
+        print(app_add_tacacs)
+        all_tags = app_add_tacacs['all_tags'].split(',')
+        all_routers = app_add_tacacs['routers'].split(',')
+        tacacs_id = int(app_add_tacacs['tacacs'])
+        for entry in all_routers:
+            print(entry)
+            router = Routers.query.filter_by(name=entry).first()
+            router.tacacs_id = tacacs_id
+            #take care of tags for this router
+            handle_tags(router,all_tags)
+            db.session.merge(router)
+            db.session.commit()
+        return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
+    except Exception as e:
+        print('error',e)
+        return 'e'
+
 
 @blueprint.route('/app_add_tacacs', methods=['POST'])
 @login_required

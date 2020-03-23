@@ -7,6 +7,48 @@
 {% endblock stylesheets %}
 
 {% block content %}
+<!--Bulk Edit Routers -->
+<div id="edit-routers" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true"></span>
+        </button>
+        <h4 class="modal-title" id="title">Edit Routers </h4>
+      </div>
+      <form id="edit-routers-form" data-parsley-validate class="form-horizontal form-label-left" method="post">
+        <div class="modal-body">
+<!--
+          <div class="form-group float-label-control">
+            <label for="">Router</label>
+            <input type="text" name='router_name' class="form-control required" readonly value=""
+          </div>
+-->
+          <div class="form-group float-label-control">
+            <label for="">TACACS</label><br>
+            <select class="form-control" name="tacacs">
+              {% for n in tacacs_id %}
+              <option value={{n.id}} >{{n.name}}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div id = 'replace' class="form-group float-label-control">
+            <label for="">Tags</label><br>
+            <select class="form-control" name="id_tags_routers" id="id_tags_routers" style="width: 100%"></select>
+          </div>
+        <!-- </div> -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-success" onclick="app_edit_routers()">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+</div>
+<!--Bulk Edit Routers -->
+
 <!--Edit links Modal-->
 <div id="edit-router" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog modal-lg">
@@ -233,11 +275,13 @@
                 </li>
               </ul>
               <div class="tab-content tab-no-active-fill-tab-content">
+                <button type="button" class="btn btn-success" onclick="show_edit_routers_modal()">Edit Selected</button>
                 <div class="tab-pane fade show active" id="revenue-for-last-month" role="tabpanel" aria-labelledby="revenue-for-last-month-tab">
                   <div class="d-lg-flex justify-content-between">
                     <!--table here -->
                     <div class="table-responsive">
                       <table id="routers_table" class="table table-hover table-bordered"
+                      data-id-field="ip"
                       data-toggle="table"
                       data-search="true"
                       data-sortable="true"
@@ -245,6 +289,7 @@
                       data-show-columns="true">
                       <thead class="thead-light">
                         <tr>
+                          <th data-field="state" data-class="hide_me1" data-checkbox="true" data-sortable="false">State</th>
                           <th data-field="name" data-sortable="true">NAME</th>
                           <th data-field="ip" data-sortable="true">IP</th>
                           <th data-field="country" data-sortable="true">LOCATION</th>
@@ -257,6 +302,7 @@
                       <tbody>
                         <tr>
                           {% for node in routers %}
+                         <td></td>
                           <td>{{node.name}}<br><br>
                             {% for tag in node.tags %}
                             <span class="badge badge-warning">{{tag.name}}</span>
@@ -498,6 +544,51 @@ $table.bootstrapTable()
         console.log(row_size)
         $(e.target).closest('.card').remove()
     });
+ function show_edit_routers_modal(){
+    selected_items = $table.bootstrapTable('getSelections')
+    if (selected_items.length > 0) { 
+     $('#edit-routers').modal('toggle')
+     //make sure no previous selection
+     $('#id_tags_routers').find('option').remove()
+     $('#id_tags_routers').select2({
+        dropdownParent: $('#edit-routers'),
+        theme: "classic",
+        width: "resolve",
+        tags: true,
+        data: tag_values,
+        multiple: true,
+        allowClear: true,
+        placeholder: "Tags",})
+    }
+    else { 
+     alertify.notify('Please select at least a router first ', 'error', 5) 
+    }
+
+ }
+ function app_edit_routers(){
+  //get selection
+  selected_items = $table.bootstrapTable('getSelections')
+  //get router names from selection
+  routers = [] 
+  selected_items.forEach(function(d) { 
+   routers.push( d["name"].split("<")[0] ) 
+  })
+  //get all values in the form
+  form_values = $('#edit-routers-form').serialize() + "&all_tags="+ $("#id_tags_routers").val() + "&routers=" + routers
+  //iterate over selection and update
+  $.ajax({
+   type: 'POST',
+   url: '/admin/app_edit_routers',
+   dataType: 'json',
+   data : form_values,
+   error: function(result) { alertify.notify('error', 'error', 5);},
+   success: function(result) {
+    alertify.notify('Routers Changed', 'success', 5);
+    $('#edit-routers').modal('toggle') ;
+    setTimeout(location.reload.bind(location), 1000);
+    }
+  })
+ }
 </script>
 
 {% endblock javascripts %}
