@@ -2,6 +2,8 @@ from flask import Blueprint, render_template, session
 from flask_login import login_required
 from database import db
 from objects_v2.models import Bgp_peers, Bgp_customers, Bgp_peering_points,Node_position_global
+from base_v2.basic_role import requires_roles
+
 import pandas as pd
 
 from .mutils import generate_peer_map
@@ -42,6 +44,7 @@ def bgp_map():
 
 @blueprint.route('/edit_peering_points')
 @login_required
+@requires_roles('admin')
 def edit_peering_points():
     df = pd.read_sql(db.session.query(Bgp_peering_points).filter(
         Bgp_peering_points.index >= 0).statement, db.session.bind)

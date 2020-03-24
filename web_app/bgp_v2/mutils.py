@@ -3,10 +3,11 @@ import sqlite3
 
 def generate_peer_map():
   conn = sqlite3.connect("/opt/lnetd/web_app/database.db")
-  sql_bgp_peer = 'SELECT router,neighbour,neighbour_ip from bgp_peers'
+  sql_bgp_peer = 'SELECT router,neighbour,neighbour_ip,type,is_up from bgp_peers'
   sql_routers = 'SELECT name,ip from Routers'
   # get bgp peers from sql
   df_bgp_peer = pd.read_sql(sql_bgp_peer, conn)
+  print(df_bgp_peer)
   #df = df.drop(['index'], axis=1)
   # get routers from sql
   df_routers = pd.read_sql(sql_routers, conn)
@@ -27,9 +28,11 @@ def generate_peer_map():
     if entry['neighbour_ip'] in nested.keys():
       target = nested[entry['neighbour_ip']][0]['name']
       icon = 'router'
+      type = 'internal'
     else:
       target = entry['neighbour']
       icon = 'cloud'
+      type = 'external'
     entry['target'] = target
     entry['tar_icon'] = icon
     bgp_map.append(entry)
@@ -39,10 +42,14 @@ def generate_peer_map():
                'target': entry['router'],
                'neighbour_ip': entry['neighbour_ip'],
                'src_icon': 'cloud',
-               'tar_icon': 'router'}
+               'tar_icon': 'router',
+	       'type' : entry['type'],
+	       'is_up' : entry['is_up']
+	       }
         bgp_map.append(reverse)
 
   df_map = pd.DataFrame(bgp_map)
+  print(df_map)
   # add l_ip/r_ip and the l_ip_r_ip list
   df_map['l_ip'] = df_map['neighbour_ip']
   df_map['r_ip'] = df_map['neighbour_ip']
@@ -52,6 +59,8 @@ def generate_peer_map():
   df_map = df_map.drop(['neighbour_ip', 'neighbour'], axis=1)
   # change router to
   df_map = df_map.rename(columns={'router': 'source'})
+  print(df_map)
+  df_map.fillna('none', inplace=True)
   ibgp_map = df_map[ (df_map['target'].isin(routers_list) ) & ( df_map['source'].isin(routers_list) )]
   return df_map,ibgp_map
 

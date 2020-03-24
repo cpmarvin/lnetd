@@ -68,7 +68,7 @@ class Node_position_global(Base):
     user = Column(String(120), primary_key=True)
     x = Column(String(120), unique=False)
     y = Column(String(120), unique=False)
-    map_type = Column(String(120), unique=False)
+    map_type = Column(String(120), primary_key=True)
 
     def __init__(self, **kwargs):
         for property, value in kwargs.items():

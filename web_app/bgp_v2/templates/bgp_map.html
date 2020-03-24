@@ -28,7 +28,25 @@
                                         <label class="checkbox-inline">
                                             <input type="radio" name="group1" id="ibgp_topology" value=""> iBGP Topology
                                         </label>
+                                       	<label class="checkbox-inline">
+                                            <input type="radio" name="group1" id="ebgp_topology" value=""> eBGP Topology
+                                       	</label>
                                     </form>
+<!--
+                                <form class="form-inline">
+                                  <div class="input-group mb-2 mr-sm-2">
+                                   <label class="checkbox-inline">
+                                      <input class="form-check-info" type="radio" name="group" id="circle_topology" value=""> Circle Topology
+                                    </label>
+                                  </div>
+                                  <div class="input-group mb-2 mr-sm-2">
+                                   <label class="checkbox-inline">
+                                      <input class="form-check-info" type="radio" name="group" id="level_topology" value=""> Level Topology
+                                    </label>
+                                  </div>
+                                </form>
+-->
+
                                 </div>
                             </div>
                         </div>
@@ -55,6 +73,7 @@ var web_ip = {{app_config|tojson|safe}}
         var node_position = {{node_position | tojson | safe}}
 	var bgp_graphData = JSON.parse('{{ values | tojson | safe}}');
         var ibgp_graphData = JSON.parse('{{ ibgp_values | tojson | safe}}');
+        var ebgp_graphData = bgp_graphData.filter(function(itm){if (itm.type !='internal') {return itm}})
 	var source = ''
         var target = ''
                 var re_source = new RegExp (source);
@@ -71,6 +90,11 @@ $('#ibgp_topology').on('click change', function(e) {
 
 $('#bgp_topology').on('click change', function(e) {
                 result = data_prepare(bgp_graphData,re_source,re_target) //this returns the correct link and nodes
+                run_it.restart(result[1],result[0],result[0]) //draw
+});
+
+$('#ebgp_topology').on('click change', function(e) {
+                result = data_prepare(ebgp_graphData,re_source,re_target) //this returns the correct link and nodes
                 run_it.restart(result[1],result[0],result[0]) //draw
 });
 

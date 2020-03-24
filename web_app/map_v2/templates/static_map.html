@@ -125,7 +125,9 @@
               <div class="d-flex align-items-center justify-content-between">
                 <h4 class="card-title mb-2">External Topology</h4>
                 <div class="dropdown">
-      <button onclick="javascript:node_position_save();" class="btn btn-success">Save Layout</button> </h3>
+		 {% if "admin" in current_user.role %}
+                  <button onclick="javascript:node_position_save();" class="btn btn-success">Save Layout</button> </h3>
+                 {% endif %}
                   </div>
                 </div>
                 <div>

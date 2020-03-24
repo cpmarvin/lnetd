@@ -22,7 +22,7 @@ blueprint = Blueprint(
 
 @blueprint.route('/admin_report_failed', methods=['POST','GET'])
 @login_required
-@requires_roles('admin')
+#@requires_roles('admin')
 def admin_report_failed():
     rvalue = request
     rvalue_dict = rvalue.args.to_dict(flat=False)
@@ -55,7 +55,7 @@ def admin_report_failed():
 
 @blueprint.route('/admin_report')
 @login_required
-@requires_roles('admin')
+#@requires_roles('admin')
 def admin_report():
     df = pd.read_sql(db.session.query(Links).statement,db.session.bind)
     df['status']='up'

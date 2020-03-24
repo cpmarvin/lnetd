@@ -87,34 +87,38 @@ with tqdm(total=len(all_devices.inventory.hosts), desc="Get BGP Peers",) as prog
 for i in r.failed_hosts.keys():
     print('HOSTNAME:{}|ERROR:{}'.format(i, r[i][1].result))
 
+
 for i in r:
     if i in r.failed_hosts.keys():
         continue
-    for n in r[i][1].result['bgp_neighbors']['global']['peers']:
-        work_level = r[i][1].result['bgp_neighbors']['global']['peers'][n]
-        #print (r[i][1].result['bgp_neighbors']['global']['peers'][n])
-        rtr = i
-        neighbour = work_level['description']
-        neighbour_ip = n
-        neighbour_version = ipaddress.ip_address(neighbour_ip).version
-        if ipaddress.ip_address(neighbour_ip).version == 4:
-            version = 'ipv4'
-        else:
-            version = 'ipv6'
-        accepted_prefixes = work_level['address_family'][version]['accepted_prefixes']
-        remote_as = work_level['remote_as']
-        is_up = work_level['is_up']
-        uptime = datetime.timedelta(seconds=work_level['uptime'])
-        if remote_as == our_asn:
-            type = 'internal'
-            ix_name = 'n/a'
-        else:
-            type = type = get_type(str(remote_as),ipt_cst)
-            entry = get_ix_name(neighbour_ip, neighbour_version,ix_lans)
-            ix_name = entry['name']
-        bgp_neighbours.append((rtr, neighbour, neighbour_ip, remote_as,
-                is_up, type, accepted_prefixes,
-                ix_name,uptime,neighbour_version))
+    try:
+        for n in r[i][1].result['bgp_neighbors']['global']['peers']:
+            work_level = r[i][1].result['bgp_neighbors']['global']['peers'][n]
+            #print (r[i][1].result['bgp_neighbors']['global']['peers'][n])
+            rtr = i
+            neighbour = work_level['description']
+            neighbour_ip = n
+            neighbour_version = ipaddress.ip_address(neighbour_ip).version
+            if ipaddress.ip_address(neighbour_ip).version == 4:
+                version = 'ipv4'
+            else:
+                version = 'ipv6'
+            accepted_prefixes = work_level['address_family'][version]['accepted_prefixes']
+            remote_as = work_level['remote_as']
+            is_up = work_level['is_up']
+            uptime = datetime.timedelta(seconds=work_level['uptime'])
+            if remote_as == our_asn:
+                type = 'internal'
+                ix_name = 'n/a'
+            else:
+                type = type = get_type(str(remote_as),ipt_cst)
+                entry = get_ix_name(neighbour_ip, neighbour_version,ix_lans)
+                ix_name = entry['name']
+            bgp_neighbours.append((rtr, neighbour, neighbour_ip, remote_as,
+                    is_up, type, accepted_prefixes,
+                    ix_name,uptime,neighbour_version))
+    except:
+        continue
 
 labels = ['router', 'neighbour', 'neighbour_ip',
           'remote_as', 'is_up', 'type',

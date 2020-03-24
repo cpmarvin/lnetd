@@ -21,7 +21,8 @@ function lnet_d3js(web_ip,result,type){
       .force("link", d3.forceLink(links).distance(10).strength(0))
       .force("x", d3.forceX(300)) //center to x 300 , only used when dynamic
       .force("y", d3.forceY(300)) // center to y 300, only used when dynamic
-      .alphaTarget(1)
+      .alphaTarget(0)
+      .alphaDecay(1)
       .on("tick", ticked);
   var g = svg.append("g").attr("id","main_g")
 	.attr("transform","translate(200,80)scale(0.8)");
@@ -159,7 +160,7 @@ const mouseOutFunction = function () {
         .attr("stroke-width",3)
         .attr("id",function(d,i) { return "linkId_" + d.l_ip + i; })
         .call(function(link) { link.transition().attr("stroke-opacity", 1); })
-        .style("stroke",function(d) { return "green" })
+        .style("stroke",function(d) { if (d.is_up =='1') { return "green" } else {return 'red'}  })
         .style("stroke-dasharray","4 1")
         .merge(link);
 

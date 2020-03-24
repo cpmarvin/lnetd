@@ -9,6 +9,7 @@ from objects_v2.models import Routers,Links,Links_latency,Node_position
 from objects_v2.models import External_topology_temp,External_topology,External_position
 from objects_v2.models import International_PoP,International_PoP_temp
 from objects_v2.models import App_external_flows
+from base_v2.basic_role import requires_roles
 
 from .generate_data import generate_data
 from .mutils import generat_unique_info, generate_traffic_util
@@ -61,6 +62,7 @@ def static_time():
 
 @blueprint.route('/edit_static_map',methods=['GET', 'POST'])
 @login_required
+@requires_roles('admin')
 def edit_static_map():
     current_user = session['_user_id']
     df = pd.read_sql(db.session.query(External_topology_temp).filter(External_topology_temp.index >=0).statement,db.session
@@ -110,6 +112,7 @@ def external_flow():
 
 @blueprint.route('/edit_international_pop',methods=['GET', 'POST'])
 @login_required
+@requires_roles('admin')
 def edit_internation_pop():
     df = pd.read_sql(db.session.query(International_PoP_temp).filter(International_PoP_temp.index >=0).statement,db.session.bind)
     df['id'] = df['index']

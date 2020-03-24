@@ -75,6 +75,7 @@
                           <li class="nav-item"><a class="nav-link" href="/data/traffic_links">PoP/PoP Capacity</a></li>
                           <li class="nav-item"><a class="nav-link" href="/map/international_pop">PoP Capacity</a></li>
                           <li class="nav-item"><a class="nav-link" href="/map/interface_graph">Interface Graph</a></li>
+			{% if "admin" in current_user.role %} {% endif %}
                           <li class="nav-item"><a class="nav-link" href="/map/edit_international_pop">Edit PoP</a></li>
                       </ul>
                   </div>
@@ -92,6 +93,7 @@
                           <li class="nav-item"><a class="nav-link" href="/map/peer_report">P&T report</a></li>
                           <li class="nav-item"><a class="nav-link" href="/map/external_flow">External Traffic flows</a></li>
                           <li class="nav-item"><a class="nav-link" href="/bgp/bgp_map">BGP Topology</a></li>
+			 {% if "admin" in current_user.role %} {% endif %}
                           <li class="nav-item"><a class="nav-link" href="/admin/app_external_netflow">Edit Traffic flows</a></li>
                           <li class="nav-item"><a class="nav-link" href="/map/edit_static_map">Edit External Topology</a></li>
                           <li class="nav-item"><a class="nav-link" href="/bgp/edit_peering_points">Edit Peering Points</a></li>
@@ -121,6 +123,7 @@
                   <div class="submenu">
                       <ul>
                           <li class="nav-item"><a class="nav-link" href="/noc/noc_topology">NOC TOPOLOGY</a></li>
+			{% if "admin" in current_user.role %} {% endif %}
                           <li class="nav-item"><a class="nav-link" href="/noc/edit_topology">EDIT NOC TOPOLOGY</a></li>
                       </ul>
                   </div>

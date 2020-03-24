@@ -275,8 +275,10 @@
                 </li>
               </ul>
               <div class="tab-content tab-no-active-fill-tab-content">
-                <button type="button" class="btn btn-success" onclick="show_edit_routers_modal()">Edit Selected</button>
                 <div class="tab-pane fade show active" id="revenue-for-last-month" role="tabpanel" aria-labelledby="revenue-for-last-month-tab">
+		{% if "admin" in current_user.role %}
+		  <button type="button" class="btn btn-success" onclick="show_edit_routers_modal()">Edit Selected</button>
+		{% endif %}
                   <div class="d-lg-flex justify-content-between">
                     <!--table here -->
                     <div class="table-responsive">
