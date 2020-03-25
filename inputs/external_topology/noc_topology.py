@@ -37,7 +37,7 @@ try:
     if alarms:
         for entry in df_external.to_dict(orient='records'):
             if entry['util'] <= 0 and entry['alert_status'] == "1":
-               send_slack_notification(entry['source'],entry['interface'])
+               send_slack_notification(entry['source'],entry['interface'],'down')
 except Exception as e:
     pass
 

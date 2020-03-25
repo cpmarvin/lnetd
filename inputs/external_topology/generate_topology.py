@@ -11,6 +11,10 @@ pd.set_option('display.width', 1000)
 
 conn = sqlite3.connect("/opt/lnetd/web_app/database.db")
 
+from slack_notification import send_slack_notification
+
+alarms = True
+
 df_external = pd.read_sql("SELECT * FROM External_topology_temp", conn)
 df_external = df_external.drop(['index'], axis=1)
 df_external.loc[:, 'l_ip_r_ip'] = pd.Series(
@@ -54,3 +58,23 @@ add_to_table = disk_engine.execute(text(
 delete_old_values = disk_engine.execute(text(
         '''DELETE FROM External_topology_time WHERE timestamp <= datetime('now','-7 days','localtime')''').execution_options(autocommit=True))
 
+#alert if util greater than thresold
+def _get_alert_values():
+    conn = sqlite3.connect("/opt/lnetd/web_app/database.db")
+    sql_app_config = pd.read_sql("select * from App_config", conn)
+    alert_thresold = sql_app_config["alert_threshold"].values[0]
+    alert_backoff =  sql_app_config["alert_backoff"].values[0]
+    return alert_thresold
+
+alert_thresold = _get_alert_values()
+
+try:
+    if alarms:
+        for entry in df.to_dict(orient='records'):
+            util = (entry['util']*100)/(entry['capacity']*1000000)
+            #print(entry,util)
+            if util > int(alert_thresold)  and entry['alert_status'] == "1":
+               #print(entry,util)
+               send_slack_notification(entry['source'],entry['interface'],'util',alert_thresold,util)
+except Exception as e:
+    print(e)

@@ -1,3 +1,4 @@
 *.pyc
 *.swp
+*.bkp
 __pycache__
