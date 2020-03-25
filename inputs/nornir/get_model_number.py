@@ -15,6 +15,11 @@ from tqdm import tqdm
 # allow dummy
 add_dummy = True
 
+if add_dummy:
+    insert_routers('Routers',98,'dummy-p8-lon','10.18.18.18','gb','juniper','MX2008','18.4',0)
+    insert_routers('Routers',99,'dummy-p9-lon','10.19.19.19','gb','huawei','NE40E-X8A','8.180',0)
+    insert_routers('Routers',100,'dummy-p10-lon','10.20.20.20','gb','cisco-xr','ASR-9922','6.5.3',0)
+
 # load the config
 print("init Nornir")
 nr = InitNornir(config_file="config.yaml")
@@ -156,10 +161,3 @@ get_cisco_ios()
 get_cisco_xr()
 get_cisco_xr_genie()
 get_juniper()
-
-if add_dummy:
-    #insert dummy devices 
-    #index|name|ip|country|vendor|model|version 
-    insert_routers('Routers',98,'dummy-p8-lon','10.18.18.18','gb','juniper','MX2008','18.4',0)
-    insert_routers('Routers',99,'dummy-p9-lon','10.19.19.19','gb','huawei','NE40E-X8A','8.180',0)
-    insert_routers('Routers',100,'dummy-p10-lon','10.20.20.20','gb','cisco-xr','ASR-9922','6.5.3',0)
