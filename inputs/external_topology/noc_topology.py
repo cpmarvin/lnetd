@@ -12,6 +12,7 @@ pd.set_option('display.width', 1000)
 
 import os
 import slack
+
 client = slack.WebClient(token='xoxb-3738957452-1000578228822-xouk7yjHeKz2OEm16XjYRudb')
 
 conn = sqlite3.connect("/opt/lnetd/web_app/database.db")
@@ -37,9 +38,18 @@ try:
     if alarms:
         for entry in df_external.to_dict(orient='records'):
             if entry['util'] <= 0 and entry['alert_status'] == "1":
-               send_slack_notification(entry['source'],entry['interface'],'down')
+               redis_key = entry['l_ip_r_ip'] + 'alarm_down'
+               is_key_in_redis =check_redis(redis_key)
+               alarm_backoff = get_alert_backoff()
+               if len(is_key_in_redis) >1:
+                   print('this is the check redis key' , check_redis(redis_key))
+                   print('will not alarm')
+               else:
+                   print('will alarm')
+                   send_slack_notification(entry['source'],entry['interface'],'down')
+                   update_redis(redis_key,entry,alarm_backoff)
 except Exception as e:
-    pass
+    print(e)
 
 
 df_external = df_external.drop(['alert_status', 'graph_status'], axis = 1)

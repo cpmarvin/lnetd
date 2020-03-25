@@ -1,6 +1,8 @@
 import datetime
 import pandas as pd
 from influxdb import InfluxDBClient
+import redis,pickle
+import sqlite3
 
 INFLUXDB_HOST = '127.0.0.1'
 INFLUXDB_NAME = 'telegraf'
@@ -57,3 +59,29 @@ def get_capacity_ifname(hostname, interface, start):
         return result
     except Exception as e:
         return -1
+
+def update_redis(key_name, data, time):
+    conn = redis.Redis("localhost")
+    redis_data = pickle.dumps(data)
+    conn.set(key_name, redis_data)
+    conn.expire(key_name, time)
+
+
+def check_redis(key_name):
+    conn = redis.Redis("localhost")
+    redis_data = conn.get(key_name)
+    if redis_data:
+        data = pickle.loads(redis_data)
+        return data
+    else:
+        return {}
+
+
+def get_alert_backoff():
+    conn = sqlite3.connect("/opt/lnetd/web_app/database.db")
+    sql_app_config = pd.read_sql("select * from App_config", conn)
+    alert_thresold = sql_app_config["alert_threshold"].values[0]
+    alert_backoff =  sql_app_config["alert_backoff"].values[0]
+    alert_backoff_sec = int(alert_backoff) * 60
+    return alert_backoff_sec
+
