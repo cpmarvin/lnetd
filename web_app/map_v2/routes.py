@@ -67,26 +67,10 @@ def edit_static_map():
     current_user = session['_user_id']
     df = pd.read_sql(db.session.query(External_topology_temp).filter(External_topology_temp.index >=0).statement,db.session
 .bind)
-    df['id'] = df['index']
     isis_links = df.to_dict(orient='records')# External_topology_temp
     df_router_name = pd.read_sql(db.session.query(Links.source.distinct()).statement,db.session.bind)
     router_name = df_router_name['anon_1'].values.tolist()
-    columns = [
-            { "field": "state","checkbox":True },
-            { "field": "id","title":"id","sortable":False,"class":"hide_me"},
-            { "field": "index","title":"index","sortable":False,"class":"hide_me"},
-            { "field": "source","title":"source","sortable":True,"editable":True},
-            { "field": "target","title":"target","sortable":False,"editable":True},
-            { "field": "node","title":"node","sortable":False,"editable":True},
-            { "field": "interface","title":"interface","sortable":False,"editable":True},
-            { "field": "direction","title":"direction","sortable":False,"editable":True},
-            { "field": "src_icon","title":"src_icon","sortable":False,"editable":True,"class":"hide_me"},
-            { "field": "tar_icon","title":"tar_icon","sortable":False,"editable":True,"class":"hide_me"},
-            { "field": "cir","title":"cir","sortable":False,"editable":True},
-            { "field": "type","title":"type","sortable":False,"editable":True},
-            { "field": "Action","title":"Action","formatter":"TableActions"},
-            ]
-    return render_template('edit_static_map.html',values=isis_links,columns=columns,router_name=router_name)
+    return render_template('edit_static_map.html',values=isis_links,router_name=router_name)
 
 @blueprint.route('/external_flow',methods=['GET', 'POST'])
 @login_required

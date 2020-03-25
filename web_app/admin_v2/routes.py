@@ -76,7 +76,11 @@ def app_config():
     master_key = app_config_current[0].master_key
     users_list = User.query.all()
     lnetd_tacacs = Tacacs.query.all()
-    return render_template('app_config.html', asn=asn, web_ip=web_ip, influx_ip=influx_ip, nb_url=nb_url, nb_token=nb_token, master_key=master_key,users_list=users_list,lnetd_tacacs=lnetd_tacacs)
+    alert_threshold = app_config_current[0].alert_threshold
+    alert_backoff = app_config_current[0].alert_backoff
+    return render_template('app_config.html', asn=asn, web_ip=web_ip, 
+		influx_ip=influx_ip, nb_url=nb_url, nb_token=nb_token, master_key=master_key,users_list=users_list,lnetd_tacacs=lnetd_tacacs,alert_threshold=alert_threshold,
+		alert_backoff=alert_backoff)
 
 
 @blueprint.route('/app_config_save', methods=['POST'])
@@ -90,7 +94,7 @@ def app_config_save():
         db.session.commit()
         return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
     except Exception as e:
-        return json.dumps({'success': False}), 400, {'ContentType': 'application/json'}
+        return json.dumps({'error': False}), 400, {'ContentType': 'application/json'}
 
 
 @blueprint.route('/app_add_user', methods=['POST'])

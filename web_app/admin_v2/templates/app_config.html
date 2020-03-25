@@ -97,6 +97,22 @@
                           </div>
                         </div>
                       </div>
+                      <div class="col-md-6">
+                        <div class="form-group row">
+                          <label class="col-sm-4 col-form-label font-weight-bold col-form-label-bottom">ALERT UTIL THRESHOLD(%)</label>
+                          <div class="col-sm-8">
+                            <input type="text" class="form-control required" id="alert_threshold" name="alert_threshold" value={{alert_threshold}}>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group row">
+                          <label class="col-sm-4 col-form-label font-weight-bold col-form-label-bottom">ALERT BACKOFF TIME(m)</label>
+                          <div class="col-sm-8">
+                            <input type="text" class="form-control required" id="alert_backoff" name="alert_backoff" value={{alert_backoff}}>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                     <button type="submit" class="btn btn-primary btn-success mr-2" onclick="app_config_save()">Save config</button>
                     <button class="btn btn-light float-right">Cancel</button>
@@ -301,7 +317,7 @@ function app_config_save() {
       dataType: 'json',
       data: $('#app-config-form').serialize(),
       error: function(result) { alertify.notify('error', 'error', 5) ;},
-      complete: function(result) { alertify.notify('Config Saved', 'success', 5);}
+      success: function(result) { alertify.notify('Config Saved', 'success', 5);}
     });
   }
 }

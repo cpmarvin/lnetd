@@ -460,6 +460,7 @@ class External_topology_temp(Base, UserMixin):
     tar_icon = Column(String(120), unique=False)
     cir = Column(String(120), unique=False)
     type = Column(String(120), unique=False)
+    alert_status = Column(String(120), unique=False)
 
     def __init__(self, **kwargs):
         for property, value in kwargs.items():
@@ -723,6 +724,8 @@ class App_config(Base):
     nb_url = Column(String(120), unique=True)
     nb_token = Column(String(120), unique=True)
     master_key = Column(String(120), unique=True)
+    alert_threshold = Column(String(120), unique=False)
+    alert_backoff = Column(String(120), unique=False)
 
     def __init__(self, **kwargs):
         for property, value in kwargs.items():

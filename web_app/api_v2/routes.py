@@ -224,19 +224,15 @@ def save_external_position():
     df_node_position.to_sql(name='External_position', con=db.engine, index=False, if_exists='replace')
     return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
 
-@blueprint.route('/save_topology',methods=['POST'])
+@blueprint.route('/save_topology',methods=['POST','GET'])
 @login_required
 def save_topology():
-    print('did i run this')
     arr = request.args['arr']
     print(arr)
     df = pd.DataFrame(eval(arr))
-    df = df.drop(['','index','Action','id'], axis=1)
-    print(df.dtypes,df.columns)
+    df = df.drop(['index'], axis=1)
     #df = df.reset_index()
-    print(df.dtypes,df.columns) 
-    #df.columns = ['index','direction','icon','interface','node','source','target']
-    print(df.to_dict(orient='records'))
+    print('this is the df\n',df)
     df.to_sql(name='External_topology_temp', con=db.engine, if_exists='replace' )
     return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
 
