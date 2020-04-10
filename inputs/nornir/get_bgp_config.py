@@ -47,8 +47,9 @@ with tqdm(
         task=netflow_configuration, progress_bar=progress_bar
     )
 
+
 process_tasks(deploy_netflow_config)
-# print_result(deploy_netflow_config)
+#print_result(deploy_netflow_config)
 # import ipdb; ipdb.set_trace()
 def parse_bgp_config(nornir_object):
     bgp_groups = []

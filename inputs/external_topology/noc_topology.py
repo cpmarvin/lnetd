@@ -34,13 +34,26 @@ df_external['util'] = df_external.apply(lambda row: get_util_interface(
 
 print(df_external)
 
+#alert if util greater than thresold
+def _get_alert_values():
+    conn = sqlite3.connect("/opt/lnetd/web_app/database.db")
+    sql_app_config = pd.read_sql("select * from App_config", conn)
+    alert_thresold = sql_app_config["alert_threshold"].values[0]
+    alert_backoff =  sql_app_config["alert_backoff"].values[0]
+    return alert_thresold
+
+alert_thresold = _get_alert_values()
+
+df_external['capacity'] = df_external.apply(lambda row: get_capacity_ifname(
+        row['node'], row['interface'], 0), axis=1)
+
 try:
     if alarms:
         for entry in df_external.to_dict(orient='records'):
+            alarm_backoff = get_alert_backoff()
             if entry['util'] <= 0 and entry['alert_status'] == "1":
                redis_key = entry['l_ip_r_ip'] + 'alarm_down'
                is_key_in_redis =check_redis(redis_key)
-               alarm_backoff = get_alert_backoff()
                if len(is_key_in_redis) >1:
                    print('this is the check redis key' , check_redis(redis_key))
                    print('will not alarm')
@@ -48,9 +61,18 @@ try:
                    print('will alarm')
                    send_slack_notification(entry['source'],entry['interface'],'down')
                    update_redis(redis_key,entry,alarm_backoff)
+            elif (entry['util']*100)/(entry['capacity']*1000000) > int(alert_thresold) and entry['alert_status'] == "1":
+                redis_key = entry['l_ip_r_ip'] + 'util'
+                is_key_in_redis =check_redis(redis_key)
+                if len(is_key_in_redis) >1:
+                    print('will not alarm')
+                    print('this is the check redis key' , check_redis(redis_key))
+                else:
+                    print('will alarm')
+                    update_redis(redis_key,entry,alarm_backoff)
+                    send_slack_notification(entry['source'],entry['interface'],'util',alert_thresold,(entry['util']*100)/(entry['capacity']*1000000))
 except Exception as e:
     print(e)
-
 
 df_external = df_external.drop(['alert_status', 'graph_status'], axis = 1)
 

@@ -235,6 +235,8 @@
             play_data = Object.values(data)
             console.log(play_data)
             play_button(play_data)
+            updateData(instance_data.result.from_value)
+       	    $('#topology-title').text('External Topology ' + instance_data.result.from_value)
             })
 
     }

@@ -73,6 +73,8 @@ print('Init Nornir')
 nr = InitNornir(config_file="config.yaml",dry_run=False)
 print('Filter devices with tag peering')
 all_devices = nr.filter(F(groups__contains="peering"))
+#test XR
+all_devices = nr.filter(name='nl-p13-ams')
 
 bgp_neighbours = []
 

@@ -1,4 +1,4 @@
-import sqlite3
+import sqlite3,redis
 import pandas as pd
 import re
 from sqlalchemy import create_engine, text
@@ -58,6 +58,7 @@ add_to_table = disk_engine.execute(text(
 delete_old_values = disk_engine.execute(text(
         '''DELETE FROM External_topology_time WHERE timestamp <= datetime('now','-7 days','localtime')''').execution_options(autocommit=True))
 
+
 #alert if util greater than thresold
 def _get_alert_values():
     conn = sqlite3.connect("/opt/lnetd/web_app/database.db")
@@ -74,7 +75,15 @@ try:
             util = (entry['util']*100)/(entry['capacity']*1000000)
             #print(entry,util)
             if util > int(alert_thresold)  and entry['alert_status'] == "1":
-               #print(entry,util)
-               send_slack_notification(entry['source'],entry['interface'],'util',alert_thresold,util)
+               redis_key = entry['l_ip_r_ip'] + 'util' + entry['direction']
+               is_key_in_redis =check_redis(redis_key)
+               alarm_backoff = get_alert_backoff()
+               if len(is_key_in_redis) >1:
+                   print('will not alarm')
+                   print('this is the check redis key' , check_redis(redis_key))
+               else:
+                   print('will alarm')
+                   update_redis(redis_key,entry,alarm_backoff)
+                   send_slack_notification(entry['source'],entry['interface'],'util',alert_thresold,util)
 except Exception as e:
     print(e)

@@ -20,3 +20,4 @@ flask_httpauth
 genie
 pyats
 slackclient
+pymsteams
