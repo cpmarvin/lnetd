@@ -4,6 +4,13 @@ import sqlite3
 import pandas as pd
 from sqlalchemy import create_engine,text
 
+from influxdb import InfluxDBClient
+from datetime import date, timedelta
+
+INFLUXDB_HOST = '127.0.0.1'
+INFLUXDB_NAME = 'telegraf_agg'
+client = InfluxDBClient(INFLUXDB_HOST, '8086', '', '', INFLUXDB_NAME)
+
 
 disk_engine = create_engine('sqlite:////opt/lnetd/web_app/database.db')
 
@@ -138,3 +145,36 @@ def generate_traffic_util(df):
   traffic_values['peer_out'] = df_outbound_peering['util'].sum()
 
   return traffic_values
+
+
+def get_month_util(provider,pop):
+  today = date.today().replace(day=1)
+  prev = today - timedelta(days=1)
+  end_interval = today.strftime("%Y-%m")+"-01T00:00:00Z"
+  start_interval = prev.strftime("%Y-%m")+"-01T00:00:00Z"
+  if pop == 'all':
+      query = f'''SELECT PERCENTILE(bps_out,95) as bps_out ,PERCENTILE(bps_in,95) as bps_in from h_transit_statistics
+      where target =~/{provider}/
+      and pop =~//
+      and type =~ /transit/
+      AND time >= '{start_interval}'  and time < '{end_interval}' ;
+      '''
+  else:
+      query = f'''select PERCENTILE(bps_out,95) as bps_out ,PERCENTILE(bps_in,95) as bps_in from h_transit_statistics
+      where target =~/{provider}/
+      and pop =~/{pop}/
+      and type =~ /transit/
+      AND time >= '{start_interval}'  and time < '{end_interval}' ;
+      '''
+  try:
+      result = client.query(query)
+      #print(query)
+      t = list(result.get_points(measurement='h_transit_statistics'))
+      df = pd.DataFrame(t)
+      df = df.fillna(0)
+      df["bps"] = df[["bps_in", "bps_out"]].max(axis=1)
+      df["bps"] = df["bps"] / 1000000
+      #print(df)
+      return round(float(df["bps"].values[0]),2)
+  except Exception as e:
+      return -1

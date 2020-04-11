@@ -1,5 +1,5 @@
 from flask_login import UserMixin
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Table
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Table, Float
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship,backref
 
@@ -14,6 +14,25 @@ tags = Table('tags',Base.metadata,
                 Column('router_name', Integer, ForeignKey('Routers.name')),
                 )
 
+
+class Transit_Cost(Base):
+    __tablename__ = 'Transit_Cost'
+
+    index = Column(Integer, primary_key=True)
+    provider = Column(String(120), unique=False)
+    pop_name = Column(String(120), unique=False)
+    commit = Column(Integer, unique=False)
+    commit_cost = Column(Float, unique=False)
+    burst_cost = Column(Float, unique=False)
+
+    def __init__(self, **kwargs):
+        for property, value in kwargs.items():
+            if hasattr(value, '__iter__') and not isinstance(value, str):
+                value, = value
+            setattr(self, property, value)
+
+    def __repr__(self):
+        return str(self.index)
 
 class Noc_Topology(Base):
     __tablename__ = 'Noc_Topology'

@@ -8,13 +8,15 @@ from database import db
 from objects_v2.models import Routers,Links,Links_latency,Node_position
 from objects_v2.models import External_topology_temp,External_topology,External_position
 from objects_v2.models import International_PoP,International_PoP_temp
-from objects_v2.models import App_external_flows
+from objects_v2.models import App_external_flows,Transit_Cost
 from base_v2.basic_role import requires_roles
 
 from .generate_data import generate_data
-from .mutils import generat_unique_info, generate_traffic_util
+from .mutils import generat_unique_info, generate_traffic_util,get_month_util
 
 from influxdb import InfluxDBClient
+from datetime import date, timedelta
+
 INFLUXDB_HOST = '127.0.0.1'
 INFLUXDB_NAME = 'telegraf_agg'
 client = InfluxDBClient(INFLUXDB_HOST, '8086', '', '', INFLUXDB_NAME)
@@ -27,6 +29,45 @@ blueprint = Blueprint(
     static_folder = 'static'
     )
 
+
+
+@blueprint.route('/save_cost_table',methods=['POST','GET'])
+@login_required
+def save_cost_table():
+    arr = request.args['arr']
+    df = pd.DataFrame(eval(arr))
+    df = df.drop(['index'], axis=1)
+    print('this is the df\n',df)
+    df.to_sql(name='Transit_Cost', con=db.engine, if_exists='replace' )
+    return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
+
+@blueprint.route('/cost_report')
+@login_required
+def cost_report():
+    try:
+      today = date.today().replace(day=1)
+      prev = today - timedelta(days=1)
+      end_interval = today.strftime("%Y-%m")+"-01"
+      start_interval = prev.strftime("%Y-%m")+"-01"
+      df = pd.read_sql(db.session.query(Transit_Cost).filter(Transit_Cost.index >=0).statement,db.session.bind)
+      df['commit'] = df['commit'].astype(float)
+      df['commit_cost'] = df['commit_cost'].astype(float)
+      df['burst_cost'] = df['burst_cost'].astype(float)
+      #get util for provider and pop for between 1st of each month , that's in the get_month_util
+      df['util'] = df.apply(lambda row: get_month_util(row['provider'],row['pop_name']),axis=1)
+      #calculate if util is above commit rate
+      df['burstable'] = round(df['util'] - df['commit'],2)
+      #if it is then pir is not 0
+      df['burst'] = df.apply(lambda x: 0 if x['burstable']<0 else x['burstable'], axis=1)
+      #calculate the billing cost , commit cost + pir * pir_cost
+      df['total'] = df.apply(lambda row: row['commit_cost'] + (row['burst'] * row['burst_cost']),axis=1)
+      df['total'] = round(df['total'],2)
+      df.drop(['burstable'], axis=1, inplace=True)
+      values = df.to_dict(orient='records')
+      return render_template('cost_report.html',values=values,start_interval=start_interval,end_interval=end_interval)
+    except Exception as e:
+      print(e)
+      return render_template('cost_report.html',values=[{}])
 
 @blueprint.route('/interface_graph')
 @login_required
