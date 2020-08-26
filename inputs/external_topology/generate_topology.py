@@ -33,7 +33,7 @@ df_links['interface'] = df_links.apply(lambda row: get_interface_ifName(
 df_links = df_links.drop(['l_int'], axis = 1)
 df_links['type'] = 'backbone'
 df_links['cir'] = 0
-#print(df_links)
+print(df_links)
 
 df_final = [df_links , df_external]
 df = pd.concat(df_final)

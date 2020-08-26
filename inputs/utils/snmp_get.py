@@ -99,6 +99,7 @@ def get_sysdesc(hostname):
     #logger.debug('Get sysDesc from influxdb based on %s with %s'%(hostname))
     timestamp = datetime.datetime.utcnow().isoformat()
     queryurl = '''SELECT last(sysDesc) from snmp where hostname =~ /%s/''' % (hostname)
+    #print(queryurl)
     result = client.query(queryurl)
     points = list(result.get_points(measurement='snmp'))
     if not points:

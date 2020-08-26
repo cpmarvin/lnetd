@@ -81,7 +81,7 @@
     rawData.forEach(function(datum, i) {
         lat.push(datum['lat']);
         lon.push(datum['lon']);
-        size.push(datum['capacity']);
+        size.push(datum['capacity']*1000);
         text.push(datum['text']);
         });
     return {

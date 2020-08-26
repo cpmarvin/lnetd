@@ -21,7 +21,7 @@ import os
 os.environ["NET_TEXTFSM"] = "/opt/lnetd/inputs/nornir/ntc-templates/"
 
 # allow dummy
-add_dummy = True
+add_dummy = False
 
 # filter function
 def core_device_jnp(host):
