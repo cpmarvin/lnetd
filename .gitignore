@@ -1,4 +1,5 @@
 *.pyc
 *.swp
 *.bkp
+*.log
 __pycache__

@@ -1,7 +1,9 @@
 ---
-core:
-    num_workers: 20
+runner:
+ plugin: my_runner
+ options:
+  num_workers: 20
 inventory:
-  plugin: lnetd_nornir_inventory.LnetDInventory
+  plugin: LnetDInventory
   options:
     lnetd_db: '/opt/lnetd/web_app/database.db'

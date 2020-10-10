@@ -1,14 +1,37 @@
-from nornir import InitNornir
-from nornir.core.filter import F
-from nornir.plugins.tasks.networking import netmiko_send_command
-from nornir.plugins.tasks import networking
-from nornir.plugins.functions.text import print_result
+import logging
+import sys
 import pandas as pd
+from sqlalchemy import create_engine, text
 import re
 
-from sqlalchemy import create_engine, text
+##nornir
+from nornir import InitNornir
+from nornir.core.filter import F
 
-from mutils import get_cards_jnp, get_cards_xr, get_cards_huawei
+##Import and register custom runner
+from nornir.core.plugins.runners import RunnersPluginRegister
+from custom_runners import (
+    runner_as_completed,
+    runner_as_completed_tqdm,
+    runner_as_completed_rich,
+)
+
+RunnersPluginRegister.register("my_runner", runner_as_completed_rich)
+# RunnersPluginRegister.register("my_runner", runner_as_completed_tqdm)
+# RunnersPluginRegister.register("my_runner", runner_as_completed)
+##Import and register custom inventory
+from lnetd_nornir_inventory import LnetDInventory
+from nornir.core.plugins.inventory import InventoryPluginRegister
+
+InventoryPluginRegister.register("LnetDInventory", LnetDInventory)
+
+##Import plugins
+from nornir_napalm.plugins.tasks import napalm_get
+from nornir_netmiko import netmiko_send_command
+from nornir_utils.plugins.functions import print_title
+
+# custom
+from mutils import *
 
 # disable warnings
 import warnings
@@ -23,19 +46,6 @@ os.environ["NET_TEXTFSM"] = "/opt/lnetd/inputs/nornir/ntc-templates/"
 # allow dummy
 add_dummy = False
 
-# filter function
-def core_device_jnp(host):
-    return bool(re.search(".", host.name) and (host["type"] == "juniper"))
-
-
-def core_device_xr(host):
-    return bool(re.search(".", host.name) and (host["type"] == "cisco-xr"))
-
-
-def core_device_huawei(host):
-    return bool(re.search(".", host.name) and (host["type"] == "huawei"))
-
-
 # load the config
 print("init Nornir")
 nr = InitNornir(config_file="config.yaml")
@@ -44,9 +54,11 @@ all_cards = []
 
 
 def get_juniper():
-    print("running show juniper facts")
-    all_juniper = nr.filter(filter_func=core_device_jnp)
-    show_juniper_facts = all_juniper.run(task=get_cards_jnp)
+    print_title("running show juniper facts")
+    all_juniper = nr.filter(type="juniper")
+    show_juniper_facts = all_juniper.run(
+        task=get_cards_jnp, severity_level=logging.INFO
+    )
 
     for i in show_juniper_facts.keys():
         if i not in show_juniper_facts.failed_hosts.keys():
@@ -54,28 +66,24 @@ def get_juniper():
                 all_cards.append(show_juniper_facts[i][0].result)
             except Exception as e:
                 pass
-    print("failed juniper hosts:\n{}\n".format(show_juniper_facts.failed_hosts.keys()))
 
 
 def get_cisco_xr():
-    print("runing show platform XR")
-    all_xr = nr.filter(filter_func=core_device_xr)
+    print_title("runing show platform XR")
+    all_xr = nr.filter(type="cisco-xr")
     show_platform_xr = all_xr.run(
         task=netmiko_send_command,
         command_string=f"admin show platform",
         use_textfsm=True,
+        severity_level=logging.INFO,
     )
     # print(show_platform_xr)
     for i in show_platform_xr.keys():
         if i not in show_platform_xr.failed_hosts.keys():
             try:
-                # print(show_platform_xr[i][0].result)
-                df = get_cards_xr(i, show_platform_xr[i][0].result)
-                # print(df)
-                all_cards.append(df)
+                all_cards.append(get_cards_xr(i, show_platform_xr[i][0].result))
             except Exception as e:
                 pass
-    print("failed XR hosts:\n{}\n".format(show_platform_xr.failed_hosts.keys()))
 
 
 def huawei_multiple(task):
@@ -84,33 +92,22 @@ def huawei_multiple(task):
     )
     r = task.run(task=netmiko_send_command, command_string=f"display version")
     p = task.run(task=netmiko_send_command, command_string="display device pic-status")
-    # pow = task.run(task=netmiko_send_command, command_string='display power')
-    # print(r.result)
-    # print(p.result)
     return r.result + p.result
 
 
 def get_huawei():
-    print("runing display version and display device pic-status")
-    all_xr = nr.filter(filter_func=core_device_huawei)
-    # all_xr = nr.filter(name='acc1.pru.lon')
+    print_title("runing display version and display device pic-status")
+    all_xr = nr.filter(type="huawei")
     show_platform_xr = all_xr.run(task=huawei_multiple)
-    print_result(show_platform_xr)
     for i in show_platform_xr.keys():
-        print("i in show plat", i)
         if i not in show_platform_xr.failed_hosts.keys():
             try:
-                print(show_platform_xr[i][0].result)
-                # df = get_cards_huawei(i,show_platform_xr[i][0].result)
                 df = get_cards_huawei(show_platform_xr[i][0].result)
                 df["router_name"] = i
-                print(df)
                 all_cards.append(df)
-                # print('this is the all_jnp_cards inside xr',all_jnp_cards)
             except Exception as e:
                 print(e)
                 pass
-    print("failed huawei hosts:\n{}\n".format(show_platform_xr.failed_hosts.keys()))
 
 
 get_cisco_xr()

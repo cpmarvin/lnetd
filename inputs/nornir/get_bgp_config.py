@@ -1,56 +1,54 @@
-from nornir import InitNornir
-from nornir.plugins.tasks.networking import (
-    netmiko_send_command,
-    napalm_get,
-    napalm_configure,
-)
-from nornir.plugins.tasks import networking, text
-from nornir.plugins.functions.text import print_result, print_title
-from nornir.plugins.tasks import commands
 import logging
 import sys
-
-#
-from tqdm import tqdm
 import pandas as pd
 from sqlalchemy import create_engine, text
 
-#
-def netflow_configuration(task, progress_bar):
+##nornir
+from nornir import InitNornir
+from nornir.core.filter import F
+
+##Import and register custom runner
+from nornir.core.plugins.runners import RunnersPluginRegister
+from custom_runners import (
+    runner_as_completed,
+    runner_as_completed_tqdm,
+    runner_as_completed_rich,
+)
+
+RunnersPluginRegister.register("my_runner", runner_as_completed_rich)
+# RunnersPluginRegister.register("my_runner", runner_as_completed_tqdm)
+# RunnersPluginRegister.register("my_runner", runner_as_completed)
+##Import and register custom inventory
+from lnetd_nornir_inventory import LnetDInventory
+from nornir.core.plugins.inventory import InventoryPluginRegister
+
+InventoryPluginRegister.register("LnetDInventory", LnetDInventory)
+
+##Import plugins
+from nornir_napalm.plugins.tasks import napalm_get
+
+# custom
+from mutils import *
+
+
+def netflow_configuration(task):
     deploy = task.run(
         task=napalm_get,
         name="Get BGP config from device",
         getters=["get_bgp_config"],
-        severity_level=logging.DEBUG,
+        severity_level=logging.INFO,
     )
-    tqdm.write(f"{task.host}: BGP config from device complete")
-    progress_bar.update()
 
 
-def process_tasks(task):
-    if task.failed:
-        print_result(task)
-        print("Exiting script before we break anything else!")
-        sys.exit(1)
-    else:
-        print(f"Task {task.name} completed successfully!")
-
-
+print("Start Nornir")
 nr = InitNornir(config_file="config.yaml", dry_run=False)
-
-all_devices = nr.filter(type="juniper")
-
-with tqdm(
-    total=len(all_devices.inventory.hosts), desc="Get BGP Config"
-) as progress_bar:
-    deploy_netflow_config = all_devices.run(
-        task=netflow_configuration, progress_bar=progress_bar
-    )
+print("Filter devices with tag peering")
+all_devices = nr.filter(F(groups__contains="peering"))
 
 
-process_tasks(deploy_netflow_config)
-#print_result(deploy_netflow_config)
-# import ipdb; ipdb.set_trace()
+deploy_netflow_config = all_devices.run(task=netflow_configuration)
+
+
 def parse_bgp_config(nornir_object):
     bgp_groups = []
     for host, host_data in nornir_object.items():
@@ -66,6 +64,6 @@ result_nornir = parse_bgp_config(deploy_netflow_config)
 df = pd.DataFrame(result_nornir)
 # need to remove type internal
 result = df.groupby("router")["group"].apply(list).to_dict()
-print(f"Write to db")
+print("\nthis is the panda before writing to db\n", df)
 disk_engine = create_engine("sqlite:////opt/lnetd/web_app/database.db")
 df.to_sql("bgp_groups", disk_engine, if_exists="replace")

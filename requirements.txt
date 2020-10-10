@@ -7,9 +7,13 @@ pandas
 flask_cors
 influxdb
 networkx
-junos-eznc==2.2.1
+junos-eznc
 numpy
-nornir
+nornir>=3.0.0
+nornir_napalm
+nornir_netmiko
+nornir_utils
+nornir-jinja2
 argon2_cffi
 simple-crypt
 pycryptodome

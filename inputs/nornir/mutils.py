@@ -16,7 +16,7 @@ def update_routers_sqlite3(table,router,version,model,vendor):
         try:
                 conn = sqlite3.connect('/opt/lnetd/web_app/database.db')
                 sql = ''' UPDATE %s SET version = '%s' , model = '%s' , vendor = '%s' WHERE name = '%s' ''' %(table,version,model,vendor,router)
-                #print (sql)
+                print (sql)
                 cur = conn.cursor()
                 cur.execute(sql)
                 conn.commit()

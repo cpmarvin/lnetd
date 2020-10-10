@@ -34,3 +34,15 @@
 2020-03-25 12:47:33,049 - nornir.core.task -    DEBUG -      start() - Host 'gb-pe5-lon': running task "Loading Configuration on the device {'gb-pe5-lon': Host: gb-pe5-lon}"
 2020-03-25 12:47:37,862 -  nornir.core -     INFO -        run() - Running task 'close_connections_task' with args {} on 1 hosts
 2020-03-25 12:47:37,868 - nornir.core.task -    DEBUG -      start() - Host 'gb-pe5-lon': running task 'close_connections_task'
+2020-10-10 17:29:55,216 -  nornir.core -     INFO -        run() - Running task 'basic_template' with args {'vars': {'ip': '185.217.104.0', 'asn': '13213', 'router': 'fr-p7-mrs', 'peer_group': 'IX-FRANCEIX', 'description': 'PEER::UK2GROUP', 'ipv4_limit': 275, 'ipv6_limit': 55, 'ip_version': 4}} on 1 hosts
+2020-10-10 17:29:55,242 - nornir.core.task -    ERROR -      start() - Host 'fr-p7-mrs': task 'basic_template' failed with traceback:
+Traceback (most recent call last):
+  File "/home/lab/nornir_3/lib/python3.7/site-packages/nornir/core/task.py", line 98, in start
+    r = self.task(self, **self.params)
+  File "/opt/lnetd/web_app/prov_v2/mutils/generate_template.py", line 90, in basic_template
+    task=text.template_file,
+NameError: name 'text' is not defined
+
+2020-10-10 17:34:33,266 -  nornir.core -     INFO -        run() - Running task 'basic_template' with args {'vars': {'ip': '185.217.104.0', 'asn': '13213', 'router': 'fr-p7-mrs', 'peer_group': 'IX-FRANCEIX', 'description': 'PEER::UK2GROUP', 'ipv4_limit': 275, 'ipv6_limit': 55, 'ip_version': 4}} on 1 hosts
+2020-10-10 17:35:30,822 -  nornir.core -     INFO -        run() - Running task "Loading Configuration on the device {'fr-p7-mrs': Host: fr-p7-mrs}" with args {'replace': False, 'configuration': 'protocols {        bgp {            group IX-FRANCEIX {                neighbor 185.217.104.0 {                description "PEER::UK2GROUP";                   family inet {                        unicast {                            prefix-limit {                                maximum 275;                                teardown 80;                            }                        }                    }                   peer-as 13213;                }            }        }    }'} on 1 hosts
+2020-10-10 17:35:34,117 -  nornir.core -     INFO -        run() - Running task 'close_connections_task' with args {} on 1 hosts
