@@ -17,7 +17,6 @@ from nornir_napalm.plugins.tasks import napalm_get, napalm_configure
 
 
 def nornir_config(router, config):
-    # import ipdb; ipdb.set_trace()
     nr = InitNornir(
         core={"raise_on_error": "False"},
         runner={"plugin": "SerialRunner"},

@@ -1,125 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    {% block head %}
-      {% block meta %}
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <meta name="description" content="An opensource capacity planning tool,network discovery, network weathermap">
-        <meta name="author" content="Catalin Petrescu">
-      {% endblock meta %}
 
-      <title> LnetD v1.0.1 | {% block title %}{% endblock %}</title>
+<head>
+  {% block head %}
+  {% block meta %}
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="An opensource capacity planning tool,network discovery, network weathermap">
+  <meta name="author" content="Catalin Petrescu">
+  {% endblock meta %}
 
-      {% block stylesheets %}
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.15.5/dist/bootstrap-table.min.css">
+  <title> LnetD v1.0.1 | {% block title %}{% endblock %}</title>
 
-    <!-- Alertify CSS -->
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.12.0/build/css/alertify.min.css"/>
+  {% block stylesheets %}
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.15.5/dist/bootstrap-table.min.css">
 
-    <!-- Alertify Bootstrap theme -->
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.12.0/build/css/themes/bootstrap.min.css"/>
+  <!-- Alertify CSS -->
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.12.0/build/css/alertify.min.css" />
 
-    <!-- font awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+  <!-- Alertify Bootstrap theme -->
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.12.0/build/css/themes/bootstrap.min.css" />
 
-    <!-- select 2 -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" rel="stylesheet" />
+  <!-- font awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
 
-    <!-- x-editable -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.1/bootstrap-editable/css/bootstrap-editable.css" rel="stylesheet">
+  <!-- select 2 -->
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" rel="stylesheet" />
+
+  <!-- x-editable -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.1/bootstrap-editable/css/bootstrap-editable.css"
+    rel="stylesheet">
 
 
-    <!-- base:css -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='vendors/mdi/css/materialdesignicons.min.css') }}">
+  <!-- base:css -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='vendors/mdi/css/materialdesignicons.min.css') }}">
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='vendors/base/vendor.bundle.base.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='vendors/base/vendor.bundle.base.css') }}">
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="shortcut icon" href="{{ url_for('base_blueprint.static', filename='images/lnetd_logo.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="shortcut icon" href="{{ url_for('base_blueprint.static', filename='images/lnetd_logo.png') }}">
 
-      {% endblock stylesheets %}
-    {% endblock head %}
-  </head>
-  <body>
-          {% block body %}
+  {% endblock stylesheets %}
+  {% endblock head %}
+</head>
 
-          {% block top_navigation %}
-              {% include "site_template/top_navigation.html" %}
-          {% endblock top_navigation %}
+<body>
+  {% block body %}
 
-          {% block content %}
+  {% block top_navigation %}
+  {% if "top" in app_config.menu_style %}
+  {% include "site_template/top_navigation.html" %}
+  {% else %}
+  {% include "site_template/sidebar.html" %}
+  {% endif %}
 
-          {% endblock content %}
+  {% endblock top_navigation %}
 
-          {% block footer %}
+  {% block content %}
 
-              {% include "site_template/footer.html" %}
+  {% endblock content %}
 
-          {% endblock footer %}
-				<!-- partial -->
-			</div>
-			<!-- main-panel ends -->
-		</div>
-		<!-- page-body-wrapper ends -->
-    </div>
-    <!-- container-scroller -->
+  {% block footer %}
+
+  {% include "site_template/footer.html" %}
+
+  {% endblock footer %}
+  <!-- partial -->
+  </div>
+  <!-- main-panel ends -->
+  </div>
+  <!-- page-body-wrapper ends -->
+  </div>
+  <!-- container-scroller -->
 </body>
-      {% block javascripts %}
+{% block javascripts %}
 
 <script src="https://code.jquery.com/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+  crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
 
 
 
 
-                <script src="{{ url_for('static', filename='js/template.js') }}"></script>
-
-                <script src="{{ url_for('static', filename='vendors/chart.js/Chart.min.js') }}"></script>
-
-
-		<script src="{{ url_for('static', filename='vendors/chartjs-plugin-datalabels/chartjs-plugin-datalabels.js') }}"></script>
-
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.4.0/perfect-scrollbar.min.js"></script>
+<script src="{{ url_for('static', filename='js/template.js') }}"></script>
+<script src="{{ url_for('static', filename='js/template_side.js') }}"></script>
 
 
-      <!-- chart plugin color -->
-      <script src="https://unpkg.com/chartjs-plugin-colorschemes"></script>
+<script src="{{ url_for('static', filename='vendors/chart.js/Chart.min.js') }}"></script>
 
-      <!-- BootstrapTable Modified Version for no records JavaScript -->
-      <script src="{{ url_for('static', filename='vendors/bootstrap-table/bootstrap-table.js') }}"></script>
 
-      <!--Jsontables , custom js -->
-      <script src="{{ url_for('static', filename='vendors/jsontables/jsontables.js') }}"></script>
-      <!-- Alertify JavaScript -->
-      <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.12.0/build/alertify.min.js"></script>
-      <!--Plotly-->
-      <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-      <!--Select2-->
-      <script src="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/js/select2.min.js"></script>
-      <!-- parsley -->
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/parsley.js/2.9.1/parsley.min.js"></script>
+<script
+  src="{{ url_for('static', filename='vendors/chartjs-plugin-datalabels/chartjs-plugin-datalabels.js') }}"></script>
 
-  <!-- Bootstrap editable extension need both -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.15.4/extensions/editable/bootstrap-table-editable.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.4.0/perfect-scrollbar.min.js"></script>
 
-  <!-- x-editable externsion need both -->
+
+<!-- chart plugin color -->
+<script src="https://unpkg.com/chartjs-plugin-colorschemes"></script>
+
+<!-- BootstrapTable Modified Version for no records JavaScript -->
+<script src="{{ url_for('static', filename='vendors/bootstrap-table/bootstrap-table.js') }}"></script>
+
+<!--Jsontables , custom js -->
+<script src="{{ url_for('static', filename='vendors/jsontables/jsontables.js') }}"></script>
+<!-- Alertify JavaScript -->
+<script src="//cdn.jsdelivr.net/npm/alertifyjs@1.12.0/build/alertify.min.js"></script>
+<!--Plotly-->
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<!--Select2-->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/js/select2.min.js"></script>
+<!-- parsley -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/parsley.js/2.9.1/parsley.min.js"></script>
+
+<!-- Bootstrap editable extension need both -->
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.15.4/extensions/editable/bootstrap-table-editable.js"></script>
+
+<!-- x-editable externsion need both -->
 <script src="{{ url_for('data_blueprint.static', filename='bootstrap-editable.js') }}"></script>
 
 <!--momentjs-->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
 
-<script src="{{ url_for('static', filename='vendors/tempusdominus-bootstrap-4/tempusdominus-bootstrap-4.js') }}"></script>
-      <script>
-      Chart.defaults.global.legend.labels.usePointStyle = true;
-      $.fn.editableform.buttons  = '<button type="submit" class="btn btn-success btn-sm editable-submit">OK</button><button type="button" class="btn btn-warning btn-sm editable-cancel">cancel</button>'
+<script
+  src="{{ url_for('static', filename='vendors/tempusdominus-bootstrap-4/tempusdominus-bootstrap-4.js') }}"></script>
+<script>
+  Chart.defaults.global.legend.labels.usePointStyle = true;
+  $.fn.editableform.buttons = '<button type="submit" class="btn btn-success btn-sm editable-submit">OK</button><button type="button" class="btn btn-warning btn-sm editable-cancel">cancel</button>'
 
-      </script>
-      {% endblock %}
+</script>
+{% endblock %}
 
-    {% endblock body %}
-  </body>
+{% endblock body %}
+</body>
+
 </html>
-

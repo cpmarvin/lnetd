@@ -1,7 +1,7 @@
 from flask_login import UserMixin
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Table, Float
 from sqlalchemy.sql import func
-from sqlalchemy.orm import relationship,backref
+from sqlalchemy.orm import relationship, backref
 
 from database import Base
 
@@ -9,14 +9,16 @@ from simplecrypt import encrypt, decrypt
 from base64 import b64encode, b64decode
 
 
-tags = Table('tags',Base.metadata,
-                Column('tag_id', Integer, ForeignKey('Tag.id')),
-                Column('router_name', Integer, ForeignKey('Routers.name')),
-                )
+tags = Table(
+    "tags",
+    Base.metadata,
+    Column("tag_id", Integer, ForeignKey("Tag.id")),
+    Column("router_name", Integer, ForeignKey("Routers.name")),
+)
 
 
 class Transit_Cost(Base):
-    __tablename__ = 'Transit_Cost'
+    __tablename__ = "Transit_Cost"
 
     index = Column(Integer, primary_key=True)
     provider = Column(String(120), unique=False)
@@ -27,15 +29,16 @@ class Transit_Cost(Base):
 
     def __init__(self, **kwargs):
         for property, value in kwargs.items():
-            if hasattr(value, '__iter__') and not isinstance(value, str):
-                value, = value
+            if hasattr(value, "__iter__") and not isinstance(value, str):
+                (value,) = value
             setattr(self, property, value)
 
     def __repr__(self):
         return str(self.index)
 
+
 class Noc_Topology(Base):
-    __tablename__ = 'Noc_Topology'
+    __tablename__ = "Noc_Topology"
 
     id = Column(Integer, primary_key=True)
     source = Column(String(120), unique=False)
@@ -50,15 +53,16 @@ class Noc_Topology(Base):
 
     def __init__(self, **kwargs):
         for property, value in kwargs.items():
-            if hasattr(value, '__iter__') and not isinstance(value, str):
-                value, = value
+            if hasattr(value, "__iter__") and not isinstance(value, str):
+                (value,) = value
             setattr(self, property, value)
 
     def __repr__(self):
         return str(self.id)
 
+
 class Noc_Topology_Edit(Base):
-    __tablename__ = 'Noc_Topology_Edit'
+    __tablename__ = "Noc_Topology_Edit"
 
     id = Column(String(120), primary_key=True)
     source = Column(String(120), primary_key=True)
@@ -70,18 +74,16 @@ class Noc_Topology_Edit(Base):
 
     def __init__(self, **kwargs):
         for property, value in kwargs.items():
-            if hasattr(value, '__iter__') and not isinstance(value, str):
-                value, = value
+            if hasattr(value, "__iter__") and not isinstance(value, str):
+                (value,) = value
             setattr(self, property, value)
 
     def __repr__(self):
         return str(self.id)
 
 
-
-
 class Node_position_global(Base):
-    __tablename__ = 'Node_position_global'
+    __tablename__ = "Node_position_global"
 
     id = Column(String(120), primary_key=True)
     user = Column(String(120), primary_key=True)
@@ -91,42 +93,64 @@ class Node_position_global(Base):
 
     def __init__(self, **kwargs):
         for property, value in kwargs.items():
-            if hasattr(value, '__iter__') and not isinstance(value, str):
-                value, = value
+            if hasattr(value, "__iter__") and not isinstance(value, str):
+                (value,) = value
             setattr(self, property, value)
 
     def __repr__(self):
         return str(self.id)
 
+
 class Tag(Base):
-    __tablename__ = 'Tag'
+    __tablename__ = "Tag"
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(32), unique=True)
 
     def __init__(self, **kwargs):
         for property, value in kwargs.items():
-            if hasattr(value, '__iter__') and not isinstance(value, str):
-                value, = value
+            if hasattr(value, "__iter__") and not isinstance(value, str):
+                (value,) = value
             setattr(self, property, value)
 
     def __repr__(self):
         return str(self.name)
 
+
+class Router_Model(Base):
+    __tablename__ = "Router_Model"
+
+    name = Column(Integer, primary_key=True)
+    version = Column(String(30))
+
+    def __init__(self, **kwargs):
+        for property, value in kwargs.items():
+            # depending on whether value is an iterable or not, we must
+            # unpack it's value (when **kwargs is request.form, some values
+            # will be a 1-element list)
+            if hasattr(value, "__iter__") and not isinstance(value, str):
+                (value,) = value
+            setattr(self, property, value)
+
+    def __repr__(self):
+        return str(self.name)
+
+
 class Routers(Base, UserMixin):
 
-    __tablename__ = 'Routers'
+    __tablename__ = "Routers"
 
-    tags = relationship('Tag', secondary=tags,
-                           backref=backref('Routers', lazy='dynamic'))
+    tags = relationship(
+        "Tag", secondary=tags, backref=backref("Routers", lazy="dynamic")
+    )
 
     index = Column(Integer, primary_key=True)
     name = Column(String(300), unique=True)
     ip = Column(String(120), unique=True)
     country = Column(String(30))
     vendor = Column(String(30))
-    model = Column(String(30))
+    model = Column(String(250), ForeignKey("Router_Model.version"), default="na")
     version = Column(String(250))
-    tacacs_id = Column(String(250), ForeignKey("Tacacs.id"), default="0")
+    tacacs_name = Column(String(250), ForeignKey("Tacacs.name"), default="0")
     tacacs = relationship("Tacacs", backref="parents")
 
     def __init__(self, **kwargs):
@@ -134,8 +158,8 @@ class Routers(Base, UserMixin):
             # depending on whether value is an iterable or not, we must
             # unpack it's value (when **kwargs is request.form, some values
             # will be a 1-element list)
-            if hasattr(value, '__iter__') and not isinstance(value, str):
-                value, = value
+            if hasattr(value, "__iter__") and not isinstance(value, str):
+                (value,) = value
             setattr(self, property, value)
 
     def __repr__(self):
@@ -144,7 +168,7 @@ class Routers(Base, UserMixin):
 
 class Prefixes(Base, UserMixin):
 
-    __tablename__ = 'Prefixes'
+    __tablename__ = "Prefixes"
 
     index = Column(Integer, primary_key=True)
     name = Column(String(120), unique=False)
@@ -157,8 +181,8 @@ class Prefixes(Base, UserMixin):
             # depending on whether value is an iterable or not, we must
             # unpack it's value (when **kwargs is request.form, some values
             # will be a 1-element list)
-            if hasattr(value, '__iter__') and not isinstance(value, str):
-                value, = value
+            if hasattr(value, "__iter__") and not isinstance(value, str):
+                (value,) = value
             setattr(self, property, value)
 
     def __repr__(self):
@@ -167,7 +191,7 @@ class Prefixes(Base, UserMixin):
 
 class Links(Base, UserMixin):
 
-    __tablename__ = 'Links'
+    __tablename__ = "Links"
 
     index = Column(Integer, primary_key=True)
     source = Column(String(120), unique=False)
@@ -186,8 +210,8 @@ class Links(Base, UserMixin):
             # depending on whether value is an iterable or not, we must
             # unpack it's value (when **kwargs is request.form, some values
             # will be a 1-element list)
-            if hasattr(value, '__iter__') and not isinstance(value, str):
-                value, = value
+            if hasattr(value, "__iter__") and not isinstance(value, str):
+                (value,) = value
             setattr(self, property, value)
 
     def __repr__(self):
@@ -196,7 +220,7 @@ class Links(Base, UserMixin):
 
 class Links_time(Base, UserMixin):
 
-    __tablename__ = 'Links_time'
+    __tablename__ = "Links_time"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     index = Column(Integer, unique=False)
@@ -217,8 +241,8 @@ class Links_time(Base, UserMixin):
             # depending on whether value is an iterable or not, we must
             # unpack it's value (when **kwargs is request.form, some values
             # will be a 1-element list)
-            if hasattr(value, '__iter__') and not isinstance(value, str):
-                value, = value
+            if hasattr(value, "__iter__") and not isinstance(value, str):
+                (value,) = value
             setattr(self, property, value)
 
     def __repr__(self):
@@ -227,7 +251,7 @@ class Links_time(Base, UserMixin):
 
 class Links_latency(Base, UserMixin):
 
-    __tablename__ = 'Links_latency'
+    __tablename__ = "Links_latency"
 
     index = Column(Integer, primary_key=True)
     source = Column(String(120), unique=False)
@@ -247,8 +271,8 @@ class Links_latency(Base, UserMixin):
             # depending on whether value is an iterable or not, we must
             # unpack it's value (when **kwargs is request.form, some values
             # will be a 1-element list)
-            if hasattr(value, '__iter__') and not isinstance(value, str):
-                value, = value
+            if hasattr(value, "__iter__") and not isinstance(value, str):
+                (value,) = value
             setattr(self, property, value)
 
     def __repr__(self):
@@ -257,7 +281,7 @@ class Links_latency(Base, UserMixin):
 
 class Node_position(Base, UserMixin):
 
-    __tablename__ = 'Node_position'
+    __tablename__ = "Node_position"
 
     id = Column(String(120), primary_key=True)
     user = Column(String(120), primary_key=True)
@@ -269,8 +293,8 @@ class Node_position(Base, UserMixin):
             # depending on whether value is an iterable or not, we must
             # unpack it's value (when **kwargs is request.form, some values
             # will be a 1-element list)
-            if hasattr(value, '__iter__') and not isinstance(value, str):
-                value, = value
+            if hasattr(value, "__iter__") and not isinstance(value, str):
+                (value,) = value
             setattr(self, property, value)
 
     def __repr__(self):
@@ -279,7 +303,7 @@ class Node_position(Base, UserMixin):
 
 class Node_position_temp(Base, UserMixin):
 
-    __tablename__ = 'Node_position_temp'
+    __tablename__ = "Node_position_temp"
 
     id = Column(String(120), primary_key=True)
     user = Column(String(120), primary_key=True)
@@ -291,8 +315,8 @@ class Node_position_temp(Base, UserMixin):
             # depending on whether value is an iterable or not, we must
             # unpack it's value (when **kwargs is request.form, some values
             # will be a 1-element list)
-            if hasattr(value, '__iter__') and not isinstance(value, str):
-                value, = value
+            if hasattr(value, "__iter__") and not isinstance(value, str):
+                (value,) = value
             setattr(self, property, value)
 
     def __repr__(self):
@@ -301,7 +325,7 @@ class Node_position_temp(Base, UserMixin):
 
 class isisd_routers(Base, UserMixin):
 
-    __tablename__ = 'isisd_routers'
+    __tablename__ = "isisd_routers"
 
     index = Column(Integer, primary_key=True)
     name = Column(String(300), unique=True)
@@ -313,8 +337,8 @@ class isisd_routers(Base, UserMixin):
             # depending on whether value is an iterable or not, we must
             # unpack it's value (when **kwargs is request.form, some values
             # will be a 1-element list)
-            if hasattr(value, '__iter__') and not isinstance(value, str):
-                value, = value
+            if hasattr(value, "__iter__") and not isinstance(value, str):
+                (value,) = value
             setattr(self, property, value)
 
     def __repr__(self):
@@ -323,7 +347,7 @@ class isisd_routers(Base, UserMixin):
 
 class isisd_prefixes(Base, UserMixin):
 
-    __tablename__ = 'isisd_prefixes'
+    __tablename__ = "isisd_prefixes"
 
     index = Column(Integer, primary_key=True)
     name = Column(String(120), unique=False)
@@ -335,8 +359,8 @@ class isisd_prefixes(Base, UserMixin):
             # depending on whether value is an iterable or not, we must
             # unpack it's value (when **kwargs is request.form, some values
             # will be a 1-element list)
-            if hasattr(value, '__iter__') and not isinstance(value, str):
-                value, = value
+            if hasattr(value, "__iter__") and not isinstance(value, str):
+                (value,) = value
             setattr(self, property, value)
 
     def __repr__(self):
@@ -345,7 +369,7 @@ class isisd_prefixes(Base, UserMixin):
 
 class isisd_links(Base, UserMixin):
 
-    __tablename__ = 'isisd_links'
+    __tablename__ = "isisd_links"
 
     index = Column(Integer, primary_key=True)
     source = Column(String(120), unique=False)
@@ -360,8 +384,8 @@ class isisd_links(Base, UserMixin):
             # depending on whether value is an iterable or not, we must
             # unpack it's value (when **kwargs is request.form, some values
             # will be a 1-element list)
-            if hasattr(value, '__iter__') and not isinstance(value, str):
-                value, = value
+            if hasattr(value, "__iter__") and not isinstance(value, str):
+                (value,) = value
             setattr(self, property, value)
 
     def __repr__(self):
@@ -370,7 +394,7 @@ class isisd_links(Base, UserMixin):
 
 class rpc_routers(Base, UserMixin):
 
-    __tablename__ = 'rpc_routers'
+    __tablename__ = "rpc_routers"
 
     index = Column(Integer, primary_key=True)
     name = Column(String(300), unique=True)
@@ -382,8 +406,8 @@ class rpc_routers(Base, UserMixin):
             # depending on whether value is an iterable or not, we must
             # unpack it's value (when **kwargs is request.form, some values
             # will be a 1-element list)
-            if hasattr(value, '__iter__') and not isinstance(value, str):
-                value, = value
+            if hasattr(value, "__iter__") and not isinstance(value, str):
+                (value,) = value
             setattr(self, property, value)
 
     def __repr__(self):
@@ -392,7 +416,7 @@ class rpc_routers(Base, UserMixin):
 
 class rpc_prefixes(Base, UserMixin):
 
-    __tablename__ = 'rpc_prefixes'
+    __tablename__ = "rpc_prefixes"
 
     index = Column(Integer, primary_key=True)
     name = Column(String(120), unique=False)
@@ -404,8 +428,8 @@ class rpc_prefixes(Base, UserMixin):
             # depending on whether value is an iterable or not, we must
             # unpack it's value (when **kwargs is request.form, some values
             # will be a 1-element list)
-            if hasattr(value, '__iter__') and not isinstance(value, str):
-                value, = value
+            if hasattr(value, "__iter__") and not isinstance(value, str):
+                (value,) = value
             setattr(self, property, value)
 
     def __repr__(self):
@@ -414,7 +438,7 @@ class rpc_prefixes(Base, UserMixin):
 
 class rpc_links(Base, UserMixin):
 
-    __tablename__ = 'rpc_links'
+    __tablename__ = "rpc_links"
 
     index = Column(Integer, primary_key=True)
     source = Column(String(120), unique=False)
@@ -429,8 +453,8 @@ class rpc_links(Base, UserMixin):
             # depending on whether value is an iterable or not, we must
             # unpack it's value (when **kwargs is request.form, some values
             # will be a 1-element list)
-            if hasattr(value, '__iter__') and not isinstance(value, str):
-                value, = value
+            if hasattr(value, "__iter__") and not isinstance(value, str):
+                (value,) = value
             setattr(self, property, value)
 
     def __repr__(self):
@@ -439,7 +463,7 @@ class rpc_links(Base, UserMixin):
 
 class External_topology_time(Base, UserMixin):
 
-    __tablename__ = 'External_topology_time'
+    __tablename__ = "External_topology_time"
     id = Column(Integer, primary_key=True, autoincrement=True)
     index = Column(Integer, unique=False)
     cir = Column(String(120), unique=False)
@@ -458,16 +482,17 @@ class External_topology_time(Base, UserMixin):
 
     def __init__(self, **kwargs):
         for property, value in kwargs.items():
-            if hasattr(value, '__iter__') and not isinstance(value, str):
-                value, = value
+            if hasattr(value, "__iter__") and not isinstance(value, str):
+                (value,) = value
             setattr(self, property, value)
 
     def __repr__(self):
         return str(self.index)
 
+
 class External_topology_temp(Base, UserMixin):
 
-    __tablename__ = 'External_topology_temp'
+    __tablename__ = "External_topology_temp"
 
     index = Column(Integer, primary_key=True)
     source = Column(String(120), unique=False)
@@ -483,8 +508,8 @@ class External_topology_temp(Base, UserMixin):
 
     def __init__(self, **kwargs):
         for property, value in kwargs.items():
-            if hasattr(value, '__iter__') and not isinstance(value, str):
-                value, = value
+            if hasattr(value, "__iter__") and not isinstance(value, str):
+                (value,) = value
             setattr(self, property, value)
 
     def __repr__(self):
@@ -493,7 +518,7 @@ class External_topology_temp(Base, UserMixin):
 
 class External_topology(Base, UserMixin):
 
-    __tablename__ = 'External_topology'
+    __tablename__ = "External_topology"
 
     index = Column(Integer, primary_key=True)
     source = Column(String(120), unique=False)
@@ -514,8 +539,8 @@ class External_topology(Base, UserMixin):
             # depending on whether value is an iterable or not, we must
             # unpack it's value (when **kwargs is request.form, some values
             # will be a 1-element list)
-            if hasattr(value, '__iter__') and not isinstance(value, str):
-                value, = value
+            if hasattr(value, "__iter__") and not isinstance(value, str):
+                (value,) = value
             setattr(self, property, value)
 
     def __repr__(self):
@@ -524,7 +549,7 @@ class External_topology(Base, UserMixin):
 
 class External_position(Base, UserMixin):
 
-    __tablename__ = 'External_position'
+    __tablename__ = "External_position"
 
     id = Column(String(120), primary_key=True)
     user = Column(String(120), primary_key=True)
@@ -536,8 +561,8 @@ class External_position(Base, UserMixin):
             # depending on whether value is an iterable or not, we must
             # unpack it's value (when **kwargs is request.form, some values
             # will be a 1-element list)
-            if hasattr(value, '__iter__') and not isinstance(value, str):
-                value, = value
+            if hasattr(value, "__iter__") and not isinstance(value, str):
+                (value,) = value
             setattr(self, property, value)
 
     def __repr__(self):
@@ -546,7 +571,7 @@ class External_position(Base, UserMixin):
 
 class International_PoP_temp(Base, UserMixin):
 
-    __tablename__ = 'International_PoP_temp'
+    __tablename__ = "International_PoP_temp"
 
     index = Column(Integer, primary_key=True)
     name = Column(String(120), unique=False)
@@ -560,8 +585,8 @@ class International_PoP_temp(Base, UserMixin):
             # depending on whether value is an iterable or not, we must
             # unpack it's value (when **kwargs is request.form, some values
             # will be a 1-element list)
-            if hasattr(value, '__iter__') and not isinstance(value, str):
-                value, = value
+            if hasattr(value, "__iter__") and not isinstance(value, str):
+                (value,) = value
             setattr(self, property, value)
 
     def __repr__(self):
@@ -570,7 +595,7 @@ class International_PoP_temp(Base, UserMixin):
 
 class International_PoP(Base, UserMixin):
 
-    __tablename__ = 'International_PoP'
+    __tablename__ = "International_PoP"
 
     index = Column(Integer, primary_key=True)
     name = Column(String(120), unique=False)
@@ -588,8 +613,8 @@ class International_PoP(Base, UserMixin):
             # depending on whether value is an iterable or not, we must
             # unpack it's value (when **kwargs is request.form, some values
             # will be a 1-element list)
-            if hasattr(value, '__iter__') and not isinstance(value, str):
-                value, = value
+            if hasattr(value, "__iter__") and not isinstance(value, str):
+                (value,) = value
             setattr(self, property, value)
 
     def __repr__(self):
@@ -598,7 +623,7 @@ class International_PoP(Base, UserMixin):
 
 class Inventory_cards(Base, UserMixin):
 
-    __tablename__ = 'Inventory_cards'
+    __tablename__ = "Inventory_cards"
     index = Column(Integer, primary_key=True)
     card_name = Column(String(120))
     card_slot = Column(String(120))
@@ -610,8 +635,8 @@ class Inventory_cards(Base, UserMixin):
             # depending on whether value is an iterable or not, we must
             # unpack it's value (when **kwargs is request.form, some values
             # will be a 1-element list)
-            if hasattr(value, '__iter__') and not isinstance(value, str):
-                value, = value
+            if hasattr(value, "__iter__") and not isinstance(value, str):
+                (value,) = value
             setattr(self, property, value)
 
     def __repr__(self):
@@ -620,7 +645,7 @@ class Inventory_cards(Base, UserMixin):
 
 class Inventory_interfaces(Base, UserMixin):
 
-    __tablename__ = 'Inventory_interfaces'
+    __tablename__ = "Inventory_interfaces"
     index = Column(Integer, primary_key=True)
     interface_name = Column(String(120))
     interface_status = Column(String(120))
@@ -632,8 +657,8 @@ class Inventory_interfaces(Base, UserMixin):
             # depending on whether value is an iterable or not, we must
             # unpack it's value (when **kwargs is request.form, some values
             # will be a 1-element list)
-            if hasattr(value, '__iter__') and not isinstance(value, str):
-                value, = value
+            if hasattr(value, "__iter__") and not isinstance(value, str):
+                (value,) = value
             setattr(self, property, value)
 
     def __repr__(self):
@@ -642,7 +667,7 @@ class Inventory_interfaces(Base, UserMixin):
 
 class Script_run(Base):
 
-    __tablename__ = 'Script_run'
+    __tablename__ = "Script_run"
 
     id = Column(Integer, primary_key=True)
     name = Column(String(120), unique=False)
@@ -653,8 +678,8 @@ class Script_run(Base):
             # depending on whether value is an iterable or not, we must
             # unpack it's value (when **kwargs is request.form, some values
             # will be a 1-element list)
-            if hasattr(value, '__iter__') and not isinstance(value, str):
-                value, = value
+            if hasattr(value, "__iter__") and not isinstance(value, str):
+                (value,) = value
             setattr(self, property, value)
 
     def __repr__(self):
@@ -663,7 +688,7 @@ class Script_run(Base):
 
 class Bgp_peers(Base):
 
-    __tablename__ = 'Bgp_peers'
+    __tablename__ = "Bgp_peers"
 
     index = Column(Integer, primary_key=True)
     router = Column(String(120), unique=False)
@@ -682,8 +707,8 @@ class Bgp_peers(Base):
             # depending on whether value is an iterable or not, we must
             # unpack it's value (when **kwargs is request.form, some values
             # will be a 1-element list)
-            if hasattr(value, '__iter__') and not isinstance(value, str):
-                value, = value
+            if hasattr(value, "__iter__") and not isinstance(value, str):
+                (value,) = value
             setattr(self, property, value)
 
     def __repr__(self):
@@ -692,7 +717,7 @@ class Bgp_peers(Base):
 
 class Bgp_customers(Base):
 
-    __tablename__ = 'Bgp_customers'
+    __tablename__ = "Bgp_customers"
 
     index = Column(Integer, primary_key=True)
     prefix = Column(String(300), unique=True)
@@ -703,8 +728,8 @@ class Bgp_customers(Base):
             # depending on whether value is an iterable or not, we must
             # unpack it's value (when **kwargs is request.form, some values
             # will be a 1-element list)
-            if hasattr(value, '__iter__') and not isinstance(value, str):
-                value, = value
+            if hasattr(value, "__iter__") and not isinstance(value, str):
+                (value,) = value
             setattr(self, property, value)
 
     def __repr__(self):
@@ -713,7 +738,7 @@ class Bgp_customers(Base):
 
 class Bgp_peering_points(Base):
 
-    __tablename__ = 'Bgp_peering_points'
+    __tablename__ = "Bgp_peering_points"
 
     index = Column(Integer, primary_key=True)
     name = Column(String(300), unique=True)
@@ -725,8 +750,8 @@ class Bgp_peering_points(Base):
             # depending on whether value is an iterable or not, we must
             # unpack it's value (when **kwargs is request.form, some values
             # will be a 1-element list)
-            if hasattr(value, '__iter__') and not isinstance(value, str):
-                value, = value
+            if hasattr(value, "__iter__") and not isinstance(value, str):
+                (value,) = value
             setattr(self, property, value)
 
     def __repr__(self):
@@ -735,7 +760,7 @@ class Bgp_peering_points(Base):
 
 class App_config(Base):
 
-    __tablename__ = 'App_config'
+    __tablename__ = "App_config"
 
     asn = Column(String(300), primary_key=True)
     web_ip = Column(String(120), unique=True)
@@ -745,14 +770,15 @@ class App_config(Base):
     master_key = Column(String(120), unique=True)
     alert_threshold = Column(String(120), unique=False)
     alert_backoff = Column(String(120), unique=False)
+    menu_style = Column(String(120), unique=False)
 
     def __init__(self, **kwargs):
         for property, value in kwargs.items():
             # depending on whether value is an iterable or not, we must
             # unpack it's value (when **kwargs is request.form, some values
             # will be a 1-element list)
-            if hasattr(value, '__iter__') and not isinstance(value, str):
-                value, = value
+            if hasattr(value, "__iter__") and not isinstance(value, str):
+                (value,) = value
             setattr(self, property, value)
 
     def __repr__(self):
@@ -760,7 +786,7 @@ class App_config(Base):
 
 
 class App_external_flows(Base):
-    __tablename__ = 'App_external_flows'
+    __tablename__ = "App_external_flows"
     index = Column(Integer, primary_key=True)
     name = Column(String(300), unique=True)
     router = Column(String(120), unique=False)
@@ -771,49 +797,17 @@ class App_external_flows(Base):
             # depending on whether value is an iterable or not, we must
             # unpack it's value (when **kwargs is request.form, some values
             # will be a 1-element list)
-            if hasattr(value, '__iter__') and not isinstance(value, str):
-                value, = value
+            if hasattr(value, "__iter__") and not isinstance(value, str):
+                (value,) = value
             setattr(self, property, value)
 
     def __repr__(self):
         return str(self.name)
 
-# model_save_load
-
-
-class Links_Model(Base, UserMixin):
-
-    __tablename__ = 'Links_Model'
-
-    index = Column(Integer, primary_key=True, autoincrement=True)
-    source = Column(String(120), unique=False)
-    target = Column(String(120), unique=False)
-    l_ip = Column(String(120), unique=False)
-    metric = Column(String(120), unique=False)
-    l_int = Column(String(120), unique=False)
-    r_ip = Column(String(120), unique=False)
-    l_ip_r_ip = Column(String(120), unique=False)
-    util = Column(String(120), unique=False)
-    capacity = Column(String(120), unique=False)
-    user_id = Column(String(120), unique=False)
-    model_name = Column(String(120), unique=False)
-
-    def __init__(self, **kwargs):
-        for property, value in kwargs.items():
-            # depending on whether value is an iterable or not, we must
-            # unpack it's value (when **kwargs is request.form, some values
-            # will be a 1-element list)
-            if hasattr(value, '__iter__') and not isinstance(value, str):
-                value, = value
-            setattr(self, property, value)
-
-    def __repr__(self):
-        return str(self.l_ip)
-
 
 class Fabric_links(Base, UserMixin):
 
-    __tablename__ = 'Fabric_links'
+    __tablename__ = "Fabric_links"
 
     index = Column(Integer, primary_key=True)
     source = Column(String(120), unique=False)
@@ -832,8 +826,8 @@ class Fabric_links(Base, UserMixin):
             # depending on whether value is an iterable or not, we must
             # unpack it's value (when **kwargs is request.form, some values
             # will be a 1-element list)
-            if hasattr(value, '__iter__') and not isinstance(value, str):
-                value, = value
+            if hasattr(value, "__iter__") and not isinstance(value, str):
+                (value,) = value
             setattr(self, property, value)
 
     def __repr__(self):
@@ -841,10 +835,11 @@ class Fabric_links(Base, UserMixin):
 
 
 class Tacacs(Base):
-    __tablename__ = 'Tacacs'
+    """Tacacs table , links with Routers"""
 
+    __tablename__ = "Tacacs"
     id = Column(Integer, primary_key=True)
-    name = Column(String(300), unique=True)
+    name = Column(String(300), primary_key=True)
     username = Column(String(300), unique=False)
     password = Column(String(300), unique=False)
 
@@ -853,9 +848,9 @@ class Tacacs(Base):
             # depending on whether value is an iterable or not, we must
             # unpack it's value (when **kwargs is request.form, some values
             # will be a 1-element list)
-            if hasattr(value, '__iter__') and not isinstance(value, str):
-                value, = value
-            if property == 'password':
+            if hasattr(value, "__iter__") and not isinstance(value, str):
+                (value,) = value
+            if property == "password":
                 cipher = encrypt(master_key, value)
                 encoded_cipher = b64encode(cipher)
                 setattr(self, property, encoded_cipher)
@@ -867,8 +862,10 @@ class Tacacs(Base):
 
 
 class bgp_groups(Base, UserMixin):
+    """Table used to store bgp groups via discovery and
+    used in provisioning"""
 
-    __tablename__ = 'bgp_groups'
+    __tablename__ = "bgp_groups"
 
     index = Column(Integer, primary_key=True)
     group = Column(String(300), unique=False)
@@ -879,27 +876,9 @@ class bgp_groups(Base, UserMixin):
             # depending on whether value is an iterable or not, we must
             # unpack it's value (when **kwargs is request.form, some values
             # will be a 1-element list)
-            if hasattr(value, '__iter__') and not isinstance(value, str):
-                value, = value
+            if hasattr(value, "__iter__") and not isinstance(value, str):
+                (value,) = value
             setattr(self, property, value)
 
     def __repr__(self):
         return str(self.router)
-
-class Layer1Topology(Base, UserMixin):
-
-    __tablename__ = 'Layer1Topology'
-
-    id = Column(Integer, primary_key=True)
-    source = Column(String(120), unique=False)
-    target = Column(String(120), unique=False)
-    status = Column(String(120), unique=False)
-    layer3_mapping = Column(String(120), unique=False)
-    def __init__(self, **kwargs):
-        for property, value in kwargs.items():
-            if hasattr(value, '__iter__') and not isinstance(value, str):
-                value, = value
-            setattr(self, property, value)
-
-    def __repr__(self):
-        return str(self.index)
