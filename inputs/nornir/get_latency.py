@@ -6,7 +6,6 @@ import time
 import math
 import concurrent.futures
 from sqlalchemy import create_engine, text
-import ipdb
 
 ##nornir
 from nornir import InitNornir
@@ -128,6 +127,7 @@ def helper_function(device):
     # helper function for concurent
     ip_list = df["r_ip"].loc[df["source"] == device].tolist()
     print_title(f"run collect_latency with {device} and {ip_list}")
+    print()
     result = collect_latency(device, ip_list)
     return result
 

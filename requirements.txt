@@ -25,3 +25,4 @@ genie
 pyats
 slackclient
 pymsteams
+rich

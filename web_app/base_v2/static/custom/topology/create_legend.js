@@ -86,6 +86,4 @@ function create_legend(type, div_width) {
 	}
 
 }
-			   
-}
 

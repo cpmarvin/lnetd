@@ -86,7 +86,7 @@
 <script src="{{ url_for('noc_blueprint.static', filename='lnet_d3js.js') }}"></script>
 
 <script>
-  var web_ip = {{app_config|tojson|safe}}
+  var web_ip = {{app_config.web_ip|tojson|safe}}
   var node_position = {{node_position|tojson|safe}}
   var graphData = JSON.parse('{{ values | tojson | safe}}');
   console.log(graphData)

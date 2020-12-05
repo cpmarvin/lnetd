@@ -167,7 +167,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/corejs-typeahead/1.2.1/typeahead.bundle.js"></script>
 
 <script>
-  var web_ip = {{app_config|tojson|safe}};
+  var web_ip = {{app_config.web_ip|tojson|safe}};
   var external_links = {{values|tojson|safe}}
 
 

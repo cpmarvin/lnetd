@@ -116,25 +116,6 @@ class Tag(Base):
         return str(self.name)
 
 
-class Router_Model(Base):
-    __tablename__ = "Router_Model"
-
-    name = Column(Integer, primary_key=True)
-    version = Column(String(30))
-
-    def __init__(self, **kwargs):
-        for property, value in kwargs.items():
-            # depending on whether value is an iterable or not, we must
-            # unpack it's value (when **kwargs is request.form, some values
-            # will be a 1-element list)
-            if hasattr(value, "__iter__") and not isinstance(value, str):
-                (value,) = value
-            setattr(self, property, value)
-
-    def __repr__(self):
-        return str(self.name)
-
-
 class Routers(Base, UserMixin):
 
     __tablename__ = "Routers"
@@ -148,9 +129,9 @@ class Routers(Base, UserMixin):
     ip = Column(String(120), unique=True)
     country = Column(String(30))
     vendor = Column(String(30))
-    model = Column(String(250), ForeignKey("Router_Model.version"), default="na")
+    model = Column(String(250))
     version = Column(String(250))
-    tacacs_name = Column(String(250), ForeignKey("Tacacs.name"), default="0")
+    tacacs_id = Column(String(250), ForeignKey("Tacacs.id"), default="0")
     tacacs = relationship("Tacacs", backref="parents")
 
     def __init__(self, **kwargs):
@@ -839,7 +820,7 @@ class Tacacs(Base):
 
     __tablename__ = "Tacacs"
     id = Column(Integer, primary_key=True)
-    name = Column(String(300), primary_key=True)
+    name = Column(String(300), unique=True)
     username = Column(String(300), unique=False)
     password = Column(String(300), unique=False)
 

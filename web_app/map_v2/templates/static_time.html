@@ -151,7 +151,7 @@
     var graphData_external = JSON.parse('{{ values | tojson | safe}}');
     var graphData_external_only = graphData_external.filter(function(itm){if (itm.type !='backbone') {return itm}})
 
-    var web_ip = {{app_config|tojson|safe}}
+    var web_ip = {{app_config.web_ip|tojson|safe}}
     var div_width = document.getElementById("topology-menu").clientWidth
     create_legend('traffic',div_width)
     var source = ""

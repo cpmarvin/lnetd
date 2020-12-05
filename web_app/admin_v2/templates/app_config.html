@@ -130,8 +130,11 @@
                           <div class="col-sm-8">
                             <select class="form-control" name="menu_style">
                               <option selected="selected">{{menu_style}}</option>
+                                {% if menu_style == 'sidebar' %}
                               <option>top</option>
+                                {% else %}
                               <option>sidebar</option>
+                                {% endif %}
                             </select>
                           </div>
                         </div>
@@ -329,7 +332,7 @@
         dataType: 'json',
         data: $('#app-config-form').serialize(),
         error: function (result) { alertify.notify('error', 'error', 5); },
-        success: function (result) { alertify.notify('Config Saved', 'success', 5); }
+        success: function (result) { alertify.notify('Config Saved', 'success', 5); location.reload() }
       });
     }
   }

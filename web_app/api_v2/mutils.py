@@ -37,6 +37,7 @@ def get_influxdb_data(source,target):
 
 
 def generate_forecast(source,target):
+    print('what is the source and target',source,target)
     try:
         df = get_influxdb_data(source,target)
         #print(df.head(10))

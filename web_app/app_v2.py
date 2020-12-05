@@ -104,8 +104,6 @@ app = create_app()
 def get_app_config():
 
     app_config = App_config.query.all()
-
-    print(app_config[0])
     return dict(app_config=app_config[0])
 
 

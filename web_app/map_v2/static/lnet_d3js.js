@@ -9,7 +9,7 @@ function lnet_d3js(web_ip,result,type){
   var width = 1900 ;
   var height = 1001;
   var svg = d3.select("#topology").append("svg")
-                    .call(zoom)
+                    //.call(zoom)
                     .attr("id","main_svg")
 		    .attr("preserveAspectRatio", "xMinYMin meet")
 		    .attr("viewBox", "0 0 1900 1001")

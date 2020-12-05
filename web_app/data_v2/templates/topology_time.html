@@ -154,7 +154,7 @@
 <script>
     var node_position = {{node_position | tojson | safe}}
     var graphData = JSON.parse('{{ values | tojson | safe}}');
-    var web_ip = {{app_config|tojson|safe}}
+    var web_ip = {{app_config.web_ip|tojson|safe}}
     var div_width = document.getElementById("topology-menu").clientWidth
     create_legend('traffic',div_width)
     var source = ""

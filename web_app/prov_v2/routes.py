@@ -8,8 +8,6 @@ import pandas as pd
 import json
 import sys
 sys.path.append('./prov/mutils')
-from .mutils.deploy_nornir import nornir_config
-from .mutils.generate_template import nornir_template
 
 blueprint = Blueprint(
     'prov_blueprint',
@@ -51,6 +49,9 @@ def peering_prov():
 @blueprint.route('/generate_config', methods=['GET', 'POST'])
 @login_required
 def generate_config():
+    from .mutils.deploy_nornir import nornir_config
+    from .mutils.generate_template import nornir_template
+
     config_router = request.args['router']
     config_ip = request.args['ip']
     config_asn = request.args['asn']
