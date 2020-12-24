@@ -25,6 +25,8 @@ function lnet_d3js(web_ip,result,type){
       .alphaTarget(0)
       .on("tick", ticked);
   var g = svg.append("g").attr("id","main_g")
+      groups = g.append("g").selectAll('.path_placeholder')
+
       link = g.append("g").selectAll(".link"),
       linktext = g.append("g").selectAll(".link_text"),
       node = g.append("g").selectAll(".node");
@@ -109,6 +111,32 @@ const mouseOutFunction = function () {
      .style("opacity",0);
 
 };
+// Apply the general update pattern to groups.
+
+  groups = groups.data(d3.nest().key(function(d) { return d.name.split('-')[2] }).entries(nodes) , function(dd) { return dd.key })
+  groups.exit().transition()
+      .remove();
+  var groupsEnter = groups.enter()    
+        .append("g").attr("class", "path_placeholder").append("path")
+        .style("fill", 'red')    
+        .style("stroke", 'black') 
+        .style("stroke-width", 30)    
+        .style("stroke-linejoin", "round")
+        .style("opacity", .1)   
+        .attr("d",function(d) { 
+                var arr = d.values.map(function(i) { return [i.fx, i.fy]})
+                  if (arr.length === 1) { arr.push( [arr[0][0], arr[0][1]]) }
+                  //lame
+                  if (arr.length === 2) { arr.push( [arr[0][0], arr[0][1]]) , arr.push( [arr[0][0], arr[0][1]]) }
+
+                return_result = "M" + d3.polygonHull(arr).join("L") + "Z";
+     return return_result
+
+ })
+
+  groups = groupsEnter.merge(groups)
+
+
   // Apply the general update pattern to the nodes.
   node = node.data(nodes, function(d) { return d.name ;});
 
@@ -142,6 +170,7 @@ const mouseOutFunction = function () {
 
       node = nodeEnter.merge(node); // enter + update
 
+
   // Apply the general update pattern to the links.
   link = link.data(links, function(d) { return d.source.name + "-" + d.target.name + "-" + d.l_ip + "-" + d.util + "-" + d.metric; });
 
@@ -163,6 +192,7 @@ const mouseOutFunction = function () {
 	  else if (type == 'demand'){
 	    return get_util(d,"0")
           }
+
           else if (type == 'errors'){
             return get_errors(d,"0")
           }
@@ -215,6 +245,20 @@ const mouseOutFunction = function () {
   }
 
   function ticked() {
+  groups
+        .attr("d",function(d) { 
+                var arr = d.values.map(function(i) { return [i.fx, i.fy]})
+                  if (arr.length === 1) { arr.push( [arr[0][0], arr[0][1]]) }
+                  //lame but only need another one so ...
+                  if (arr.length === 2) { arr.push( [arr[0][0], arr[0][1]]) , arr.push( [arr[0][0], arr[0][1]]) }
+                return_result = "M" + d3.polygonHull(arr).join("L") + "Z";
+	     return return_result
+
+ })
+
+
+
+
   link
    .attr("d", function(d,i){
         var LINK_WIDTH = 2
