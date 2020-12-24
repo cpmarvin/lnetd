@@ -116,9 +116,13 @@ const mouseOutFunction = function () {
   groups = groups.data(d3.nest().key(function(d) { return d.name.split('-')[2] }).entries(nodes) , function(dd) { return dd.key })
   groups.exit().transition()
       .remove();
+
+  var color = d3.scaleOrdinal(d3.schemeCategory10)
+
   var groupsEnter = groups.enter()    
         .append("g").attr("class", "path_placeholder").append("path")
-        .style("fill", 'red')    
+        //.style("fill", 'red')
+        .style("fill",function(d,i){return color(i)})
         .style("stroke", 'black') 
         .style("stroke-width", 30)    
         .style("stroke-linejoin", "round")
@@ -126,7 +130,7 @@ const mouseOutFunction = function () {
         .attr("d",function(d) { 
                 var arr = d.values.map(function(i) { return [i.fx, i.fy]})
                   if (arr.length === 1) { arr.push( [arr[0][0], arr[0][1]]) }
-                  //lame
+                  //lame but only one more needed 
                   if (arr.length === 2) { arr.push( [arr[0][0], arr[0][1]]) , arr.push( [arr[0][0], arr[0][1]]) }
 
                 return_result = "M" + d3.polygonHull(arr).join("L") + "Z";
