@@ -154,22 +154,22 @@ const mouseOutFunction = function () {
     .attr("class", "node");
 
   nodeEnter.append("circle") // enter the circle on the g
-        .attr("r", 5)
+        .attr("r", 15)
         .attr('class', 'circle')
         //.attr('fill', 'red');
   nodeEnter.append("image").attr("class","image")
         .attr("xlink:href", "/static/images/router.png")
-        .attr("x", "-12px")
-        .attr("y", "-12px")
-        .attr("width", "24px")
-        .attr("height", "24px")
+        .attr("x", "-42px")
+        .attr("y", "-42px")
+        .attr("width", "90px")
+        .attr("height", "90px")
         .on('mouseover', mouseOverFunction)
         .on('mouseout', mouseOutFunction)
         .on('click', function(d) { return node_click(web_ip,d) } )
   nodeEnter.append("text") // enter the text on the g
-        .attr("dy", ".35em")
+        .attr("dy", "0.825em")
         .attr("x", 12)
-        .style("font-size", "12px")
+        .style("font-size", "30px")
         .text(function(d) {return d.name ;});
 
       node = nodeEnter.merge(node); // enter + update
@@ -186,6 +186,7 @@ const mouseOutFunction = function () {
   link = link.enter()
         .append("path")
         .attr("stroke","red")
+        .attr("stroke-width",10) 
         .attr("class", "link")
         .attr("id",function(d,i) { return "linkId_" + d.l_ip + i; })
         .call(function(link) { link.transition().attr("stroke-opacity", 1); })
@@ -218,7 +219,7 @@ const mouseOutFunction = function () {
                   .attr("class","link_text")
                   .attr("xlink:href",function(d,i) { return "#linkId_" + d.l_ip + i;})
                   .attr("text-anchor","middle")
-                  .style("font-size", "4px")
+                  .style("font-size", "20px")
                   .style("font-weight","bold")
                   .attr("dy",0)
                   .attr("startOffset","50%")
@@ -265,7 +266,7 @@ const mouseOutFunction = function () {
 
   link
    .attr("d", function(d,i){
-        var LINK_WIDTH = 2
+        var LINK_WIDTH = 7
         var targetDistance = (d.linknum % 2 === 0 ? d.linknum * LINK_WIDTH : (-d.linknum + 1) * LINK_WIDTH);
         calcTranslationExact(d.source.name,targetDistance, d.source, d.target);
         return callback;}
