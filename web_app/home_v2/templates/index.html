@@ -411,6 +411,9 @@
                       data-search="true"
                       data-sortable="true"
                       data-pagination="true"
+                      data-show-export="true"
+                      data-show-toggle="true"
+                      data-export-data-type="all"
                       data-show-columns="true">
                       <thead class="thead-light">
                         <tr>
@@ -462,6 +465,9 @@
 <script src="https://unpkg.com/chartjs-plugin-colorschemes"></script>
 <script src="{{ url_for('home_blueprint.static', filename='home.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tableexport.jquery.plugin@1.10.21/tableExport.min.js"></script>
+<script src="https://unpkg.com/bootstrap-table@1.19.1/dist/bootstrap-table.min.js"></script>
+<script src="https://unpkg.com/bootstrap-table@1.19.1/dist/extensions/export/bootstrap-table-export.min.js"></script>
 <script>
 //create pie graphs
 

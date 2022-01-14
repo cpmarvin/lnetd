@@ -120,17 +120,22 @@ const mouseOutFunction = function () {
   var color = d3.scaleOrdinal(d3.schemeCategory10)
 
   var groupsEnter = groups.enter()    
-        .append("g").attr("class", "path_placeholder").append("path")
+//        .append("g")
+ //       .attr("class", "path_placeholder")
+        .append("path")
+      //groupsEnter.append("path")
         //.style("fill", 'red')
         .style("fill",function(d,i){return color(i)})
-        .style("stroke", 'black') 
-        .style("stroke-width", 30)    
+        //.style("stroke", 'black')
+        .style("stroke",function(d,i){return color(i)})
+        .style("stroke-width", 190)
         .style("stroke-linejoin", "round")
-        .style("opacity", .1)   
-        .attr("d",function(d) { 
+        .style("opacity", .1)
+        .attr("d",function(d) {
                 var arr = d.values.map(function(i) { return [i.fx, i.fy]})
+                console.log('var',arr)
                   if (arr.length === 1) { arr.push( [arr[0][0], arr[0][1]]) }
-                  //lame but only one more needed 
+                  //lame but only one more needed
                   if (arr.length === 2) { arr.push( [arr[0][0], arr[0][1]]) , arr.push( [arr[0][0], arr[0][1]]) }
 
                 return_result = "M" + d3.polygonHull(arr).join("L") + "Z";

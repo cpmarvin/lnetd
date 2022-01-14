@@ -42,7 +42,7 @@ def edit_topology():
     df_router_name = pd.read_sql(
         db.session.query(Links.source.distinct()).statement, db.session.bind
     )
-    router_name = df_router_name["anon_1"].values.tolist()
+    router_name = df_router_name["source"].values.tolist()
 
     node_position = pd.read_sql(
         db.session.query(Node_position)

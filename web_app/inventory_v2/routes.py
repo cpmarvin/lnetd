@@ -50,7 +50,8 @@ def inventory_device():
     df_router_name = pd.read_sql(db.session.query(
         Inventory_cards.router_name.distinct()).statement, db.session.bind)
     router_name = df_router_name.sort_values(
-        by='anon_1').to_dict(orient='records')
+        by='router_name').to_dict(orient='records')
+    print(router_name)
     if (device_cc == None):
         #device_cc = 'gb-pe8-lo'
         return render_template('inventory_device.html', router_name=router_name, device_cc='',

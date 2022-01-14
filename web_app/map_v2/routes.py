@@ -110,7 +110,7 @@ def edit_static_map():
 .bind)
     isis_links = df.to_dict(orient='records')# External_topology_temp
     df_router_name = pd.read_sql(db.session.query(Links.source.distinct()).statement,db.session.bind)
-    router_name = df_router_name['anon_1'].values.tolist()
+    router_name = df_router_name['source'].values.tolist()
     return render_template('edit_static_map.html',values=isis_links,router_name=router_name)
 
 @blueprint.route('/external_flow',methods=['GET', 'POST'])
