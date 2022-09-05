@@ -161,7 +161,7 @@
     var target = source
     var re_source = new RegExp (source);
     var re_target = re_source
-    result = data_prepare(graphData,re_source,re_target) //this returns the correct link and nodes
+    result = data_prepare(graphData,re_source,re_target,node_position) //this returns the correct link and nodes
     var run_it = new lnet_d3js(web_ip,result,'traffic') //run lnet_d3js
     run_it.restart(result[1],result[0],result[0]) //draw
     //dynamic nodes
@@ -287,7 +287,7 @@
         url = {{ url_for('api_blueprint.get_isis_links_time')|tojson }}+'?time='+time
         var graphData1 = getData(url)
             graphData1.then(function (data) {
-                result = data_prepare(data,re_source,re_target)
+                result = data_prepare(data,re_source,re_target,node_position)
                 nodes = result[1]
                 links = result[0]
                 linkstext = result[0]

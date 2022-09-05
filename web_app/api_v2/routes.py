@@ -15,7 +15,7 @@ from .calculateSpf_latency_fct import calculateSpf_latency
 from .model_demand import model_demand_get
 
 from database import db
-from objects_v2.models import Routers, Links, Links_latency, Node_position
+from objects_v2.models import Routers, Links, Links_latency, Node_position,Node_position_global
 from objects_v2.models import External_topology_temp, External_position
 from objects_v2.models import Links_time, External_topology_time
 
@@ -201,6 +201,17 @@ def spf_and_latency():
     results = calculateSpf_latency(arr, source, target)
     return jsonify(results)
 
+@blueprint.route("/save_map_name",methods=["POST","GET"])
+@login_required
+def save_map_name():
+    map_name = str(request.args["map_name"])
+    regexp_value = str(request.args["regexp"])
+    sql_query = "INSERT OR REPLACE INTO Map_name values('%s','%s')" %(map_name,regexp_value)
+    run_sql = db.engine.connect()
+    trans = run_sql.begin()
+    run_sql.execute(sql_query)
+    trans.commit()
+    return json.dumps({"success": True}), 200, {"ContentType": "application/json"}
 
 @blueprint.route("/save_node_position_global", methods=["POST"])
 @login_required
@@ -254,6 +265,16 @@ def get_isis_links():
     df = pd.read_sql(
         db.session.query(Links).filter(Links.index >= 0).statement, db.session.bind
     )
+    isis_links = df.to_dict(orient="records")
+    return jsonify(isis_links)
+
+@blueprint.route("/get_node_position_by_name", methods=["GET"])
+@login_required
+def node_position_by_name():
+    map_name = request.args["map_name"]
+    df = pd.read_sql(
+        db.session.query(Node_position_global).filter(Node_position_global.map_type == map_name).statement, db.session.bind
+        )
     isis_links = df.to_dict(orient="records")
     return jsonify(isis_links)
 

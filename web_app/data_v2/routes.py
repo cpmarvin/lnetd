@@ -6,6 +6,7 @@ from objects_v2.models import (
     Links_latency,
     Node_position,
     App_config,
+    Map_name
 )
 from database import db
 from collections import Counter, OrderedDict
@@ -43,8 +44,9 @@ def topology():
         db.session.query(Links).filter(Links.index >= 0).statement, db.session.bind
     )
     isis_links = df.to_dict(orient="records")
+    map_name = Map_name.query.all()
     return render_template(
-        "topology.html", values=isis_links, node_position=node_position
+        "topology.html", values=isis_links, node_position=node_position,map_name=map_name
     )
 
 

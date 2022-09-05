@@ -41,7 +41,7 @@
                 <div>
                 </div>
                 <div class="dropdown">
-                    <button onclick="javascript:node_position_save();" class="btn btn-success">Save Layout</button> </h3>
+		    <button onclick="javascript:save_map();" class="btn btn-success">Save Map</button>
                   </div>
                 </div>
                 <div>
@@ -65,15 +65,12 @@
                                                     <input type="radio" name="group" id="spf_check" value=""> Activate SPF
                                             </label>
                                     </div>
-                                    <div class="input-group mb-2 mr-sm-2">
-                                       <label class="checkbox-inline">
-                                            <input class="form-check-info" type="radio" name="group" id="dynamic_topology" value=""> Dynamic Topology
-                                        </label>
-                                    </div>
-                                    <div class="input-group mb-2 mr-sm-2">
-                                        <label class="col-sm-4 font-weight-bold">Filter</label>
-                                    <input type="text" class="form-control" name= "source_filter" id="source_filter" placeholder="Filter:gb-p|fr-p">
-                                    </div>
+                                    <div class="input-group mb-4 mr-sm-4">
+                                        <label class="col-sm-4 font-weight-bold">Filter SRC:</label>
+                                        <input type="text" class="form-control" name= "source_filter" id="source_filter" placeholder="Filter:gb-p|fr-p">
+                                        <label class="col-sm-4 font-weight-bold">Map Name</label>
+                                        <input type="text" class="form-control" name= "map_name" id="map_name" placeholder="Filter:gb-p|fr-p">
+				    </div>
                                 </form>
                               </div>
                             </div>
@@ -148,7 +145,7 @@
         var re_target = new RegExp (target);
         console.log(source,re_source)
         console.log(target,re_target)
-		result = data_prepare(graphData,re_source,re_target) //this returns the correct link and nodes
+		result = data_prepare(graphData,re_source,re_target,node_position) //this returns the correct link and nodes
         console.log(result)
         console.log(graphData)
 		var run_it = new lnet_d3js(web_ip,result,'traffic') //run lnet_d3js
@@ -166,6 +163,7 @@
 
 
         var inputBox = document.getElementById('source_filter');
+        var map_name = document.getElementById('map_name');
 
 inputBox.onkeyup = function(){
     console.log('key pressed',inputBox.value)
@@ -174,10 +172,43 @@ inputBox.onkeyup = function(){
     console.log(source,re_source)
     var re_target = new RegExp (source);
     console.log(source,re_target)
-    result = data_prepare(graphData,re_source,re_target)
+    result = data_prepare(graphData,re_source,re_target,node_position)
     console.log(result)
     console.log(graphData)
     run_it.restart(result[1],result[0],result[0])
+}
+
+
+function save_map(){
+	var inputBox = document.getElementById('source_filter');
+        var map_name = document.getElementById('map_name');
+        node_postion_save =[]
+        d3.selectAll(".node").data().forEach(
+            function (d) {
+                var entry = {'id':d.name,'x':d.x,'y':d.y} ;
+                node_postion_save.push(entry)
+            })
+        var demandArrStr = encodeURIComponent(JSON.stringify(node_postion_save));
+        map_name = map_name.value.replace(/ /g, '');
+        reg_exp = inputBox.value
+        url = {{ url_for('api_blueprint.save_node_position_global')|tojson }}+'?arr='+demandArrStr+'&map_type='+map_name
+        var saveData = $.ajax({
+              type: 'POST',
+              url: url,
+              dataType: "text",
+              success: function(resultData) { alertify.notify("Node Position Saved ", 'success', 5) }
+        });
+
+	//save map name
+	url = {{ url_for('api_blueprint.save_map_name')|tojson }}+'?map_name='+map_name+'&regexp='+reg_exp
+	var saveDataMap = $.ajax({
+		type: 'POST',
+		url: url,
+		dataType: "text",
+		success: function(resultData) { alertify.notify("Map name saved", 'success', 5) }
+	});
+	//end save map name
+
 }
 
 

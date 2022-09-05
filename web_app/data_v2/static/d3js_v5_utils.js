@@ -59,7 +59,7 @@ function calcTranslationExact(debug,targetDistance, point0, point1) {
   };
 }
 
-function data_prepare(grapheDatasInitial,re_source,re_target) {
+function data_prepare(grapheDatasInitial,re_source,re_target,node_position) {
   grapheDatas1 = JSON.parse(JSON.stringify(grapheDatasInitial));
   //console.log('inside data_prepare data is :' ,grapheDatas1)
 
