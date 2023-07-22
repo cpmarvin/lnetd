@@ -58,7 +58,6 @@
                   <div class="submenu">
                       <ul>
                           <li class="nav-item"><a class="nav-link" href="/admin/app_config">LnetD Configuration</a></li>
-                          <li class="nav-item"><a class="nav-link" href="/prov/peering_prov">IX BGP Provision</a></li>
                           <li class="nav-item"><a class="nav-link" href="/admin/admin_report">IGP Network Report</a></li>
                       </ul>
                   </div>
@@ -72,12 +71,10 @@
                   </a>
                   <div class="submenu">
                       <ul>
-                          <li class="nav-item"><a class="nav-link" href="/data/traffic_links">PoP/PoP Capacity</a></li>
-                          <li class="nav-item"><a class="nav-link" href="/map/international_pop">PoP Capacity</a></li>
-                          <li class="nav-item"><a class="nav-link" href="/map/interface_graph">Interface Graph</a></li>
+                          <li class="nav-item"><a class="nav-link" href="/capacity/traffic_links">PoP/PoP Capacity</a></li>
+                          <li class="nav-item"><a class="nav-link" href="/capacity/interface_graph">Interface Graph</a></li>
 			{% if "admin" in current_user.role %} {% endif %}
-                          <li class="nav-item"><a class="nav-link" href="/map/edit_international_pop">Edit PoP</a></li>
-                      </ul>
+                        </ul>
                   </div>
               </li>
               <li class="nav-item">
@@ -89,47 +86,13 @@
                   <div class="submenu">
                       <ul>
                           <li class="nav-item"><a class="nav-link" href="/map/static_map">External Topology</a></li>
-                          <li class="nav-item"><a class="nav-link" href="/map/static_time">External Time Topology</a></li>
-                          <li class="nav-item"><a class="nav-link" href="/map/peer_report">P&T report</a></li>
-                          <li class="nav-item"><a class="nav-link" href="/map/cost_report">P&T Cost Report</a></li>
-                          <li class="nav-item"><a class="nav-link" href="/map/external_flow">External Traffic flows</a></li>
-                          <li class="nav-item"><a class="nav-link" href="/bgp/bgp_map">BGP Topology</a></li>
-			 {% if "admin" in current_user.role %} {% endif %}
-                          <li class="nav-item"><a class="nav-link" href="/admin/app_external_netflow">Edit Traffic flows</a></li>
+			                    <li class="nav-item"><a class="nav-link" href="/map/peer_report">P&T report</a></li>
+                           {% if "admin" in current_user.role %} {% endif %}
                           <li class="nav-item"><a class="nav-link" href="/map/edit_static_map">Edit External Topology</a></li>
-                          <li class="nav-item"><a class="nav-link" href="/bgp/edit_peering_points">Edit Peering Points</a></li>
                       </ul>
                   </div>
               </li>
-              <li class="nav-item">
-                  <a href="#" class="nav-link">
-                    <i class="mdi mdi-server menu-icon"></i>
-                    <span class="menu-title">Inventory</span>
-                    <i class="menu-arrow"></i>
-                  </a>
-                  <div class="submenu">
-                      <ul>
-                          <li class="nav-item"><a class="nav-link" href="/inventory/inventory_device">Device Inventory</a></li>
-                          <li class="nav-item"><a class="nav-link" href="/inventory/inventory_network">Network Inventory</a></li>
-                      </ul>
-                  </div>
-              </li>
-
-              <li class="nav-item">
-                  <a href="#" class="nav-link">
-                    <i class="mdi mdi-server menu-icon"></i>
-                    <span class="menu-title">NOC</span>
-                    <i class="menu-arrow"></i>
-                  </a>
-                  <div class="submenu">
-                      <ul>
-                          <li class="nav-item"><a class="nav-link" href="/noc/noc_topology">NOC TOPOLOGY</a></li>
-			{% if "admin" in current_user.role %} {% endif %}
-                          <li class="nav-item"><a class="nav-link" href="/noc/edit_topology">EDIT NOC TOPOLOGY</a></li>
-                      </ul>
-                  </div>
-              </li>
-
+	      
               <li class="nav-item">
                   <a href="#" class="nav-link">
                     <i class="mdi mdi-animation menu-icon"></i>
@@ -138,14 +101,8 @@
                   </a>
                   <div class="submenu">
                       <ul>
-			  <li class="nav-item"><a class="nav-link" href="https://github.com/cpmarvin/lnetd_qt">IGP TOPOLOGY MODEL</a></li>
-<!--
-                          <li class="nav-item"><a class="nav-link" href="/data/model_demand">IGP TOPOLOGY MODEL</a></li>
-                          <li class="nav-item"><a class="nav-link" href="/data/model_demand_lsp">IGP LSP SHORTCUTS MODEL</a></li>
-                          <li class="nav-item"><a class="nav-link" href="/data/model_layer1">LAYER1 TOPOLOGY MODEL</a></li>
-                          <li class="nav-item"><a class="nav-link" href="/data/add_layer1">EDIT LAYER1 TOPOLOGY</a></li>
-                          <li class="nav-item"><a class="nav-link" href="/data/model_edit">NEW NETWORK MODEL</a></li>
--->
+                      <li class="nav-item">
+                        <a class="nav-link" href="https://github.com/cpmarvin/lnetd_qt">IGP TOPOLOGY MODEL</a></li>
                       </ul>
                   </div>
               </li>
@@ -158,18 +115,21 @@
                   <div class="submenu">
                       <ul>
                           <li class="nav-item"><a id="topo" class="nav-link" href="/data/topology">IGP TOPOLOGY</a></li>
-                          <li class="nav-item"><a class="nav-link" href="/data/topology_time">IGP TIME TOPOLOGY</a></li>
                           <li class="nav-item"><a class="nav-link" href="/data/topology_nested">IGP NESTED TOPOLOGY</a></li>
                           <li class="nav-item"><a class="nav-link" href="/data/topology_nested_aggregated">IGP AGGREGATED TOPOLOGY</a></li>
                           <li class="nav-item"><a class="nav-link" href="/data/filter_topology">IGP TOPOLOGY FILTER</a></li>
-                          <li class="nav-item"><a class="nav-link" href="/data/topology_errors">IGP TOPOLOGY ERRORS</a></li>
-                          <li class="nav-item"><a class="nav-link" href="/data/topology_latency">IGP TOPOLOGY LATENCY</a></li>
-                          <li class="nav-item"><a class="nav-link" href="/data/topology_netbox">NETBOX TOPOLOGY</a></li>
-                          <li class="nav-item"><a class="nav-link" href="/dc/dc_topology">DC EVPN</a></li>
                       </ul>
                   </div>
               </li>
-            </ul>
+              <li class="nav-item">
+                <a class="nav-link" href="/home/support">
+                  <i class="mdi mdi-file-document-box menu-icon"></i>
+                  <span class="menu-title">Support</span>
+                </a>
+              </li>
+
+
+	    </ul>
         </div>
       </nav>
     </div>

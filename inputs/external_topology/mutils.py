@@ -10,15 +10,18 @@ client = InfluxDBClient(INFLUXDB_HOST, '8086', '', '', INFLUXDB_NAME)
 
 
 def get_interface_ifName(hostname,interface):
-    timestamp = datetime.datetime.utcnow().isoformat()
-    client = InfluxDBClient(INFLUXDB_HOST,'8086','','',INFLUXDB_NAME)
-    queryurl = "show tag values with key = ifName where hostname =~ /%s/ and ifIndex ='%s'" %(hostname,interface)
-    result = client.query(queryurl)
-    points = list(result.get_points(measurement='interface_statistics'))
-    df = pd.DataFrame(points)
-    df.columns = ['Ifindex', 'IfName']
-    df1=df.to_dict(orient='records')
-    return str(df1[0]['IfName'])
+    try:
+        timestamp = datetime.datetime.utcnow().isoformat()
+        client = InfluxDBClient(INFLUXDB_HOST,'8086','','',INFLUXDB_NAME)
+        queryurl = "show tag values with key = ifName where hostname =~ /%s/ and ifIndex ='%s'" %(hostname,interface)
+        result = client.query(queryurl)
+        points = list(result.get_points(measurement='interface_statistics'))
+        df = pd.DataFrame(points)
+        df.columns = ['Ifindex', 'IfName']
+        df1=df.to_dict(orient='records')
+        return str(df1[0]['IfName'])
+    except:
+        return "NoINT"
 
 def get_util_interface(hostname, interface, direction):
     try:

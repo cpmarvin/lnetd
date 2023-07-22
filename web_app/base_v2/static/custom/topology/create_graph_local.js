@@ -1,11 +1,17 @@
-function graph(web_ip,source,interface,capacity,direction) {
+function graph_local(data_values,source,interface,capacity) {
+    console.log('this is the web_ip inside graph function - ????????',data_values)
     Plotly.purge(graph2)
-    var interface_name = interface
-    var rawDataURL = 'http://'+web_ip+':8801/api/graph_ifname?'+'interface='+interface+'&'+'host='+source+'&'+'direction=out'
-    //// map the fields
+    //var url = 'http://'+web_ip+':8801/api/ifName?'+'ip='+interface+'&'+'host='+source
+    //var url1 = {{ url_for('api_blueprint.get_forecast')|tojson }}
+    //console.log('this is the url1 inside graph',url1)
+    var interface_name = interface //$.ajax({type: "GET", url: url, async: false, dataType:'json'}).responseText;
+    //console.log(url)
+    //var rawDataURL = 'http://'+web_ip+':8801/api/graph_ifindex?'+'ip='+interface+'&'+'host='+source
+    //console.log(rawDataURL)
+    //// map the fields 
     var xField = 'time';
     var yField = 'bps';
-    /// create selector
+    /// create selector 
     var selectorOptions = {
         buttons: [{
             step: 'minute',
@@ -25,21 +31,23 @@ function graph(web_ip,source,interface,capacity,direction) {
         }, {
             step: 'hour',
             stepmode: 'todate',
-            count: 12,
-            label: '12h'
+            count: 6,
+            label: '6h'
         }, {
             step: 'all',
-            label: '24h'
         }],
     };
     ////prepare the graph
-    Plotly.d3.csv(rawDataURL, function(err, rawData) {
-        if(err) throw err;
-        var data = prepData(rawData);
+    ///Plotly.d3.csv(data_values, function(err, rawData) {
+       //test_new_graph(rawData) {
+        var width = document.getElementById("graph2").clientWidth - 30
+        console.log(width,data_values)
+        var data = prepData(data_values);
+	console.log(data)
         var layout = {
             showlegend: true,
             autoresize: true,
-            width: 820,
+            width: width,
             height: 360,
             title: 'Router: ' + source + ' Interface: '+ interface_name + ' Speed: ' + capacity +' Mbps',
             xaxis: {
@@ -59,13 +67,15 @@ function graph(web_ip,source,interface,capacity,direction) {
         };
 
         Plotly.newPlot('graph2', data, layout);
-    });
+	 //   }
+		  //});
     ////prepare the data
     function prepData(rawData) {
         var x = [];
         var y = [];
 
         rawData.forEach(function(datum, i) {
+		console.log(datum)
 
             x.push(new Date(datum[xField]));
             y.push(datum[yField]);
@@ -83,3 +93,4 @@ function graph(web_ip,source,interface,capacity,direction) {
 
     }
 }
+

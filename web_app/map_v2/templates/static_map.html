@@ -182,6 +182,8 @@
 <script src="{{ url_for('map_blueprint.static', filename='lnet_d3js.js') }}"></script>
 
 <script>
+  tt = "{{url_for('api_blueprint.graph_ifname')}}"
+	console.log(tt)
   var web_ip = {{ app_config.web_ip| tojson | safe}}
   var node_position = {{ node_position| tojson | safe}}
   var graphData = JSON.parse('{{ values | tojson | safe}}');

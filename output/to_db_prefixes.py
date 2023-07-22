@@ -24,13 +24,17 @@ def main():
         sql = 'SELECT * from %s' %input
         df=pd.read_sql(sql, conn)
         #drop index from old table
-        df=df.drop(['index'], axis=1)
-        logger.info('Find the ipaddress version')
-        df['version'] = df.apply(lambda row: ipaddress.ip_address(row['ip'].split('/')[0]).version,axis=1)
-        disk_engine = create_engine('sqlite:////opt/lnetd/web_app/database.db')
-        df.to_sql('Prefixes', disk_engine, if_exists='replace')
-        logger.info('all done')
-        logger.debug('final pandas %s' %df)
+        if len(df.index) >0:
+            df=df.drop(['index'], axis=1)
+            logger.info('Find the ipaddress version')
+            df['version'] = df.apply(lambda row: ipaddress.ip_address(row['ip'].split('/')[0]).version,axis=1)
+            disk_engine = create_engine('sqlite:////opt/lnetd/web_app/database.db')
+            df.to_sql('Prefixes', disk_engine, if_exists='replace')
+            logger.info('all done')
+            logger.debug('final pandas %s' %df)
+        else:
+            print(f'No routes in input database')
+            sys.exit()
 
 if __name__ == '__main__':
         main()

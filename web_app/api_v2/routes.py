@@ -12,17 +12,15 @@ from .get_graph_fct_ifname import get_graph_ifname
 from .get_graph_fct_aggregated import get_graph_aggregated
 from .calculateSpf_fct import calculateSpf
 from .calculateSpf_latency_fct import calculateSpf_latency
-from .model_demand import model_demand_get
+
 
 from database import db
-from objects_v2.models import Routers, Links, Links_latency, Node_position,Node_position_global
+from objects_v2.models import Routers, Links, Node_position,Node_position_global,Map_name
 from objects_v2.models import External_topology_temp, External_position
-from objects_v2.models import Links_time, External_topology_time
+
 
 from api_v2.mutils import *
 
-# test new lsp demands
-from .lsp_deploy_demands import lsp_demands
 
 from base_v2.models import User
 from flask_httpauth import HTTPBasicAuth
@@ -79,7 +77,7 @@ def ifName():
 
 @blueprint.route("/graph_ifindex")
 @login_required
-def graph():
+def graph_ifindex():
     ip = request.args["ip"]
     host = request.args["host"]
     results = get_graph_ifindex(host, ip)
@@ -115,84 +113,6 @@ def spf():
     return jsonify(results)
 
 
-@blueprint.route("/model_lsp_demand")
-@login_required
-def model_lsp_demand():
-    demand_request = request.args["demand"]
-    arr = request.args["arr"]
-    df_links = pd.DataFrame(eval(arr))
-    lsps = eval(request.args["lsps"])
-    print(f"this is the lsps:{lsps}")
-    # create an empty frame
-    df_all_demands = pd.DataFrame()
-    df_all_lsps = []
-    for entry in eval(demand_request):
-        source = entry["source"]
-        target = entry["target"]
-        demand = entry["demand"]
-        results_array = lsp_demands(lsps, arr, source, target, demand)
-        df_all_demands = pd.concat([df_all_demands, results_array[0]], axis=0)
-        df_all_lsps.extend(results_array[1])
-    df_final = df_all_demands.groupby(
-        [
-            "index",
-            "l_int",
-            "capacity",
-            "source",
-            "target",
-            "r_ip",
-            "l_ip",
-            "metric",
-            "errors",
-            "Action",
-            "l_ip_r_ip",
-        ],
-        as_index=False,
-    )["util"].sum()
-    df_final["l_ip_r_ip"] = df_final["l_ip_r_ip"].astype(str)
-    df_final_lsps = pd.DataFrame(df_all_lsps)
-    if len(lsps) > 0:
-        print("lsp before merge\n", df_final_lsps)
-        df_final_lsps = df_final_lsps.groupby(
-            [
-                "id",
-                "capacity",
-                "ero",
-                "index",
-                "l_ip",
-                "metric",
-                "r_ip",
-                "source",
-                "target",
-            ],
-            as_index=False,
-        )["util"].sum()
-        print("lsp after merge\n", df_final_lsps)
-    else:
-        df_final_lsps = pd.DataFrame()
-
-    results_final = df_final.to_dict(orient="records")
-    df_final_lsps = df_final_lsps.to_dict(orient="records")
-    return jsonify(results_final, df_final_lsps)
-
-
-@blueprint.route("/model_demand")
-@login_required
-def model_demand():
-    demand_request = request.args["demand"]
-    arr = request.args["arr"]
-    print("this is the array", arr)
-    df_links = pd.DataFrame(eval(arr))
-    # df_links = df_links.replace({'\t': ''}, regex=True)
-    from datetime import datetime
-
-    print("start_time", datetime.now())
-    results = model_demand_get(df_links, demand_request)
-    print("end_time", datetime.now())
-    results_final = results.to_dict(orient="records")
-    return jsonify(results_final)
-
-
 @blueprint.route("/spf_and_latency", methods=["GET", "POST"])
 def spf_and_latency():
     source = request.args["source"]
@@ -206,11 +126,9 @@ def spf_and_latency():
 def save_map_name():
     map_name = str(request.args["map_name"])
     regexp_value = str(request.args["regexp"])
-    sql_query = "INSERT OR REPLACE INTO Map_name values('%s','%s')" %(map_name,regexp_value)
-    run_sql = db.engine.connect()
-    trans = run_sql.begin()
-    run_sql.execute(sql_query)
-    trans.commit()
+    new_map = Map_name(name=map_name,regexp=regexp_value)
+    db.session.add(new_map)
+    db.session.commit()
     return json.dumps({"success": True}), 200, {"ContentType": "application/json"}
 
 @blueprint.route("/save_node_position_global", methods=["POST"])
@@ -380,17 +298,6 @@ def get_external_interval():
     values = df["timestamp"].astype(str).unique().tolist()
     return jsonify(values)
 
-
-@blueprint.route("/save_layer1_topology", methods=["POST"])
-@login_required
-def save_layer1_topology():
-    arr = request.args["arr"]
-    df = pd.DataFrame(eval(arr))
-    df.set_index("id", inplace=True)
-    # df = df.drop(['','index','Action','id'], axis=1)
-    df.to_sql(name="Layer1Topology", con=db.engine, if_exists="replace")
-    print(df)
-    return json.dumps({"success": True}), 200, {"ContentType": "application/json"}
 
 
 @blueprint.route("/save_international_pop", methods=["POST"])

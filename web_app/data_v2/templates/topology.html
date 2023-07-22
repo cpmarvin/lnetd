@@ -84,7 +84,7 @@
 
 {% block javascripts %}
 {{ super() }}
-<script src="{{ url_for('static', filename='custom/topology/create_graph.js') }}"></script>
+<script src="{{ url_for('static', filename='custom/topology/create_graph_local.js') }}"></script>
 <script src="{{ url_for('static', filename='custom/topology/getSPF.js') }}"></script>
 <script src="{{ url_for('static', filename='custom/topology/create_legend.js') }}"></script>
 <script src="https://d3js.org/d3.v4.min.js"></script>
@@ -165,6 +165,38 @@ $('#map_select').change(function () {
   }, 60000); //60sec
 
 })
+
+//test local link_click
+function link_click_test(web_ip,d,type) {
+  if (d.l_int == -1 || d.util == -1 ) {
+    alert("NO SNMP DATA")
+    return }
+  $('#modal-top').modal('toggle')
+  if(type == 'cloud'){
+    $('#modal-body').attr("id","graph2")
+    .html(graph(web_ip,d.node,d.l_int,d.capacity)) }
+  else if(type =='cloud_aggregate'){
+    $('#modal-body').attr("id","graph2")
+    .html(graph(web_ip,d.source.name,d.target.name,d.capacity)) }
+  else {
+       var url_graph = "{{ url_for('api_blueprint.graph_ifindex') }}"+'?ip='+d.l_int+'&'+'host='+d.source.name
+       var data_values = $.ajax({type: "GET", url: url_graph, async: false, dataType: "json"}).responseJSON;
+        console.log('TTTTT',data_values)
+        data_values_1 = [
+				  {'time':'2016-09-02 17:30:00+00:00','bps':'7601000'},
+				  {'time':'2016-09-02 17:35:00+00:00','bps':'17601000'},
+			  ]
+        console.log('TTTTT',data_values)
+		  var url_int = " {{ url_for('api_blueprint.ifName') }}"+'?ip='+d.l_int+'&'+'host='+d.source.name
+        var interface_name =  $.ajax({type: "GET", url: url_int, async: false}).responseText;
+		  console.log('interefa',interface_name)
+
+    $('#modal-body').attr("id","graph2")
+
+       .html(graph_local(data_values,d.source.name,interface_name,d.capacity))
+  }
+}
+// end test local link click
 </script>
 
 {% endblock javascripts %}

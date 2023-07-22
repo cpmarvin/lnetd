@@ -62,6 +62,7 @@ def get_util_router(lst):
     # 1000000000 #demo uses 1000 real is 1000000000
     max_value_inbound = df_merged_inbound['bps'].max() / 1000000000
     max_value_inbound = round(max_value_inbound, 1)
+    print(max_value, max_value_inbound)
     return [max_value, max_value_inbound]
 
 
@@ -71,7 +72,7 @@ def get_capacity_router(lst):
     for router in lst:
         links = get_router_links(router)
         for link in links:
-            # print(link)
+            print(link)
             capacity = capacity + link['capacity']
     return capacity / 1000 #demo uses 100 real data is 1000
 
@@ -92,4 +93,5 @@ def get_max_util(hostname, interface, start):
     df = pd.DataFrame(points)
     df = df.to_dict(orient='records')
     result = int(round(df[0]['bps']))
+    result = 100000000000000
     return result

@@ -210,7 +210,7 @@ const mouseOutFunction = function () {
             return 'black'
           }
         })
-        .on("click",function(d) { return link_click(web_ip,d,'topo')} )
+        .on("click",function(d) { return link_click_test(web_ip,d,'topo')} )
         .merge(link);
 
   linktext = linktext.data(linkstext, function(d) { return d.source.name + "-" + d.target.name + "-" + d.l_ip + "-" + d.util + "-" + d.metric });

@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template
 from flask_login import login_required
 
-from objects_v2.models import Routers, Prefixes, Links,Bgp_peers
+from objects_v2.models import Routers, Prefixes, Links
 
 from collections import Counter, OrderedDict
 from database import db
@@ -32,15 +32,11 @@ def index():
         'prefixes_v4': len(Prefixes.query.filter_by(version = '4').all()),
         'prefixes_v6': len(Prefixes.query.filter_by(version = '6').all()),
         'users': len(User.query.all()),
-        'peers': len(Bgp_peers.query.all()),
-        'peers_v4': len(Bgp_peers.query.filter_by(version = '4').all()),
-        'peers_v6': len(Bgp_peers.query.filter_by(version = '6').all()),
     }
     # get counters for routers
     routers = Routers.query.all()
     prefixes = Prefixes.query.all()
     links = Links.query.all()
-    bgp_peers = Bgp_peers.query.all()
     prefix_total_count = Counter(k.name for k in prefixes)
     prefix_top10_count = Counter(dict(prefix_total_count.most_common(5)))
     links_total_count = Counter(k.source for k in links)
@@ -49,7 +45,7 @@ def index():
                         "BPrefix_per_country": Counter(k.country for k in prefixes),
                         "CPrefix_per_router": prefix_top10_count,
                         "DLinks_per_router": links_top10_count,
-  			"network_vendors": Counter(k.vendor for k in routers)
+  			             "network_vendors": Counter(k.vendor for k in routers)
                         }
     tag_values = pd.read_sql(db.session.query(Tag).statement,db.session.bind)
     tag_values['text'] = tag_values['name']
@@ -59,4 +55,9 @@ def index():
 
     return render_template('index.html', objects_counters=objects_counters, 
 			counters=counters, names=pretty_names,routers=routers,tag_values=tag_values,
-			tacacs_id=tacacs_id,links=links,prefixes=prefixes,bgp_peers=bgp_peers)
+			tacacs_id=tacacs_id,links=links,prefixes=prefixes)
+
+@blueprint.route('/support')
+@login_required
+def support():
+    return render_template('support.html')

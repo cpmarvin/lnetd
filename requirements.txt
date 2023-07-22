@@ -19,7 +19,7 @@ simple-crypt
 pycryptodome==3.5
 pynetbox
 redis
-cryptography==3.2
+cryptography
 flask_httpauth
 genie
 pyats

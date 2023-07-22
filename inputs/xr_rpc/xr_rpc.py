@@ -42,7 +42,7 @@ rpc_mpls = """
 def main():
     logger.info('Get Netconf data')    
     mpls_te, isis_hostname = get_netconf(rpc_mpls,rpc_hostname)
-    #print(mpls_te)
+    print(mpls_te,isis_hostname)
     logger.info('Parse xml data for hostname')
     df_hostname = parse_xml('hostname', isis_hostname)
     logger.info('Parse xml data for links')
@@ -55,7 +55,7 @@ def main():
     df_routers = parse_xml('routers', mpls_te)
     df_routers['name'] = df_routers.apply(lambda row: df_hostname[row['name']], axis=1)
     df_routers.loc[:, 'country'] = df_routers['name'].str[0:2]
-    #print(df_routers)
+    print(df_routers)
     # write to db
     logger.info('Write to Database')
     write_to_db('rpc_routers',df_routers)

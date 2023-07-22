@@ -5,7 +5,6 @@ from base_v2.basic_role import requires_roles
 from database import db
 from objects_v2.models import (
     App_config,
-    App_external_flows,
     Tacacs,
     Routers,
     Tag,
@@ -28,61 +27,6 @@ blueprint = Blueprint(
 )
 
 
-@blueprint.route("/admin_report_failed", methods=["POST", "GET"])
-@login_required
-# @requires_roles('admin')
-def admin_report_failed():
-    rvalue = request
-    rvalue_dict = rvalue.args.to_dict(flat=False)
-    type = rvalue_dict["type"][0]
-    failed_links = json.loads(rvalue_dict["links"][0])
-
-    current_user = str(session["_user_id"])
-    node_position = pd.read_sql(
-        db.session.query(Node_position)
-        .filter(Node_position.user == current_user)
-        .statement,
-        db.session.bind,
-    )
-    node_position = node_position.to_dict(orient="records")
-
-    df = pd.read_sql(db.session.query(Links).statement, db.session.bind)
-    df["status"] = "up"
-    network_initial = df.to_dict(orient="records")
-
-    # failed_links = ['10.2.3.2','10.22.33.22']
-    df_failed = pd.read_sql(db.session.query(Links).statement, db.session.bind)
-    df_failed["status"] = "up"
-    df_failed.loc[
-        (df_failed["l_ip"].isin(failed_links)) | (df_failed["r_ip"].isin(failed_links)),
-        "status",
-    ] = "down"
-    network_failed = df_failed.to_dict(orient="records")
-
-    network_report = generate_network_report(
-        initial_network=df, failed_network=df_failed, compare=True
-    )
-    initial_netowrk_paths = pd.DataFrame(network_report["initial_network"]["paths"])
-    failed_network_paths = pd.DataFrame(network_report["failed_network"]["paths"])
-    change_paths_df = initial_netowrk_paths.merge(
-        failed_network_paths,
-        suffixes=["_initial", "_failed"],
-        indicator=True,
-        how="outer",
-        on=["source", "target"],
-    )
-    print(change_paths_df)
-    change_paths = change_paths_df.to_dict(orient="records")
-
-    return render_template(
-        "admin_report_failed.html",
-        network_report=network_report,
-        change_paths=change_paths,
-        network_initial=network_initial,
-        network_failed=network_failed,
-        node_position=node_position,
-    )
-
 
 @blueprint.route("/admin_report")
 @login_required
@@ -93,7 +37,6 @@ def admin_report():
     network_report = generate_network_report(
         initial_network=df, failed_network=None, compare=False
     )
-    print(network_report)
     return render_template("admin_report.html", network_report=network_report)
 
 
@@ -163,47 +106,6 @@ def app_add_user():
 def app_new_user():
     users_list = User.query.all()
     return render_template("app_new_user.html", values=users_list)
-
-
-@blueprint.route("/app_external_netflow")
-@login_required
-@requires_roles("admin")
-def app_external_netflow():
-    df = pd.read_sql(
-        db.session.query(App_external_flows)
-        .filter(App_external_flows.index >= 0)
-        .statement,
-        db.session.bind,
-    )
-    df["id"] = df["index"]
-    isis_links = df.to_dict(orient="records")
-    columns = [
-        {"field": "state", "checkbox": True},
-        {"field": "id", "title": "id", "sortable": False, "class": "hide_me"},
-        {"field": "index", "title": "index", "sortable": False, "class": "hide_me"},
-        {"field": "name", "title": "name", "sortable": True, "editable": True},
-        {"field": "router", "title": "router", "sortable": False, "editable": True},
-        {"field": "if_index", "title": "if_index", "sortable": False, "editable": True},
-        {"field": "Action", "title": "Action", "formatter": "TableActions"},
-    ]
-    return render_template(
-        "app_external_netflow.html", values=isis_links, columns=columns
-    )
-
-
-@blueprint.route("/app_external_netflow_save", methods=["POST"])
-@login_required
-@requires_roles("admin")
-def app_external_netflow_save():
-    try:
-        arr = request.args["arr"]
-        df = pd.DataFrame(eval(arr))
-        df = df.drop(["", "index", "Action", "id"], axis=1)
-        df.to_sql(name="App_external_flows", con=db.engine, if_exists="replace")
-        return json.dumps({"success": True}), 200, {"ContentType": "application/json"}
-    except Exception as e:
-        print(e)
-        return json.dumps({"success": False}), 400, {"ContentType": "application/json"}
 
 
 def handle_tags(router_name=None, tags=None):
@@ -283,7 +185,6 @@ def app_add_tacacs():
         db.session.commit()
         return json.dumps({"success": True}), 200, {"ContentType": "application/json"}
     except Exception as e:
-        print(e)
         return "e"
 
 

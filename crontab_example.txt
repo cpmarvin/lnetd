@@ -8,14 +8,8 @@
 */5 * * * *  cd /opt/lnetd/output && python3 to_db_prefixes.py
 */5 * * * *  cd /opt/lnetd/output && python3 to_db_routers.py
 
-#update pop map
-*/5 * * * *  cd /opt/lnetd/inputs/international_pop && python3 generate_pop_capacity.py
-
 #external topology
 */5 * * * * cd /opt/lnetd/inputs/external_topology && python3 generate_topology.py
-
-#noc map
-*/5 * * * * cd /opt/lnetd/inputs/external_topology && python3 noc_topology.py
 
 #aggregate 1h
 0 * * * * cd /opt/lnetd/output/h_aggregated/ && python3 h_aggregate_influxdb.py
@@ -23,25 +17,6 @@
 #transit report
 0 * * * * cd /opt/lnetd/output/h_aggregated/ && python3 transit_h_aggregate_influxdb.py
 
-#SNMP service every 4 hours
+#Generate SNMP configs for all devices every 4 hours
 0 */4 * * * /opt/lnetd/telegraf.d/reload_snmp.sh
-
-#Inventory every day at 5AM
-0 5 * * * cd /opt/lnetd/inputs/nornir && python3 get_inventory.py
-
-#Model Number every day at 6AM
-0 6 * * * cd /opt/lnetd/inputs/nornir && python3 get_model_number.py
-
-#bgp peers every 6 hrs
-0 */6 * * * cd /opt/lnetd/inputs/nornir &&  python3 get_bgp_peers.py
-
-#bgp customers every 6 hrs
-0 */6 * * * cd /opt/lnetd/inputs/ipt_cst &&  python3 get_ipt_cst.py
-
-#get interfaces every 3hrs
-0 */3 * * * cd /opt/lnetd/inputs/nornir && python3 get_interfaces.py
-
-#get latency every 4 hrs
-0 */4 * * * cd /opt/lnetd/inputs/nornir && python3 get_latency.py
-
 

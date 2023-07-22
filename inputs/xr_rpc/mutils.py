@@ -11,6 +11,7 @@ sys.path.append('../utils/')
 from lnetd_log import get_module_logger
 
 logger = get_module_logger(__name__,'DEBUG')
+import ipdb
 
 def remove_ns(xml_string):
     '''Remove namespace from xml string'''
@@ -35,18 +36,20 @@ def get_netconf(*args):
     '''Get netconf operation data,
     return clean xml object'''
     results = []
-    ios_xr = manager.connect(host='10.13.13.13',
-                             username='cpetrescu',
-                             password='lab123',
+    ios_xr = manager.connect(host='172.20.20.3',
+                             username='clab',
+                             password='clab@123',
                              hostkey_verify=False,
                              device_params={'name': 'iosxr'})
     # just return static for now
     for i in args:
+        print(i)
         logger.info('Get netconf data for %s' %i)
         res = ios_xr.dispatch(to_ele(i))
-        res = to_xml(res.data)
-        #print(res)
-        results.append(remove_ns(res))
+        #res = etree.fromstring(res.xml)
+        #res = to_xml(res.data)
+        results.append(remove_ns(res.xml))
+        #results.append(res)
     return results
 
 

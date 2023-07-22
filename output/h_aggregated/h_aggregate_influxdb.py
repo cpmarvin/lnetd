@@ -19,7 +19,7 @@ def main():
     #print(df)
     df = df.drop(['index','l_ip_r_ip','r_ip','metric'], axis=1)
     #df = df[df['capacity'] != -1]
-    #print(df)
+    print(df)
     df['l_int'] = df.apply(lambda row: snmp_get.get_ifIndex_IP(row['source'],row['l_ip']),axis=1)
     df['capacity'] = df.apply(lambda row: snmp_get.get_capacity_ifIndex(row['source'],row['l_int']),axis=1)
     df = df[df['capacity'] != -1]

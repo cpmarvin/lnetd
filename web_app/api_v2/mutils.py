@@ -1,7 +1,7 @@
 import pandas as pd
 from influxdb import InfluxDBClient
 import sys
-from fbprophet import *
+#from fbprophet import *
 
 INFLUXDB_HOST = '127.0.0.1'
 INFLUXDB_NAME = 'telegraf_agg'

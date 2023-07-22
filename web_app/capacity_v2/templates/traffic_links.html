@@ -44,7 +44,7 @@
                   <select class="form-control" name="source_cc">
                     <option selected>Source Country</option>
                     {% for entry in countries %}
-                    <option value="{{entry['anon_1']}}">{{entry['anon_1']}}</option>
+                    <option value="{{entry['country']}}">{{entry['country']}}</option>
                     {% endfor %}
                   </select>
                 </div>
@@ -52,7 +52,8 @@
                   <select class="form-control" name="target_cc">
                     <option selected>Target Country</option>
                     {% for entry in countries %}
-                    <option value="{{entry['anon_1']}}">{{entry['anon_1']}}</option>
+		     {{entry}} SSSS
+                    <option value="{{entry['country']}}">{{entry['country']}}</option>
                     {% endfor %}
                   </select>
                 </div>
@@ -198,28 +199,30 @@
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.3.0/echarts-en.min.js"></script>
-<script src="{{ url_for('static', filename='custom/topology/create_graph.js') }}"></script>
+<script src="{{ url_for('static', filename='custom/topology/create_graph_local.js') }}"></script>
 
 <script src="{{ url_for('data_blueprint.static',filename='utils.js') }}"></script>
 
-<script src="{{ url_for('data_blueprint.static', filename='d3js_v5_utils.js') }}"></script>
-<script src="{{ url_for('data_blueprint.static', filename='lnet_d3js.js') }}"></script>
 
 <script>
 $(document).ready(function(){
   $('.graph2-btn').on('click', function (e) {
     console.log('clik btn')
     var source = $(this).attr('source')
-    var interface = $(this).attr('interface')
+    var interface_ifindex = $(this).attr('interface')
     var capacity = $(this).attr('capacity')
+    var url_graph = "{{ url_for('api_blueprint.graph_ifindex') }}"+'?ip='+interface_ifindex+'&'+'host='+source
+    var data_values = $.ajax({type: "GET", url: url_graph, async: false}).responseJSON;
+    var url_int = " {{ url_for('api_blueprint.ifName') }}"+'?ip='+interface_ifindex+'&'+'host='+source
+    var interface_name =  $.ajax({type: "GET", url: url_int, async: false}).responseText;
     $('#modal-top').modal('toggle')
     $('#modal-body').attr("id","graph2")
-    .html(graph(web_ip,source,interface,capacity))
+    .html(graph_local(data_values,source,interface_name,capacity))
   })
 })
 
 
-  var web_ip = {{app_config.web_ip|tojson|safe}}
+  var web_ip = '' //{{app_config.web_ip|tojson|safe}}
   var capacity={{total_capacity}}
   var data = {{graph|tojson}}
   var df_year= {{df_year|tojson}}
@@ -228,7 +231,7 @@ $(document).ready(function(){
   var target_cc = '{{t_c}}'
 
   if ( data == 0 ) {
-    alert('No Links between Countries');
+    alert('No Links between Countries or SNMP collection is not enabled');
   }
   graph_aggr(data,capacity)
 
@@ -289,7 +292,7 @@ $(document).ready(function(){
       autotick: true,
       autorange: true,
       tickformat: ".3s",
-      title: 'Mbps'
+      title: 'bps'
     }
   };
 ////prepare the data
@@ -297,7 +300,7 @@ $(document).ready(function(){
         var x = [];
         var y = [];
 
-        rawData.forEach(function(datum, i) {
+        rawData.forEach(function(datum, i) { console.log(datum)
 
           x.push(new Date(datum[xField]));
           y.push(datum[yField]);

@@ -24,9 +24,12 @@
           <span class="menu-title">Admin</span>
         </a>
         <ul class="collapse list-unstyled" id="homeSubmenu">
-          <li class="nav-item"><a class="nav-link" href="/admin/app_config">&nbsp&middotConfiguration</a></li>
-          <li class="nav-item"><a class="nav-link" href="/prov/peering_prov">&nbsp&middotIX BGP Provision</a></li>
-          <li class="nav-item"><a class="nav-link" href="/admin/admin_report">&nbsp&middotIGP Network Report</a></li>
+          <li class="nav-item">
+            <a class="nav-link" href="/admin/app_config">&nbsp&middotConfiguration</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/admin/admin_report">&nbsp&middotIGP Network Report</a>
+          </li>
         </ul>
       </li>
       <!-- Capacity Planning -->
@@ -36,11 +39,10 @@
           <span class="menu-title">Capacity Planning</span>
         </a>
         <ul class="collapse list-unstyled" id="capSubmenu">
-          <li class="nav-item"><a class="nav-link" href="/data/traffic_links">&nbsp&middotPoP/PoP Capacity</a></li>
-          <li class="nav-item"><a class="nav-link" href="/map/international_pop">&nbsp&middotPoP Capacity</a></li>
+          <li class="nav-item">
+            <a class="nav-link" href="/data/traffic_links">&nbsp&middotPoP/PoP Capacity</a>
+          </li>
           <li class="nav-item"><a class="nav-link" href="/map/interface_graph">&nbsp&middotInterface Graph</a></li>
-          {% if "admin" in current_user.role %} {% endif %}
-          <li class="nav-item"><a class="nav-link" href="/map/edit_international_pop">&nbsp&middotEdit PoP</a></li>
         </ul>
       </li>
       <!-- Peering and transit -->
@@ -51,7 +53,7 @@
         </a>
         <ul class="collapse list-unstyled" id="peerSubmenu">
           <li class="nav-item"><a class="nav-link" href="/map/static_map">&nbsp&middotExternal Topology</a></li>
-          <li class="nav-item"><a class="nav-link" href="/map/static_time">&nbsp&middotExternal Time Topology</a></li>
+	  <!-- <li class="nav-item"><a class="nav-link" href="/map/static_time">&nbsp&middotExternal Time Topology</a></li> -->
           <li class="nav-item"><a class="nav-link" href="/map/peer_report">&nbsp&middotP&T report</a></li>
           <li class="nav-item"><a class="nav-link" href="/map/cost_report">&nbsp&middotP&T Cost Report</a></li>
           <li class="nav-item"><a class="nav-link" href="/map/external_flow">&nbsp&middotExternal Traffic flows</a></li>
@@ -110,7 +112,7 @@
         </a>
         <ul class="collapse list-unstyled" id="netSubmenu">
           <li class="nav-item"><a id="topo" class="nav-link" href="/data/topology">&nbsp&middotIGP TOPOLOGY</a></li>
-          <li class="nav-item"><a class="nav-link" href="/data/topology_time">&nbsp&middotIGP TIME TOPOLOGY</a></li>
+	  <!-- <li class="nav-item"><a class="nav-link" href="/data/topology_time">&nbsp&middotIGP TIME TOPOLOGY</a></li> -->
           <li class="nav-item"><a class="nav-link" href="/data/topology_nested">&nbsp&middotIGP NESTED TOPOLOGY</a></li>
           <li class="nav-item"><a class="nav-link" href="/data/topology_nested_aggregated">&nbsp&middotIGP AGGREGATED
               TOPOLOGY</a></li>
