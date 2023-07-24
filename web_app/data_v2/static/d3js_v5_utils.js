@@ -98,7 +98,12 @@ function returnY (source) {
     return result
 }
 
-grapheDatas1 = grapheDatas1.filter(function(d) { return re_source.test(d.source) && re_target.test(d.target) });
+grapheDatas1 = grapheDatas1.filter(function(d) {
+                return re_source.test(d.source) && re_target.test(d.target) ||
+                       re_source.test(d.target) && re_target.test(d.source)
+});
+
+
 grapheDatas1.sort(function(a,b) {
   if (a.source > b.source) {return 1;}
   else if (a.source < b.source) {return -1;}
@@ -172,22 +177,6 @@ function getData(url){
   return customAjaxResponse.promise();
   }
 
-function link_click(web_ip,d,type) {
-  if (d.l_int == -1 || d.util == -1 ) {
-    alert("NO SNMP DATA")
-    return }
-  $('#modal-top').modal('toggle')
-  if(type == 'cloud'){
-    $('#modal-body').attr("id","graph2")
-    .html(graph(web_ip,d.node,d.l_int,d.capacity)) }
-  else if(type =='cloud_aggregate'){
-    $('#modal-body').attr("id","graph2")
-    .html(graph(web_ip,d.source.name,d.target.name,d.capacity)) }
-  else {
-    $('#modal-body').attr("id","graph2")
-    .html(graph(web_ip,d.source.name,d.l_int,d.capacity))
-  }
-}
 
 function node_click(web_ip,d) {
   if ($('#spf_check').is(':checked')){

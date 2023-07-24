@@ -7,9 +7,118 @@
 {% endblock stylesheets %}
 
 {% block content %}
+<div class="container-fluid page-body-wrapper">
+  <div class="main-panel">
+    <div class="content-wrapper">
+      <div class="row sortable">
+      <!--
+      <div class="col-sm-12 grid-margin">
+      <nav aria-label="breadcrumb">
+      <ol class="breadcrumb breadcrumb hide-phone float-right p-0 m-0">
+        <li class="breadcrumb-item"><a href="#">LnetD</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+      </ol>
+      </nav>
+      </div>
+      -->
+<div class="col-lg-6 col-xs-6 grid-margin stretch-card-none">
+  <div class="card">
+    <div class="d-flex flex-row-reverse">
+      <i class="mdi text-primary"></i>
+    </div>
+    <div class="card-body pt-0">
+      <h4 class="card-title text-center">Buy me a coffee</h4>
+      <div class="row justify-content-around grid-margin stretch-card">
+        <div class="col-xs-6 mt-4 mt-lg-0">
+		<script type="text/javascript" src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" data-name="bmc-button" data-slug="pemexi" data-color="#5F7FFF" data-emoji=""  data-font="Cookie" data-text="Buy me a coffee" data-outline-color="#000000" data-font-color="#ffffff" data-coffee-color="#FFDD00" ></script>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="col-lg-6 col-xs-6 grid-margin stretch-card-none">
+  <div class="card">
+    <div class="d-flex flex-row-reverse">
+      <i class="mdi text-primary"></i>
+    </div>
+    <div class="card-body pt-0">
+      <h4 class="card-title text-center">Pay Pall</h4>
+      <div class="row justify-content-around grid-margin stretch-card">
+        <div class="col-xs-6 mt-4 mt-lg-0">
+		<p>
+  		 <a href="https://www.paypal.me/cpmarvin">
+      		  <img src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" alt="paypal">
+  		 </a>
+		</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--start form -->
+	    <div class="col-md-12 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">Contract Support</h4>
+                  <p class="card-description">
+                    If you need a support contract for installing LnetD in your enviroment contact me 
+                  </p>
+                  <form id="support_form" class="forms-sample">
+                    <div class="form-group">
+                      <label for="InputName">Name</label>
+                      <input type="text" class="form-control" id="InputName" placeholder="Name" name="name">
+                    </div>
+                    <div class="form-group">
+                      <label for="InputEmail">Email address</label>
+                      <input type="email" class="form-control" id="InputEmail" placeholder="Email" name="email">
+                    </div>
+		    <div class="form-group">
+                      <label for="exampleTextarea1">Message(Optional)</label>
+                      <textarea class="form-control" id="exampleTextarea1" rows="4" name="textarea"></textarea>
+                    </div>
+                    <button onclick="javascript:support_form();" class="btn btn-primary me-2">Submit</button> </h3>
+                  </form>
+                </div>
+              </div>
+            </div>
+<!--end form -->
+
+</div><!--end row-->
+               <!--end table here -->
+             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+</div>
+</div>
 
 {% endblock content %}
 
 {% block javascripts %}
 {{ super() }}
+<script>
+url_json = "{{url_for('api_blueprint.save_support_details')}}"
+function support_form(){
+  event.preventDefault()
+  data = $('#support_form').serialize()
+  data_json = JSON.stringify(data)
+  console.log(data_json)
+  var saveData_json = $.ajax({
+    type: 'POST',
+    url: url_json,
+    dataType : 'json',
+    data: data,
+    success: function (resultData) { alertify.notify("Message sent", 'success', 5) }
+	 })
+}
+</script>
+
+
 {% endblock javascripts %}

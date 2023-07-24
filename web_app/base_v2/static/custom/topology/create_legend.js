@@ -8,7 +8,7 @@ function create_legend(type, div_width) {
 	if (type == 'traffic') {
 		legendValues = [
 			{ 'value': 'No Data', 'color': '#999', 'y': y_start, 'x': space * 0 },
-			{ 'value': 'SPF-Path', 'color': 'black', 'y': y_start, 'x': space * 1 },
+			{ 'value': 'Down', 'color': 'black', 'y': y_start, 'x': space * 1 },
 			{ 'value': '0%-1%', 'color': 'blue', 'y': y_start, 'x': space * 2 },
 			{ 'value': '1%-30%', 'color': 'green', 'y': y_start, 'x': space * 3 },
 			{ 'value': '30%-50%', 'color': 'yellow', 'y': y_start, 'x': space * 4 },
@@ -20,7 +20,7 @@ function create_legend(type, div_width) {
 	else if (type == 'latency') {
 		legendValues = [
 			{ 'value': 'No Data', 'color': '#999', 'y': y_start, 'x': space * 0 },
-			{ 'value': 'SPF-PATH', 'color': 'black', 'y': y_start, 'x': space * 1 },
+			{ 'value': 'Down', 'color': 'black', 'y': y_start, 'x': space * 1 },
 			{ 'value': '0-10ms', 'color': 'blue', 'y': y_start, 'x': space * 2 },
 			{ 'value': '10-30ms', 'color': 'green', 'y': y_start, 'x': space * 3 },
 			{ 'value': '30-80ms', 'color': 'yellow', 'y': y_start, 'x': space * 4 },

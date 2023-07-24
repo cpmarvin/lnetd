@@ -5,6 +5,7 @@ import pandas as pd
 import json
 from flask import Flask, redirect, request, jsonify
 from flask_cors import CORS, cross_origin
+from sqlalchemy import text
 
 from .get_graph_fct_ifindex import get_graph_ifindex
 from .get_interface_ifName_fct import get_interface_ifName
@@ -16,7 +17,7 @@ from .calculateSpf_latency_fct import calculateSpf_latency
 
 from database import db
 from objects_v2.models import Routers, Links, Node_position,Node_position_global,Map_name
-from objects_v2.models import External_topology_temp, External_position
+from objects_v2.models import External_topology_temp, External_position,Support
 
 
 from api_v2.mutils import *
@@ -126,10 +127,14 @@ def spf_and_latency():
 def save_map_name():
     map_name = str(request.args["map_name"])
     regexp_value = str(request.args["regexp"])
-    new_map = Map_name(name=map_name,regexp=regexp_value)
-    db.session.add(new_map)
-    db.session.commit()
+    regexp_value_tar = str(request.args["regexptar"])
+    sql_query = "INSERT OR REPLACE INTO Map_name values('%s','%s','%s')" %(map_name,regexp_value,regexp_value_tar)
+    run_sql = db.engine.connect()
+    trans = run_sql.begin()
+    run_sql.execute(text(sql_query))
+    trans.commit()
     return json.dumps({"success": True}), 200, {"ContentType": "application/json"}
+
 
 @blueprint.route("/save_node_position_global", methods=["POST"])
 @login_required
@@ -148,10 +153,11 @@ def save_node_position_global():
         replace_sql = db.engine.connect()
         trans = replace_sql.begin()
         for sql_entry in sql_inserts:
-            replace_sql.execute(sql_entry)
+            replace_sql.execute(text(sql_entry))
         trans.commit()
         return json.dumps({"success": True}), 200, {"ContentType": "application/json"}
     except Exception as e:
+        print(e)
         raise
 
 
@@ -169,9 +175,9 @@ def save_node_position():
     # hack due to panda limitation ; no if_exists='update'
     replace_sql = db.engine.connect()
     trans = replace_sql.begin()
-    replace_sql.execute(
+    replace_sql.execute(text(
         "INSERT OR REPLACE INTO Node_position (id,x,y,user) SELECT id,x,y,user FROM Node_position_temp;"
-    )
+    ))
     trans.commit()
     # end hack , need a better way here , this is lame
     return json.dumps({"success": True}), 200, {"ContentType": "application/json"}
@@ -195,7 +201,6 @@ def node_position_by_name():
         )
     isis_links = df.to_dict(orient="records")
     return jsonify(isis_links)
-
 
 @blueprint.route("/get_isis_nested_links", methods=["GET"])
 @login_required
@@ -229,7 +234,6 @@ def save_external_position():
 @login_required
 def save_topology():
     arr = request.args["arr"]
-    print(arr)
     df = pd.DataFrame(eval(arr))
     df = df.drop(["index"], axis=1)
     # df = df.reset_index()
@@ -331,3 +335,15 @@ def save_bgp_peering():
     df = df.drop(["", "index", "Action", "id"], axis=1)
     df.to_sql(name="Bgp_peering_points", con=db.engine, if_exists="replace")
     return json.dumps({"success": True}), 200, {"ContentType": "application/json"}
+
+@blueprint.route("/save_support_details", methods=["POST"])
+@login_required
+def save_support_details():
+    name = request.form.get('name')
+    email = request.form.get('email')
+    message = request.form.get('textarea')
+    entry = Support(name=name,email=email,message=message)
+    db.session.merge(entry)
+    db.session.commit()
+    return json.dumps({"success": True}), 200, {"ContentType": "application/json"}
+

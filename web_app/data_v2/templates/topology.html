@@ -55,15 +55,13 @@
                     <div id="topology">
                       <div class="checkbox" id="spf_div">
                         <form>
-                          <label class="checkbox-inline">
-                            <input type="radio" name="group" id="spf_check" value=""> Activate SPF
-                          </label>
-			  <select class="form-select" id=map_select aria-label="Display map">
-                                <option selected>Map</option>
+                          <select class="form-select" id=map_select aria-label="Display map">
+				  <option>Select Saved Map</option>
 				{% for rec in map_name %}
-				<option value={{rec['regexp']}}>{{rec['name']}}</option>
-				{% endfor %}
-			  </select>
+                                <option value={{rec['regexp']}} tar_value={{rec['regexptar']}}>{{rec['name']}}</option>
+                                {% endfor %}
+                          </select>
+
                         </form>
                       </div>
                       <div class="spf_results x_content" id="sfp_div1"></div>
@@ -84,7 +82,7 @@
 
 {% block javascripts %}
 {{ super() }}
-<script src="{{ url_for('static', filename='custom/topology/create_graph_local.js') }}"></script>
+<script src="{{ url_for('static', filename='custom/topology/create_graph.js') }}"></script>
 <script src="{{ url_for('static', filename='custom/topology/getSPF.js') }}"></script>
 <script src="{{ url_for('static', filename='custom/topology/create_legend.js') }}"></script>
 <script src="https://d3js.org/d3.v4.min.js"></script>
@@ -97,22 +95,44 @@
   var node_position = {{ node_position | tojson | safe}}
   var graphData = JSON.parse('{{ values | tojson | safe}}');
   var web_ip = {{ app_config.web_ip| tojson | safe}}
-
+  var interface_url = "{{url_for('api_blueprint.ifName')}}"
+  var graph_url = "{{url_for('api_blueprint.graph_ifindex')}}"
+ //
+function link_click(web_ip,d,type) {
+  if (d.l_int == -1 || d.util == -1 ) {
+    alert("NO SNMP DATA")
+    return }
+  $('#modal-top').modal('toggle')
+  if(type == 'cloud'){
+    $('#modal-body').attr("id","graph2")
+    .html(graph(interface_url,graph_url,d.node,d.l_int,d.capacity)) }
+  else if(type =='cloud_aggregate'){
+    $('#modal-body').attr("id","graph2")
+    .html(graph(interface_url,graph_url,d.source.name,d.target.name,d.capacity)) }
+  else {
+    $('#modal-body').attr("id","graph2")
+    .html(graph(interface_url,graph_url,d.source.name,d.l_int,d.capacity))
+  }
+}
   //save node position
   function node_position_save() {
+    map_name = $('#map_select').find('option:selected').text();
     node_postion_save = []
     d3.selectAll(".link").data().forEach(function (d) { var entry = { 'id': d.source.name, 'x': d.source.x, 'y': d.source.y }; node_postion_save.push(entry) })
     var demandArrStr = encodeURIComponent(JSON.stringify(node_postion_save));
-    url = {{ url_for('api_blueprint.save_node_position') | tojson }} +'?arr=' + demandArrStr
+    url_json = {{ url_for('api_blueprint.save_node_position_global')|tojson }}+'?arr='+demandArrStr+'&map_type='+map_name
+    data_json =  JSON.stringify({"arr": node_postion_save})
 
 
-  var saveData = $.ajax({
+  var saveData_json = $.ajax({
     type: 'POST',
-    url: url,
-    dataType: "text",
+    url: url_json,
+    data: data_json,
+    async: false,
+    contentType: 'application/json;charset=UTF-8',
     success: function (resultData) { alertify.notify("Node Position Saved ", 'success', 5) }
-  });
-  saveData.error(function () { alertify.notify("Something went wrong", 'error', 5); });
+        })
+    saveData.error(function () { alertify.notify("Something went wrong", 'error', 5); });
 }
 
   $(window).resize(function () {
@@ -123,7 +143,7 @@
   $(document).ready(function () {
     var div_width = document.getElementById("topology-menu").clientWidth
     create_legend('traffic', div_width)
-    var source = "" // filter source target if neede
+    var source = "[2,3,7]1ert" // filter source target if neede
     var target = source
     var re_source = new RegExp(source);
     var re_target = re_source
@@ -131,72 +151,53 @@
     var run_it = new lnet_d3js(web_ip, result, 'traffic') //run lnet_d3js
     run_it.restart(result[1], result[0], result[0]) //draw
 
+    //dynamic nodes
+    $('#dynamic_topology').change(function () {
+      if (this.checked) {
+        console.log("dynamic checked")
+        d3.selectAll(".node").data().forEach(function (d) {
+          d.fx = d.fy = null;
+        })
+      }
+    });
 
-//map select
 $('#map_select').change(function () {
   map_name = $(this).find('option:selected').text();
   regexp_value = $(this).val()
+  regexp_value_tar = $(this).find('option:selected').attr('tar_value')
+  console.log(regexp_value,regexp_value_tar)
   node_topology_url = {{ url_for('api_blueprint.node_position_by_name') | tojson }} +'?map_name='+map_name
   var node_topology_new = getData(node_topology_url)
   node_topology_new.then(function (data) {
-	  node_position = data
-	  console.log('data',data)
+          node_position = data
+          console.log('data',data)
      var source = regexp_value // filter source target if neede
      var re_source = new RegExp(source);
-     var re_target = new RegExp(source);
+     var re_target = new RegExp(regexp_value_tar);
      result = data_prepare(graphData, re_source, re_target,node_position) //this returns the correct link and nodes
      console.log(result)
      run_it.restart(result[1], result[0], result[0]) //draw
     })
 });
-//end map select
+
 
     d3.interval(function () {
       //console.log('d3.interval run')
       url = {{ url_for('api_blueprint.get_isis_links') | tojson }}
         var graphData1 = getData(url)
-        graphData1.then(function (data) {
-           result = data_prepare(data, re_source, re_target)
-           nodes = result[1]
-           links = result[0]
-           linkstext = result[0]
-           run_it.restart(nodes, links, linkstext);
+    graphData1.then(function (data) {
+      result = data_prepare(data, re_source, re_target)
+      nodes = result[1]
+      links = result[0]
+      linkstext = result[0]
+      //console.log('nodes:',nodes)
+      //linkedByIndex = result[2]
+      run_it.restart(nodes, links, linkstext);
     })
-  }, 60000); //60sec
+  }, 9999960000); //60sec
 
 })
-
-//test local link_click
-function link_click_test(web_ip,d,type) {
-  if (d.l_int == -1 || d.util == -1 ) {
-    alert("NO SNMP DATA")
-    return }
-  $('#modal-top').modal('toggle')
-  if(type == 'cloud'){
-    $('#modal-body').attr("id","graph2")
-    .html(graph(web_ip,d.node,d.l_int,d.capacity)) }
-  else if(type =='cloud_aggregate'){
-    $('#modal-body').attr("id","graph2")
-    .html(graph(web_ip,d.source.name,d.target.name,d.capacity)) }
-  else {
-       var url_graph = "{{ url_for('api_blueprint.graph_ifindex') }}"+'?ip='+d.l_int+'&'+'host='+d.source.name
-       var data_values = $.ajax({type: "GET", url: url_graph, async: false, dataType: "json"}).responseJSON;
-        console.log('TTTTT',data_values)
-        data_values_1 = [
-				  {'time':'2016-09-02 17:30:00+00:00','bps':'7601000'},
-				  {'time':'2016-09-02 17:35:00+00:00','bps':'17601000'},
-			  ]
-        console.log('TTTTT',data_values)
-		  var url_int = " {{ url_for('api_blueprint.ifName') }}"+'?ip='+d.l_int+'&'+'host='+d.source.name
-        var interface_name =  $.ajax({type: "GET", url: url_int, async: false}).responseText;
-		  console.log('interefa',interface_name)
-
-    $('#modal-body').attr("id","graph2")
-
-       .html(graph_local(data_values,d.source.name,interface_name,d.capacity))
-  }
-}
-// end test local link click
 </script>
 
 {% endblock javascripts %}
+

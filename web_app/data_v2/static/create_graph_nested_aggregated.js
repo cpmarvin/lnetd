@@ -1,6 +1,6 @@
 function graph(web_ip,source,target,capacity) {
     Plotly.purge(graph2)
-    var rawDataURL = 'http://'+web_ip+':8801/api/graph_aggregated?'+'source='+source+'&'+'target='+target
+    var rawDataURL = web_ip + '?source='+source+'&'+'target='+target
     //console.log(rawDataURL)
     //// map the fields
     var xField = 'time';

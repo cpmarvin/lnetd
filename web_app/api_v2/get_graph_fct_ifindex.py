@@ -14,5 +14,6 @@ def get_graph_ifindex(hostname,interface):
     result = client.query(queryurl)
     points = list(result.get_points(measurement='interface_statistics'))
     df = pd.DataFrame(points)
-    df1=df.reindex(columns=["time","bps"]).to_dict(orient='records')
+    #df1=df.reindex(columns=["time","bps"]).to_dict(orient='records')
+    df1=df.reindex(columns=["time","bps"]).to_csv(index=False)
     return df1

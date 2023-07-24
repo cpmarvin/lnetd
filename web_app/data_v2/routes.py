@@ -28,6 +28,7 @@ blueprint = Blueprint(
 )
 
 
+
 @blueprint.route("/topology")
 @login_required
 def topology():
@@ -47,6 +48,7 @@ def topology():
     return render_template(
         "topology.html", values=isis_links, node_position=node_position,map_name=map_name
     )
+
 
 
 @blueprint.route("/topology_region1")

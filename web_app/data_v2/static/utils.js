@@ -367,7 +367,7 @@ function graph_aggr_year(data,capacity,graph_id,source_cc,target_cc) {
             autotick: true,
             autorange: true,
             tickformat: ".3s",
-            title: 'Mbps'
+            title: 'bps'
         }
     };
 

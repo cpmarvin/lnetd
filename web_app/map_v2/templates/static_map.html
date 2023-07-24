@@ -182,9 +182,19 @@
 <script src="{{ url_for('map_blueprint.static', filename='lnet_d3js.js') }}"></script>
 
 <script>
-  tt = "{{url_for('api_blueprint.graph_ifname')}}"
-	console.log(tt)
-  var web_ip = {{ app_config.web_ip| tojson | safe}}
+  web_ip = "{{url_for('api_blueprint.graph_ifname')}}"
+  
+  function link_click(web_ip,d) {
+  //console.log("link_click_d",d)
+  if (d.l_int == -1 || d.util == -1 ) {
+    alert("NO SNMP DATA")
+    return
+  }
+  $('#modal-top').modal('toggle')
+  $('#modal-body').attr("id","graph2")
+  .html(graph(web_ip,d.node,d.interface,d.capacity,d.direction))
+}
+
   var node_position = {{ node_position| tojson | safe}}
   var graphData = JSON.parse('{{ values | tojson | safe}}');
   var graphData_external = JSON.parse('{{ values | tojson | safe}}');
