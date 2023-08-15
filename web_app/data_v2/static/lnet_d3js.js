@@ -25,6 +25,8 @@ function lnet_d3js(web_ip,result,type){
       .alphaTarget(0)
       .on("tick", ticked);
   var g = svg.append("g").attr("id","main_g")
+      groups = g.append("g").selectAll('.path_placeholder')
+
       link = g.append("g").selectAll(".link"),
       linktext = g.append("g").selectAll(".link_text"),
       node = g.append("g").selectAll(".node");
@@ -109,6 +111,41 @@ const mouseOutFunction = function () {
      .style("opacity",0);
 
 };
+// Apply the general update pattern to groups.
+
+  groups = groups.data(d3.nest().key(function(d) { return d.name.split('-')[2] }).entries(nodes) , function(dd) { return dd.key })
+  groups.exit().transition()
+      .remove();
+
+  var color = d3.scaleOrdinal(d3.schemeCategory10)
+
+  var groupsEnter = groups.enter()    
+//        .append("g")
+ //       .attr("class", "path_placeholder")
+        .append("path")
+      //groupsEnter.append("path")
+        //.style("fill", 'red')
+        .style("fill",function(d,i){return color(i)})
+        //.style("stroke", 'black')
+        .style("stroke",function(d,i){return color(i)})
+        .style("stroke-width", 190)
+        .style("stroke-linejoin", "round")
+        .style("opacity", .1)
+        .attr("d",function(d) {
+                var arr = d.values.map(function(i) { return [i.fx, i.fy]})
+                console.log('var',arr)
+                  if (arr.length === 1) { arr.push( [arr[0][0], arr[0][1]]) }
+                  //lame but only one more needed
+                  if (arr.length === 2) { arr.push( [arr[0][0], arr[0][1]]) , arr.push( [arr[0][0], arr[0][1]]) }
+
+                return_result = "M" + d3.polygonHull(arr).join("L") + "Z";
+     return return_result
+
+ })
+
+  groups = groupsEnter.merge(groups)
+
+
   // Apply the general update pattern to the nodes.
   node = node.data(nodes, function(d) { return d.name ;});
 
@@ -122,25 +159,26 @@ const mouseOutFunction = function () {
     .attr("class", "node");
 
   nodeEnter.append("circle") // enter the circle on the g
-        .attr("r", 5)
+        .attr("r", 15)
         .attr('class', 'circle')
         //.attr('fill', 'red');
   nodeEnter.append("image").attr("class","image")
         .attr("xlink:href", "/static/images/router.png")
-        .attr("x", "-12px")
-        .attr("y", "-12px")
-        .attr("width", "24px")
-        .attr("height", "24px")
+        .attr("x", "-42px")
+        .attr("y", "-42px")
+        .attr("width", "90px")
+        .attr("height", "90px")
         .on('mouseover', mouseOverFunction)
         .on('mouseout', mouseOutFunction)
         .on('click', function(d) { return node_click(web_ip,d) } )
   nodeEnter.append("text") // enter the text on the g
-        .attr("dy", ".35em")
+        .attr("dy", "0.825em")
         .attr("x", 12)
-        .style("font-size", "12px")
+        .style("font-size", "30px")
         .text(function(d) {return d.name ;});
 
       node = nodeEnter.merge(node); // enter + update
+
 
   // Apply the general update pattern to the links.
   link = link.data(links, function(d) { return d.source.name + "-" + d.target.name + "-" + d.l_ip + "-" + d.util + "-" + d.metric; });
@@ -153,6 +191,7 @@ const mouseOutFunction = function () {
   link = link.enter()
         .append("path")
         .attr("stroke","red")
+        .attr("stroke-width",10) 
         .attr("class", "link")
         .attr("id",function(d,i) { return "linkId_" + d.l_ip + i; })
         .call(function(link) { link.transition().attr("stroke-opacity", 1); })
@@ -163,6 +202,7 @@ const mouseOutFunction = function () {
 	  else if (type == 'demand'){
 	    return get_util(d,"0")
           }
+
           else if (type == 'errors'){
             return get_errors(d,"0")
           }
@@ -184,7 +224,7 @@ const mouseOutFunction = function () {
                   .attr("class","link_text")
                   .attr("xlink:href",function(d,i) { return "#linkId_" + d.l_ip + i;})
                   .attr("text-anchor","middle")
-                  .style("font-size", "4px")
+                  .style("font-size", "20px")
                   .style("font-weight","bold")
                   .attr("dy",0)
                   .attr("startOffset","50%")
@@ -215,9 +255,23 @@ const mouseOutFunction = function () {
   }
 
   function ticked() {
+  groups
+        .attr("d",function(d) { 
+                var arr = d.values.map(function(i) { return [i.fx, i.fy]})
+                  if (arr.length === 1) { arr.push( [arr[0][0], arr[0][1]]) }
+                  //lame but only need another one so ...
+                  if (arr.length === 2) { arr.push( [arr[0][0], arr[0][1]]) , arr.push( [arr[0][0], arr[0][1]]) }
+                return_result = "M" + d3.polygonHull(arr).join("L") + "Z";
+	     return return_result
+
+ })
+
+
+
+
   link
    .attr("d", function(d,i){
-        var LINK_WIDTH = 2
+        var LINK_WIDTH = 7
         var targetDistance = (d.linknum % 2 === 0 ? d.linknum * LINK_WIDTH : (-d.linknum + 1) * LINK_WIDTH);
         calcTranslationExact(d.source.name,targetDistance, d.source, d.target);
         return callback;}

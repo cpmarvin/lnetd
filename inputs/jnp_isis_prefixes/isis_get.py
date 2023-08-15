@@ -17,7 +17,7 @@ from lnetd_log import get_module_logger
 def main():
   logger = get_module_logger(__name__, 'DEBUG')
 
-  devices = {'juniper.lab': '10.3.3.3'}
+  devices = {'juniper.lab': '10.203.201.212'}
 
   logger.info('Device to connect : %s' % (devices))
   for name in devices:

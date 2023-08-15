@@ -6,9 +6,8 @@ from sqlalchemy.ext.declarative import declarative_base
 db = SQLAlchemy()
 
 engine = create_engine(
-    'sqlite:///database.db', 
+    'sqlite:////opt/lnetd/web_app/database.db', 
     connect_args = {'check_same_thread': False},
-    convert_unicode = True, 
     echo = True
     )
 

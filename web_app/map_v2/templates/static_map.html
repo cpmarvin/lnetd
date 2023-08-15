@@ -3,13 +3,14 @@
 {% block title %} ISIS Topology {% endblock title %}
 
 {% block stylesheets %}
-  {{ super() }}
+{{ super() }}
 {% endblock stylesheets %}
 
 {% block content %}
 
 <!-- Modal -->
-<div class="modal fade" id="modal-top" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modal-top" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg " role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -41,7 +42,7 @@
                   <i class="fas fa-arrow-circle-down fa-2x font-weight-bold"></i>
                 </div>
                 <div class="col-xs-3 mt-4 mt-lg-0">
-                <h2 class="text-primary font-weight-bold">{{(traffic_values['total_in']/1000000000)|round(2)}}</h2>
+                  <h2 class="text-primary font-weight-bold">{{(traffic_values['total_in']/1000000000)|round(2)}}</h2>
                 </div>
                 <div class="col-xs-3 mt-4 mt-lg-0">
                   <i class="fas fa-arrow-circle-up fa-2x font-weight-bold"></i>
@@ -62,7 +63,7 @@
                   <i class="fas fa-arrow-circle-down fa-2x font-weight-bold"></i>
                 </div>
                 <div class="col-xs-3 mt-4 mt-lg-0">
-                <h2 class="text-primary font-weight-bold">{{(traffic_values['transit_in']/1000000000)|round(2)}}</h2>
+                  <h2 class="text-primary font-weight-bold">{{(traffic_values['transit_in']/1000000000)|round(2)}}</h2>
                 </div>
                 <div class="col-xs-3 mt-4 mt-lg-0">
                   <i class="fas fa-arrow-circle-up fa-2x font-weight-bold"></i>
@@ -83,7 +84,7 @@
                   <i class="fas fa-arrow-circle-down fa-2x font-weight-bold"></i>
                 </div>
                 <div class="col-xs-3 mt-4 mt-lg-0">
-                <h2 class="text-primary font-weight-bold">{{(traffic_values['peer_in']/1000000000)|round(2)}}</h2>
+                  <h2 class="text-primary font-weight-bold">{{(traffic_values['peer_in']/1000000000)|round(2)}}</h2>
                 </div>
                 <div class="col-xs-3 mt-4 mt-lg-0">
                   <i class="fas fa-arrow-circle-up fa-2x font-weight-bold"></i>
@@ -104,7 +105,7 @@
                   <i class="fas fa-arrow-circle-down fa-2x font-weight-bold"></i>
                 </div>
                 <div class="col-xs-3 mt-4 mt-lg-0">
-                <h2 class="text-primary font-weight-bold">{{(traffic_values['cdn_in']/1000000000)|round(2)}}</h2>
+                  <h2 class="text-primary font-weight-bold">{{(traffic_values['cdn_in']/1000000000)|round(2)}}</h2>
                 </div>
                 <div class="col-xs-3 mt-4 mt-lg-0">
                   <i class="fas fa-arrow-circle-up fa-2x font-weight-bold"></i>
@@ -119,40 +120,41 @@
       </div>
       <!--second row -->
       <div class="row">
-              <div class="col-sm-12 grid-margin d-flex stretch-card">
+        <div class="col-sm-12 grid-margin d-flex stretch-card">
           <div class="card">
             <div class="card-body">
               <div class="d-flex align-items-center justify-content-between">
                 <h4 class="card-title mb-2">External Topology</h4>
                 <div class="dropdown">
-		 {% if "admin" in current_user.role %}
+                  {% if "admin" in current_user.role %}
                   <button onclick="javascript:node_position_save();" class="btn btn-success">Save Layout</button> </h3>
-                 {% endif %}
-                  </div>
+                  {% endif %}
                 </div>
-                <div>
-                  <ul class="nav nav-tabs tab-no-active-fill" role="tablist">
-                    <li class="nav-item">
-                      <a class="nav-link active pl-2 pr-2" id="topology-tab" data-toggle="tab" href="#topology-menu" role="tab" aria-controls="topology-menu" aria-selected="true">ISP Telecom - P&T</a>
-                    </li>
-                  </ul>
-                  <div class="tab-content tab-no-active-fill-tab-content">
-                    <div class="tab-pane fade show active" id="topology-menu" role="tabpanel" aria-labelledby="topology-tab">
-                      <div class="d-lg-flex justify-content-between">
-                        <div id="legend_div" class="revenuechart-legend"></div>
+              </div>
+              <div>
+                <ul class="nav nav-tabs tab-no-active-fill" role="tablist">
+                  <li class="nav-item">
+                    <a class="nav-link active pl-2 pr-2" id="topology-tab" data-toggle="tab" href="#topology-menu"
+                      role="tab" aria-controls="topology-menu" aria-selected="true">ISP Telecom - P&T</a>
+                  </li>
+                </ul>
+                <div class="tab-content tab-no-active-fill-tab-content">
+                  <div class="tab-pane fade show active" id="topology-menu" role="tabpanel"
+                    aria-labelledby="topology-tab">
+                    <div class="d-lg-flex justify-content-between">
+                      <div id="legend_div" class="revenuechart-legend"></div>
+                    </div>
+                    <div id="topology">
+                      <!-- SPF div and checkbox !-->
+                      <div class="checkbox" id="spf_div">
+                        <form>
+                          <label class="checkbox-inline">
+                            <input type="radio" name="group1" id="full_topology" value=""> Full Topology
+                          </label>
+                        </form>
                       </div>
-                      <div id="topology">
-                            <!-- SPF div and checkbox !-->
-                            <div class="checkbox" id="spf_div">
-                                    <form>
-                                        <label class="checkbox-inline">
-                                            <input type="radio" name="group1" id="full_topology" value=""> Full Topology
-                                        </label>
-				    </form>
-                            </div>
-                            <!-- Div for SPF results -->
-                            <div class="spf_results x_content" id="sfp_div1"></div>
-          </div>
+                      <!-- Div for SPF results -->
+                      <div class="spf_results x_content" id="sfp_div1"></div>
                     </div>
                   </div>
                 </div>
@@ -163,11 +165,12 @@
       </div>
     </div>
   </div>
+</div>
 
 {% endblock content %}
 
 {% block javascripts %}
-  {{ super() }}
+{{ super() }}
 
 <!-- <script src="{{ url_for('static', filename='custom/topology/create_legend.js') }}"></script> -->
 
@@ -179,68 +182,81 @@
 <script src="{{ url_for('map_blueprint.static', filename='lnet_d3js.js') }}"></script>
 
 <script>
-  var web_ip = {{app_config|tojson|safe}}
-  var node_position = {{node_position|tojson|safe}}
+  web_ip = "{{url_for('api_blueprint.graph_ifname')}}"
+  
+  function link_click(web_ip,d) {
+  //console.log("link_click_d",d)
+  if (d.l_int == -1 || d.util == -1 ) {
+    alert("NO SNMP DATA")
+    return
+  }
+  $('#modal-top').modal('toggle')
+  $('#modal-body').attr("id","graph2")
+  .html(graph(web_ip,d.node,d.interface,d.capacity,d.direction))
+}
+
+  var node_position = {{ node_position| tojson | safe}}
   var graphData = JSON.parse('{{ values | tojson | safe}}');
   var graphData_external = JSON.parse('{{ values | tojson | safe}}');
-  var graphData_external_only = graphData_external.filter(function(itm){if (itm.type !='backbone') {return itm}})
+  var graphData_external_only = graphData_external.filter(function (itm) { if (itm.type != 'backbone') { return itm } })
 
   var source = ''
   var target = ''
 
-$(window).resize(function(){
+  $(window).resize(function () {
     var div_width = document.getElementById("topology-menu").clientWidth
-    create_legend('traffic',div_width)
-})
+    create_legend('traffic', div_width)
+  })
 
-function node_position_save(){
-        node_position_save = []
-        d3.selectAll(".link").data().forEach( function (d) {
-          var entry = {'id':d.source.name,'x':d.source.x,'y':d.source.y};
-          node_position_save.push(entry) })
-          var demandArrStr = encodeURIComponent(JSON.stringify(node_position_save));
-          url = {{ url_for('api_blueprint.save_external_position')|tojson }}+'?arr='+demandArrStr
-          var saveData = $.ajax({
-                type: 'POST',
-                url: url,
-                dataType: "text",
-                success: function(resultData) { alertify.notify("Node Position Saved ", 'success', 5) }
-          });
-          saveData.error(function() { alertify.notify("Something went wrong",'error',5); });
+  function node_position_save() {
+    node_position_save = []
+    d3.selectAll(".link").data().forEach(function (d) {
+      var entry = { 'id': d.source.name, 'x': d.source.x, 'y': d.source.y };
+      node_position_save.push(entry)
+    })
+    var demandArrStr = encodeURIComponent(JSON.stringify(node_position_save));
+    url = {{ url_for('api_blueprint.save_external_position') | tojson }} +'?arr=' + demandArrStr
+  var saveData = $.ajax({
+    type: 'POST',
+    url: url,
+    dataType: "text",
+    success: function (resultData) { alertify.notify("Node Position Saved ", 'success', 5) }
+  });
+  saveData.error(function () { alertify.notify("Something went wrong", 'error', 5); });
   }
 
-	$(document).ready(function() {
-      console.log('do i run here document ready?')
-      var div_width = document.getElementById("topology-menu").clientWidth
-      create_legend('traffic',div_width)
-      var re_source = new RegExp (source);
-      var re_target = new RegExp (target);
-  		result = data_prepare(graphData_external_only,re_source,re_target) //this returns the correct link and nodes
-      console.log('do i run here result?',result)
-  		var run_it = new lnet_d3js(web_ip,result,'traffic') //run lnet_d3js
-      run_it.restart(result[1],result[0],result[0]) //draw
+  $(document).ready(function () {
+    console.log('do i run here document ready?')
+    var div_width = document.getElementById("topology-menu").clientWidth
+    create_legend('traffic', div_width)
+    var re_source = new RegExp(source);
+    var re_target = new RegExp(target);
+    result = data_prepare(graphData_external_only, re_source, re_target) //this returns the correct link and nodes
+    console.log('do i run here result?', result)
+    var run_it = new lnet_d3js(web_ip, result, 'traffic') //run lnet_d3js
+    run_it.restart(result[1], result[0], result[0]) //draw
 
-$('#full_topology').on('click change', function(e) {
-                var re_source = new RegExp (source);
-                var re_target = new RegExp (target);
-                result = data_prepare(graphData,re_source,re_target) //this returns the correct link and nodes
-                console.log(result)
-                run_it.restart(result[1],result[0],result[0]) //draw
-});
+    $('#full_topology').on('click change', function (e) {
+      var re_source = new RegExp(source);
+      var re_target = new RegExp(target);
+      result = data_prepare(graphData, re_source, re_target) //this returns the correct link and nodes
+      console.log(result)
+      run_it.restart(result[1], result[0], result[0]) //draw
+    });
 
     //dynamic nodes
-      $('#dynamic_topology').change(function() {
-        if(this.checked){
+    $('#dynamic_topology').change(function () {
+      if (this.checked) {
         //console.log("dynamic checked")
-            d3.selectAll(".node").data().forEach(function(d) {
-              d.fx = d.fy = null;
-          })
-        }
-      });
-	})
+        d3.selectAll(".node").data().forEach(function (d) {
+          d.fx = d.fy = null;
+        })
+      }
+    });
+  })
 
 
 
-  </script>
+</script>
 
 {% endblock javascripts %}

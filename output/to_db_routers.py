@@ -5,6 +5,12 @@ import re
 from sqlalchemy import create_engine, text
 import random
 import sys
+
+path_app = '/opt/lnetd/web_app'
+sys.path.append(path_app)
+from database import db
+from objects_v2 import models
+
 sys.path.append('../inputs/utils/')
 
 import snmp_get
@@ -41,21 +47,21 @@ def main():
         df['version'] = 'NA'
     # set default tacacs_id
     df['tacacs_id'] = 0
-    # i need to keep existing tacacs info if any
-    df_lnetd = pd.read_sql('SELECT * from Routers', conn)
-    df_lnetd = df_lnetd.drop(['index'], axis=1)
-    # merge current network info with lnetd
-    df_merge = pd.merge(df, df_lnetd, on=[
-                        'name', 'ip', 'country', 'vendor'], how='left', suffixes=('_drop', ''))
-    # drop the ones in lnetd but not in network
-    df_merge = df_merge.loc[:, ~
-                            df_merge.columns.str.contains('_drop', case=False)]
-    df_merge['tacacs_id'] = df_merge['tacacs_id'].fillna(1).astype(int)
-    df_merge.fillna(value='NA', inplace=True)
-    df = df_merge
-    disk_engine = create_engine('sqlite:////opt/lnetd/web_app/database.db')
-    df.to_sql('Routers', disk_engine, if_exists='replace')
-    # print df.to_dict(orient='records')
+    for rtr_value in df.to_dict(orient='records'):
+        print(rtr_value)
+        existing_router = models.Routers.query.filter_by(name=rtr_value['name']).first()
+        if existing_router:
+            existing_router.ip = rtr_value['ip']
+            existing_router.country = rtr_value['country']
+            existing_router.vendor = rtr_value['vendor']
+            existing_router.model = rtr_value['model']
+            db.session.add(existing_router)
+            db.session.commit()
+
+        else:
+            new_rtr = models.Routers(**rtr_value)
+            db.session.add(new_rtr)
+            db.session.commit()
     logger.info('all done')
     logger.debug('final pandas %s' % df)
 

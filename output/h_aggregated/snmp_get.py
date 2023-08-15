@@ -72,14 +72,15 @@ def get_util_ifName(hostname, interface):
                         AND time >= now()- 1h and time < now()
                         GROUP BY time(1h)''' % (hostname, interface)
 
-    # print(queryurl)
+    #print(queryurl)
     result = client.query(queryurl)
+    #print(result)
     points = list(result.get_points(measurement='interface_statistics'))
     if not points:
         return 0
 
     df = pd.DataFrame(points)
-    # print(df.head(1).values.tolist())
+    #print(df)
     df = df.to_dict(orient='records')
     result_out = int(round(df[0]['bps_out']))
     result_in = int(round(df[0]['bps_in']))

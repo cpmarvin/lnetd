@@ -15,7 +15,6 @@ from nornir.core.inventory import Inventory, ParentGroups
 from simplecrypt import encrypt, decrypt
 from base64 import b64encode, b64decode
 import pickle
-import ipdb
 
 
 def update_redis(key_name, data):

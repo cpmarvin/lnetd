@@ -158,26 +158,8 @@
     </div>
   </div>
 </div>
-<div class="col-lg-2 col-xs-6 grid-margin stretch-card-none">
-  <div class="card">
-    <div class="d-flex flex-row-reverse">
-      <i class="mdi mdi-close-circle text-primary"></i>
-    </div>
-    <div class="card-body pt-0">
-      <h4 class="card-title text-center">Total BGP Peers</h4>
-      <div class="row justify-content-around grid-margin stretch-card">
-        <div class="col-xs-6 mt-4 mt-lg-0">
-          <h2 class="text-primary font-weight-bold">{{counters['peers_v6']}} v6 </h2>
-          <h2 class="text-primary font-weight-bold">{{counters['peers_v4']}} v4 </h2>
-        </div>
-        <div class="col-xs-6 mt-4 mt-lg-0">
-          <i class="fas fa-globe-europe fa-2x"></i>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="col-lg-4 grid-margin stretch-card">
+
+<div class="col-lg-6 grid-margin stretch-card">
   <div class="card">
     <div class="d-flex flex-row-reverse">
       <i class="mdi mdi-close-circle text-primary"></i>
@@ -269,9 +251,6 @@
                 </li>
                 <li class="nav-item">
                   <a class="nav-link pl-2 pr-2" id="data-managed-tab" data-toggle="tab" href="#data-managed" role="tab" aria-controls="data-managed" aria-selected="false">Prefixes</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link pl-2 pr-2" id="sales-by-traffic-tab" data-toggle="tab" href="#sales-by-traffic" role="tab" aria-controls="sales-by-traffic" aria-selected="false">Peers</a>
                 </li>
               </ul>
               <div class="tab-content tab-no-active-fill-tab-content">
@@ -402,49 +381,6 @@
                <!--end table here -->
              </div>
           </div>
-          <div class="tab-pane fade" id="sales-by-traffic" role="tabpanel" aria-labelledby="sales-by-traffic-tab">
-                  <div class="d-lg-flex justify-content-between">
-                    <!--table here -->
-                    <div class="table-responsive">
-                      <table id="peers_table" class="table table-hover table-bordered"
-                      data-toggle="table"
-                      data-search="true"
-                      data-sortable="true"
-                      data-pagination="true"
-                      data-show-columns="true">
-                      <thead class="thead-light">
-                        <tr>
-                          <th data-field="router" data-sortable="true">RTR-NAME</th>
-                          <th data-field="neighbour" data-sortable="true">BGP-PEER</th>
-                          <th data-field="neighbour_ip" data-sortable="true">BGP-PEER-IP</th>
-                          <th data-field="remote_as" data-sortable="true">ASN</th>
-                          <th data-field="is_up" data-sortable="true">STATUS</th>
-                          <th data-field="type" data-sortable="true">TYPE</th>
-                          <th data-field="accepted_prefixes" data-sortable="true">PXL</th>
-                          <th data-field="ix_name" data-sortable="true">IX-NAME</th>
-                          <th data-field="uptime" data-sortable="true">UPTIME</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          {% for node in bgp_peers %}
-                          <td>{{node.router}}</td>
-                          <td>{{node.neighbour}}</td>
-                          <td>{{node.neighbour_ip}}</td>
-                          <td>{{node.remote_as}}</td>
-                          <td>{{names[node.is_up]}}</td>
-                          <td>{{node.type}}</td>
-                          <td>{{node.accepted_prefixes}}</td>
-                          <td>{{node.ix_name}}</td>
-                          <td>{{node.uptime}}</td>
-                     </tr>
-                     {% endfor %}
-                   </tbody>
-                 </table>
-               </div>
-               <!--end table here -->
-             </div>
-          </div>
         </div>
       </div>
     </div>
@@ -462,6 +398,9 @@
 <script src="https://unpkg.com/chartjs-plugin-colorschemes"></script>
 <script src="{{ url_for('home_blueprint.static', filename='home.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tableexport.jquery.plugin@1.10.21/tableExport.min.js"></script>
+<script src="https://unpkg.com/bootstrap-table@1.19.1/dist/bootstrap-table.min.js"></script>
+<script src="https://unpkg.com/bootstrap-table@1.19.1/dist/extensions/export/bootstrap-table-export.min.js"></script>
 <script>
 //create pie graphs
 

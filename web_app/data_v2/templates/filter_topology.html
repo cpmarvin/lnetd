@@ -1,14 +1,114 @@
 {% extends "base_site.html" %}
-
-{% block title %} ISIS Topology {% endblock title %}
-
+{% block title %}
+    ISIS Topology
+{% endblock title %}
 {% block stylesheets %}
-  {{ super() }}
+    {{ super() }}
 {% endblock stylesheets %}
-
 {% block content %}
-<!-- Modal used for graphs-->
-<div class="modal fade" id="modal-top" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <!-- Modal used for graphs-->
+    <div class="modal fade"
+         id="modal-top"
+         tabindex="-1"
+         role="dialog"
+         aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg " role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Plotly based Graphs</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modal-body"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Modal -->
+    <!--Begin main content -->
+    <div class="container-fluid page-body-wrapper">
+        <div class="main-panel">
+            <div class="content-wrapper">
+                <div class="row">
+                    <div class="col-sm-12 grid-margin d-flex stretch-card">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <h4 class="card-title mb-2">IGP Topology</h4>
+                                    <div></div>
+                                    <div class="dropdown">
+                                        <!-- <button onclick="javascript:node_position_save();" class="btn btn-success">Save Layout</button> -->
+                                        <button onclick="javascript:save_map();" class="btn btn-success">Save Map</button>
+
+                                        </h3>
+                                </div>
+                            </div>
+                            <div>
+                                <ul class="nav nav-tabs tab-no-active-fill" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link active pl-2 pr-2"
+                                           id="topology-tab"
+                                           data-toggle="tab"
+                                           href="#topology-menu"
+                                           role="tab"
+                                           aria-controls="topology-menu"
+                                           aria-selected="true">ISP Telecom - Link Util</a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content tab-no-active-fill-tab-content">
+                                    <div class="tab-pane fade show active"
+                                         id="topology-menu"
+                                         role="tabpanel"
+                                         aria-labelledby="topology-tab">
+                                        <div class="d-lg-flex justify-content-between">
+                                            <div id="legend_div" class="revenuechart-legend"></div>
+                                        </div>
+                                        <div id="topology">
+                                            <!-- SPF div and checkbox !-->
+                                            <div class="checkbox" id="spf_div">
+                                                <div class="col-md-7 grid-margin stretch-card">
+                                                    <form class="form-inline">
+                                                        <div class="input-group mb-2 mr-sm-2">
+                                                        </div>
+
+<div class="input-group mb-4 mr-sm-4">
+                                        <label class="col-sm-8 font-weight-bold">Filter SRC:</label>
+                                        <input type="text" class="form-control input" name= "source_filter" id="source_filter" placeholder="Filter:gb-p|fr-p">
+                                        <label class="col-sm-8 font-weight-bold">Filter TAR:</label>
+                                        <input type="text" class="form-control input" name= "target_filter" id="target_filter" placeholder="Filter:gb-p|fr-p">
+                                        <label class="col-sm-8 font-weight-bold">Map Name</label>
+                                        <input type="text" class="form-control" name= "map_name" id="map_name" placeholder="europe-pop">
+                                    </div>
+
+
+                                                    </form>
+                                                </div>
+                                            </div>
+                                            <!-- Div for SPF results -->
+                                            <div class="spf_results x_content" id="sfp_div1"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End main content -->
+<!-- Modal -->
+<div class="modal fade"
+     id="modal-top"
+     tabindex="-1"
+     role="dialog"
+     aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg " role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -17,8 +117,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body" id="modal-body">
-            </div>
+            <div class="modal-body" id="modal-body"></div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
@@ -26,108 +125,18 @@
     </div>
 </div>
 <!-- End Modal -->
-<!--Begin main content -->
-
-
-<div class="container-fluid page-body-wrapper">
-  <div class="main-panel">
-    <div class="content-wrapper">
-      <div class="row">
-        <div class="col-sm-12 grid-margin d-flex stretch-card">
-          <div class="card">
-            <div class="card-body">
-              <div class="d-flex align-items-center justify-content-between">
-                <h4 class="card-title mb-2">IGP Topology</h4>
-                <div>
-                </div>
-                <div class="dropdown">
-                    <button onclick="javascript:node_position_save();" class="btn btn-success">Save Layout</button> </h3>
-                  </div>
-                </div>
-                <div>
-                  <ul class="nav nav-tabs tab-no-active-fill" role="tablist">
-                    <li class="nav-item">
-                      <a class="nav-link active pl-2 pr-2" id="topology-tab" data-toggle="tab" href="#topology-menu" role="tab" aria-controls="topology-menu" aria-selected="true">ISP Telecom - Link Util</a>
-                    </li>
-                  </ul>
-                  <div class="tab-content tab-no-active-fill-tab-content">
-                    <div class="tab-pane fade show active" id="topology-menu" role="tabpanel" aria-labelledby="topology-tab">
-                      <div class="d-lg-flex justify-content-between">
-                        <div id="legend_div" class="revenuechart-legend"></div>
-                      </div>
-                      <div id="topology">
-                            <!-- SPF div and checkbox !-->
-                            <div class="checkbox" id="spf_div">
-                                <div class="col-md-7 grid-margin stretch-card">
-                                <form class="form-inline">
-                                  <div class="input-group mb-2 mr-sm-2">
-                                            <label class="checkbox-inline">
-                                                    <input type="radio" name="group" id="spf_check" value=""> Activate SPF
-                                            </label>
-                                    </div>
-                                    <div class="input-group mb-2 mr-sm-2">
-                                       <label class="checkbox-inline">
-                                            <input class="form-check-info" type="radio" name="group" id="dynamic_topology" value=""> Dynamic Topology
-                                        </label>
-                                    </div>
-                                    <div class="input-group mb-2 mr-sm-2">
-                                        <label class="col-sm-4 font-weight-bold">Filter</label>
-                                    <input type="text" class="form-control" name= "source_filter" id="source_filter" placeholder="Filter:gb-p|fr-p">
-                                    </div>
-                                </form>
-                              </div>
-                            </div>
-                            <!-- Div for SPF results -->
-                            <div class="spf_results x_content" id="sfp_div1"></div>
-              </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-<!-- End main content -->
-	<!-- Modal -->
-	<div class="modal fade" id="modal-top" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog modal-dialog-centered modal-lg " role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="exampleModalLabel">Plotly based Graphs</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body" id="modal-body">
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- End Modal -->
-
-
-
-
 {% endblock content %}
-
 {% block javascripts %}
-  {{ super() }}
-<!-- <script src="{{ url_for('static', filename='vendors/d3.js/d3.min.js') }}"></script> -->
-<script src="{{ url_for('static', filename='custom/topology/create_legend.js') }}"></script>
-<script src="{{ url_for('static', filename='vendors/plotly/plotly-latest.min.js') }}"></script>
-<script src="{{ url_for('static', filename='custom/topology/create_graph.js') }}"></script>
-<script src="{{ url_for('static', filename='custom/topology/getSPF.js') }}"></script>
-<script src="https://d3js.org/d3.v4.min.js"></script>
-<script src="{{ url_for('data_blueprint.static', filename='d3js_v5_utils.js') }}"></script>
-<script src="{{ url_for('data_blueprint.static', filename='lnet_d3js.js') }}"></script>
-
-<script>
+    {{ super() }}
+    <!-- <script src="{{ url_for('static', filename='vendors/d3.js/d3.min.js') }}"></script> -->
+    <script src="{{ url_for('static', filename='custom/topology/create_legend.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendors/plotly/plotly-latest.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='custom/topology/create_graph.js') }}"></script>
+    <script src="{{ url_for('static', filename='custom/topology/getSPF.js') }}"></script>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="{{ url_for('data_blueprint.static', filename='d3js_v5_utils.js') }}"></script>
+    <script src="{{ url_for('data_blueprint.static', filename='lnet_d3js.js') }}"></script>
+    <script>
 
 
 
@@ -137,7 +146,7 @@
 
     var node_position = {{node_position|tojson|safe}}
     var graphData = JSON.parse('{{ values | tojson | safe}}');
-    var web_ip = {{app_config|tojson|safe}}
+    var web_ip = {{app_config.web_ip|tojson|safe}}
 
     var source = ''
     var target = ''
@@ -148,14 +157,14 @@
         var re_target = new RegExp (target);
         console.log(source,re_source)
         console.log(target,re_target)
-		result = data_prepare(graphData,re_source,re_target) //this returns the correct link and nodes
+        result = data_prepare(graphData,re_source,re_target,node_position)
         console.log(result)
         console.log(graphData)
-		var run_it = new lnet_d3js(web_ip,result,'traffic') //run lnet_d3js
+                var run_it = new lnet_d3js(web_ip,result,'traffic') //run lnet_d3js
         run_it.restart(result[1],result[0],result[0]) //draw
 
         //dynamic nodes
-	    $('#dynamic_topology').change(function() {
+            $('#dynamic_topology').change(function() {
         if(this.checked){
             console.log("dynamic checked")
             d3.selectAll(".node").data().forEach(function(d) {
@@ -166,19 +175,61 @@
 
 
         var inputBox = document.getElementById('source_filter');
+        var inputBox_tar = document.getElementById('target_filter');
+        var map_name = document.getElementById('map_name');
 
-inputBox.onkeyup = function(){
-    console.log('key pressed',inputBox.value)
+function save_map(){
+        var inputBox = document.getElementById('source_filter');
+        var inputBox_tar = document.getElementById('target_filter')
+        var map_name = document.getElementById('map_name');
+        node_postion_save =[]
+        d3.selectAll(".node").data().forEach(
+            function (d) {
+                var entry = {'id':d.name,'x':d.x,'y':d.y} ;
+                node_postion_save.push(entry)
+            })
+        var demandArrStr = encodeURIComponent(JSON.stringify(node_postion_save));
+        map_name = map_name.value.replace(/ /g, '');
+        reg_exp = inputBox.value
+        reg_exp_tar = inputBox_tar.value
+        url = {{ url_for('api_blueprint.save_node_position_global')|tojson }}+'?arr='+demandArrStr+'&map_type='+map_name
+        var saveData = $.ajax({
+              type: 'POST',
+              url: url,
+              dataType: "text",
+              success: function(resultData) { alertify.notify("Node Position Saved ", 'success', 5) }
+        });
+
+        //save map name
+        url = {{ url_for('api_blueprint.save_map_name')|tojson }}+'?map_name='+map_name+'&regexp='+reg_exp+'&regexptar='+reg_exp_tar
+        var saveDataMap = $.ajax({
+                type: 'POST',
+                url: url,
+                dataType: "text",
+                success: function(resultData) { alertify.notify("Map name saved", 'success', 5) }
+        });
+        //end save map name
+
+}
+
+//inputBox.onkeyup = function(){
+//$(".input").onkeyup = function() {
+$(".input").keyup(function() {
+    console.log('_key_pressed',inputBox.value)
     var source = inputBox.value
     var re_source = new RegExp (source);
     console.log(source,re_source)
-    var re_target = new RegExp (source);
-    console.log(source,re_target)
-    result = data_prepare(graphData,re_source,re_target)
-    console.log(result)
-    console.log(graphData)
+    var target = inputBox_tar.value
+    var re_target = new RegExp (target);
+    console.log(target,re_target)
+    temp_array = JSON.parse(JSON.stringify(graphData));
+    result = data_prepare(graphData,re_source,re_target,node_position)
+    console.log('result',result)
+    console.log('graph',graphData)
+    console.log('temp',temp_array)
+
     run_it.restart(result[1],result[0],result[0])
-}
+})
 
 
 $(document).ready(function(){
@@ -193,6 +244,6 @@ $(document).ready(function(){
     });
 });
 
-</script>
-
+    </script>
 {% endblock javascripts %}
+

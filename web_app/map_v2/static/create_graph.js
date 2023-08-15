@@ -1,7 +1,8 @@
 function graph(web_ip,source,interface,capacity,direction) {
     Plotly.purge(graph2)
     var interface_name = interface
-    var rawDataURL = 'http://'+web_ip+':8801/api/graph_ifname?'+'interface='+interface+'&'+'host='+source+'&'+'direction='+direction
+    var rawDataURL = web_ip  + '?interface='+interface+'&'+'host='+source+'&'+'direction='+direction
+
     //// map the fields
     var xField = 'time';
     var yField = 'bps';

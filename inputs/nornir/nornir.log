@@ -1,6 +1,0 @@
-2020-10-10 16:49:58,018 -  nornir.core -     INFO -        run() - Running task 'get_bgp_peers' with args {} on 6 hosts
-2020-10-10 17:38:40,776 -  nornir.core -  WARNING -        run() - Task 'netmiko_send_command' has not been run – 0 hosts selected
-2020-10-10 17:38:40,830 -  nornir.core -  WARNING -        run() - Task 'napalm_get' has not been run – 0 hosts selected
-2020-10-10 17:38:40,878 -  nornir.core -     INFO -        run() - Running task 'napalm_get' with args {'getters': ['facts'], 'severity_level': 20} on 1 hosts
-2020-10-10 17:38:54,543 -  nornir.core -     INFO -        run() - Running task 'collect_xr_multiple' with args {'severity_level': 20} on 1 hosts
-2020-10-10 17:39:05,634 -  nornir.core -     INFO -        run() - Running task 'napalm_get' with args {'getters': ['facts'], 'severity_level': 20} on 7 hosts
