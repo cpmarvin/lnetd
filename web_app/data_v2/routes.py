@@ -33,16 +33,12 @@ blueprint = Blueprint(
 @login_required
 def topology():
     current_user = str(session["_user_id"])
-    node_position = pd.read_sql(
-        db.session.query(Node_position)
-        .filter(Node_position.user == current_user)
-        .statement,
-        db.session.bind,
-    )
+
+    query_links = text("""SELECT * from Links """)
+    query_pos = text("""SELECT * FROM Node_position where Node_position.user == %s""" %current_user)
+    df = pd.read_sql(query_links, db.session.connection())
+    node_position = pd.read_sql(query_pos, db.session.connection())
     node_position = node_position.to_dict(orient="records")
-    df = pd.read_sql(
-        db.session.query(Links).filter(Links.index >= 0).statement, db.session.bind
-    )
     isis_links = df.to_dict(orient="records")
     map_name = Map_name.query.all()
     return render_template(
@@ -65,7 +61,7 @@ def topology_region1():
     df = pd.read_sql(
         db.session.query(Links).filter(Links.index >= 0).statement, db.session.bind
     )
-    isis_links = df.to_dict(orient="records")
+    isis_links = [ r.as_dict() for r in Links.query.all()]
     return render_template(
         "topology_region1.html", values=isis_links, node_position=node_position
     )
@@ -75,17 +71,13 @@ def topology_region1():
 @login_required
 def topology_nested():
     current_user = session["_user_id"]
-    node_position = pd.read_sql(
-        db.session.query(Node_position)
-        .filter(Node_position.user == current_user)
-        .statement,
-        db.session.bind,
-    )
+    query_links = text("""SELECT * from Links """)
+    query_pos = text("""SELECT * FROM Node_position where Node_position.user == %s""" %current_user)
+    df = pd.read_sql(query_links, db.session.connection())
+    node_position = pd.read_sql(query_pos, db.session.connection())
     node_position = node_position.to_dict(orient="records")
+
     try:
-        df = pd.read_sql(
-            db.session.query(Links).filter(Links.index >= 0).statement, db.session.bind
-        )
         df["node"] = df["source"]
         df["source"] = df.apply(lambda row: row["source"][:2], axis=1)
         df["target"] = df.apply(lambda row: row["target"][:2], axis=1)
@@ -103,17 +95,13 @@ def topology_nested():
 @login_required
 def topology_nested_aggregated():
     current_user = session["_user_id"]
-    node_position = pd.read_sql(
-        db.session.query(Node_position)
-        .filter(Node_position.user == current_user)
-        .statement,
-        db.session.bind,
-    )
+    query_links = text("""SELECT * from Links """)
+    query_pos = text("""SELECT * FROM Node_position where Node_position.user == %s""" %current_user)
+    df = pd.read_sql(query_links, db.session.connection())
+    node_position = pd.read_sql(query_pos, db.session.connection())
     node_position = node_position.to_dict(orient="records")
+
     try:
-        df = pd.read_sql(
-            db.session.query(Links).filter(Links.index >= 0).statement, db.session.bind
-        )
         df = df[df["source"] != df["target"]]
         df["source"] = df.apply(lambda row: row["source"][:2], axis=1)
         df["target"] = df.apply(lambda row: row["target"][:2], axis=1)
@@ -149,18 +137,15 @@ def topology_nested_aggregated():
 @login_required
 def filter_topology():
     current_user = session["_user_id"]
-    node_position = pd.read_sql(
-        db.session.query(Node_position)
-        .filter(Node_position.user == current_user)
-        .statement,
-        db.session.bind,
-    )
+    query_links = text("""SELECT * from Links """)
+    query_pos = text("""SELECT * FROM Node_position where Node_position.user == %s""" %current_user)
+    df = pd.read_sql(query_links, db.session.connection())
+    node_position = pd.read_sql(query_pos, db.session.connection())
     node_position = node_position.to_dict(orient="records")
+
     source_filter = request.form.get("source_filter")
     target_filter = request.form.get("source_filter")
-    df = pd.read_sql(
-        db.session.query(Links).filter(Links.index >= 0).statement, db.session.bind
-    )
+    
     isis_links = df.to_dict(orient="records")
     return render_template(
         "filter_topology.html",

@@ -12,7 +12,7 @@ blueprint = Blueprint(
 
 
 from database import db
-from .models import Routers, Prefixes, Links, Tacacs, Tag
+from .models import Routers, Prefixes, Links
 
 
 @blueprint.route('/isis_prefixes')

@@ -160,15 +160,7 @@
 </div>
 
 <div class="col-lg-6 grid-margin stretch-card">
-  <div class="card">
-    <div class="d-flex flex-row-reverse">
-      <i class="mdi mdi-close-circle text-primary"></i>
-    </div>
-    <div class="card-body pt-0">
-      <h4 class="card-title">Network Distribution</h4>
-      <canvas id="network_vendors"></canvas>
-    </div>
-  </div>
+
 </div>
 
 </div><!--end row-->
@@ -255,7 +247,7 @@
               </ul>
               <div class="tab-content tab-no-active-fill-tab-content">
                 <div class="tab-pane fade show active" id="revenue-for-last-month" role="tabpanel" aria-labelledby="revenue-for-last-month-tab">
-		{% if "admin" in current_user.role %}
+		{% if "admin1" in current_user.role %}
 		  <button type="button" class="btn btn-success" onclick="show_edit_routers_modal()">Edit Selected</button>
 		{% endif %}
                   <div class="d-lg-flex justify-content-between">
@@ -274,10 +266,6 @@
                           <th data-field="name" data-sortable="true">NAME</th>
                           <th data-field="ip" data-sortable="true">IP</th>
                           <th data-field="country" data-sortable="true">LOCATION</th>
-                          <th data-field="vendor" data-sortable="true">VENDOR</th>
-                          <th data-field="model" data-sortable="true">MODEL</th>
-                          <th data-field="version" data-sortable="true">VERSION</th>
-                          <th data-field="tacacs_id" data-sortable="true">TACACS</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -291,16 +279,6 @@
                           </td>
                           <td>{{node.ip}}</td>
                           <td>{{node.country}}</td>
-                          <td>{{names[node.vendor]}}</td>
-                          <td>{{node.model}}</td>
-                          <td>{{node.version}}</td>
-                          <td>
-                           <a href="#edit-router" data-toggle="modal"
-                           data-val={{node.name}} data-tags = "{%- for tag in node.tags -%}{{tag.name}},{%- endfor -%}"
-                           data-target="#edit-router"
-                           class="badge badge-light">{{node.tacacs}}
-                         </a>
-                       </td>
                      </tr>
                      {% endfor %}
                    </tbody>
@@ -422,9 +400,9 @@ $table.bootstrapTable()
 
   //edit router
   //get all tag values
-  var tag_values = {{tag_values|tojson|safe}}
+  var tag_values = {} 
 
-  $('#edit-router').on('show.bs.modal', function(e) {
+  $('#edit-router1').on('show.bs.modal', function(e) {
     //get all tags already assign to this device
     var existing_tags = $(e.relatedTarget).data('tags').split(',');
     var ownerData = JSON.parse(JSON.stringify(tag_values))

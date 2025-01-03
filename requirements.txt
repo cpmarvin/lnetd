@@ -25,9 +25,8 @@ Flask-SQLAlchemy==3.0.3
 Flask-WTF==1.1.1
 greenlet==2.0.2
 idna==3.4
-influxdb==5.3.1
-ipdb==0.13.13
-ipython==8.13.1
+influxdb
+ipython
 itsdangerous==2.1.2
 jedi==0.18.2
 Jinja2==3.1.2

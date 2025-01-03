@@ -196,11 +196,11 @@ def get_isis_links():
 @login_required
 def node_position_by_name():
     map_name = request.args["map_name"]
-    df = pd.read_sql(
-        db.session.query(Node_position_global).filter(Node_position_global.map_type == map_name).statement, db.session.bind
-        )
-    isis_links = df.to_dict(orient="records")
-    return jsonify(isis_links)
+    query_pos = text("""SELECT * FROM Node_position_global where Node_position_global.map_type == '%s' """ %map_name)
+    node_position = pd.read_sql(query_pos, db.session.connection())
+    node_position = node_position.to_dict(orient="records")
+
+    return jsonify(node_position)
 
 @blueprint.route("/get_isis_nested_links", methods=["GET"])
 @login_required

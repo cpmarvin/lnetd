@@ -11,9 +11,7 @@ pd.set_option('display.width', 1000)
 
 conn = sqlite3.connect("/opt/lnetd/web_app/database.db")
 
-from slack_notification import send_slack_notification
-
-alarms = True
+alarms = False
 
 df_external = pd.read_sql("SELECT * FROM External_topology_temp", conn)
 df_external = df_external.drop(['index'], axis=1)

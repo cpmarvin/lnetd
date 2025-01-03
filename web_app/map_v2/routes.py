@@ -14,6 +14,7 @@ from .mutils import generat_unique_info, generate_traffic_util,get_month_util
 
 from influxdb import InfluxDBClient
 from datetime import date, timedelta
+from sqlalchemy import text 
 
 INFLUXDB_HOST = '127.0.0.1'
 INFLUXDB_NAME = 'telegraf_agg'
@@ -35,9 +36,13 @@ blueprint = Blueprint(
 @login_required
 def static_map():
     current_user = session['_user_id']
-    node_position = pd.read_sql(db.session.query(External_position).filter(External_position.user == current_user).statement,db.session.bind)
-    node_position = node_position.to_dict(orient='records')
-    df = pd.read_sql(db.session.query(External_topology).filter(External_topology.index >=0).statement,db.session.bind)
+    query_links = text("""SELECT * from External_topology """)
+    query_pos = text("""SELECT * FROM External_position where External_position.user == %s""" %current_user)
+    df = pd.read_sql(query_links, db.session.connection())
+    node_position = pd.read_sql(query_pos, db.session.connection())
+    node_position = node_position.to_dict(orient="records")
+    isis_links = df.to_dict(orient="records")
+
     isis_links = df.to_dict(orient='records')
     traffic_values = generate_traffic_util(df)
     return render_template(
@@ -50,10 +55,12 @@ def static_map():
 @requires_roles('admin')
 def edit_static_map():
     current_user = session['_user_id']
-    df = pd.read_sql(db.session.query(External_topology_temp).filter(External_topology_temp.index >=0).statement,db.session
-.bind)
+    query_links = text("""SELECT * from External_topology_temp """)
+    df = pd.read_sql(query_links, db.session.connection())
     isis_links = df.to_dict(orient='records')# External_topology_temp
-    df_router_name = pd.read_sql(db.session.query(Links.source.distinct()).statement,db.session.bind)
+    query_routers = text (""" SELECT DISTINCT source from Links""")
+    df_router_name = pd.read_sql(query_routers,db.session.connection())
+
     router_name = df_router_name['source'].values.tolist()
     return render_template('edit_static_map.html',values=isis_links,router_name=router_name)
 

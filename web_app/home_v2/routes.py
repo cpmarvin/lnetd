@@ -7,7 +7,6 @@ from collections import Counter, OrderedDict
 from database import db
 from base_v2.models import User
 
-from objects_v2.models import Tag,Tacacs
 
 from .properties import pretty_names
 
@@ -45,17 +44,11 @@ def index():
                         "BPrefix_per_country": Counter(k.country for k in prefixes),
                         "CPrefix_per_router": prefix_top10_count,
                         "DLinks_per_router": links_top10_count,
-  			             "network_vendors": Counter(k.vendor for k in routers)
                         }
-    tag_values = pd.read_sql(db.session.query(Tag).statement,db.session.bind)
-    tag_values['text'] = tag_values['name']
-    tag_values['id'] = tag_values['name']
-    tag_values = tag_values.to_dict(orient='records')
-    tacacs_id = Tacacs.query.all()
 
     return render_template('index.html', objects_counters=objects_counters, 
-			counters=counters, names=pretty_names,routers=routers,tag_values=tag_values,
-			tacacs_id=tacacs_id,links=links,prefixes=prefixes)
+			counters=counters, names=pretty_names,routers=routers,
+			links=links,prefixes=prefixes)
 
 @blueprint.route('/support')
 @login_required

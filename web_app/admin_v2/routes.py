@@ -5,9 +5,7 @@ from base_v2.basic_role import requires_roles
 from database import db
 from objects_v2.models import (
     App_config,
-    Tacacs,
     Routers,
-    Tag,
     Links,
     Node_position,
 )
@@ -16,6 +14,7 @@ from base_v2.models import User
 import pandas as pd
 import json
 
+from sqlalchemy import text
 from .mutils import generate_network_report
 
 blueprint = Blueprint(
@@ -32,7 +31,9 @@ blueprint = Blueprint(
 @login_required
 # @requires_roles('admin')
 def admin_report():
-    df = pd.read_sql(db.session.query(Links).statement, db.session.bind)
+    query_links = text("""SELECT * from Links """)
+    df = pd.read_sql(query_links, db.session.connection())
+
     df["status"] = "up"
     network_report = generate_network_report(
         initial_network=df, failed_network=None, compare=False
@@ -52,7 +53,6 @@ def app_config():
     nb_token = app_config_current[0].nb_token
     master_key = app_config_current[0].master_key
     users_list = User.query.all()
-    lnetd_tacacs = Tacacs.query.all()
     alert_threshold = app_config_current[0].alert_threshold
     alert_backoff = app_config_current[0].alert_backoff
     menu_style = app_config_current[0].menu_style
@@ -65,7 +65,6 @@ def app_config():
         nb_token=nb_token,
         master_key=master_key,
         users_list=users_list,
-        lnetd_tacacs=lnetd_tacacs,
         alert_threshold=alert_threshold,
         alert_backoff=alert_backoff,
         menu_style=menu_style,
@@ -173,27 +172,7 @@ def app_edit_routers():
         return "e"
 
 
-@blueprint.route("/app_add_tacacs", methods=["POST"])
-@login_required
-@requires_roles("admin")
-def app_add_tacacs():
-    try:
-        app_config = App_config.query.all()
-        master_key = app_config[0].master_key
-        app_add_tacacs = Tacacs(master_key, **request.form)
-        db.session.merge(app_add_tacacs)
-        db.session.commit()
-        return json.dumps({"success": True}), 200, {"ContentType": "application/json"}
-    except Exception as e:
-        return "e"
 
-
-@blueprint.route("/app_new_tacacs")
-@login_required
-@requires_roles("admin")
-def app_new_tacacs():
-    lnetd_tacacs = Tacacs.query.all()
-    return render_template("app_new_tacacs.html", values=lnetd_tacacs)
 
 
 @blueprint.route("/delete_object", methods=["POST", "GET"])

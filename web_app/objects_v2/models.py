@@ -9,22 +9,6 @@ from simplecrypt import encrypt, decrypt
 from base64 import b64encode, b64decode
 
 
-tags = Table(
-    "tags",
-    Base.metadata,
-    Column("tag_id", Integer, ForeignKey("Tag.id")),
-    Column("router_name", Integer, ForeignKey("Routers.name")),
-)
-
-
-
-
-
-
-
-
-
-
 
 class Node_position_global(Base):
     __tablename__ = "Node_position_global"
@@ -44,39 +28,14 @@ class Node_position_global(Base):
     def __repr__(self):
         return str(self.id)
 
-
-class Tag(Base):
-    __tablename__ = "Tag"
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(32), unique=True)
-
-    def __init__(self, **kwargs):
-        for property, value in kwargs.items():
-            if hasattr(value, "__iter__") and not isinstance(value, str):
-                (value,) = value
-            setattr(self, property, value)
-
-    def __repr__(self):
-        return str(self.name)
-
-
 class Routers(Base, UserMixin):
 
     __tablename__ = "Routers"
-
-    tags = relationship(
-        "Tag", secondary=tags, backref=backref("Routers", lazy="dynamic")
-    )
 
     index = Column(Integer, autoincrement=True)
     name = Column(String(300), primary_key=True, unique=True)
     ip = Column(String(120), unique=True)
     country = Column(String(30))
-    vendor = Column(String(30))
-    model = Column(String(250))
-    version = Column(String(250))
-    tacacs_id = Column(String(250), ForeignKey("Tacacs.id"), default="0")
-    tacacs = relationship("Tacacs", backref="parents")
 
     def __init__(self, **kwargs):
         for property, value in kwargs.items():
@@ -141,6 +100,9 @@ class Links(Base, UserMixin):
 
     def __repr__(self):
         return str(self.l_ip)
+    
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
 
@@ -391,33 +353,6 @@ class App_config(Base):
     def __repr__(self):
         return str(self.asn)
 
-
-
-class Tacacs(Base):
-    """Tacacs table , links with Routers"""
-
-    __tablename__ = "Tacacs"
-    id = Column(Integer, primary_key=True)
-    name = Column(String(300), unique=True)
-    username = Column(String(300), unique=False)
-    password = Column(String(300), unique=False)
-
-    def __init__(self, master_key=None, **kwargs):
-        for property, value in kwargs.items():
-            # depending on whether value is an iterable or not, we must
-            # unpack it's value (when **kwargs is request.form, some values
-            # will be a 1-element list)
-            if hasattr(value, "__iter__") and not isinstance(value, str):
-                (value,) = value
-            if property == "password":
-                cipher = encrypt(master_key, value)
-                encoded_cipher = b64encode(cipher)
-                setattr(self, property, encoded_cipher)
-            else:
-                setattr(self, property, value)
-
-    def __repr__(self):
-        return str(self.name)
 
 class Map_name(Base, UserMixin):
     __tablename__ = "Map_name"
