@@ -65,16 +65,6 @@ def edit_static_map():
     return render_template('edit_static_map.html',values=isis_links,router_name=router_name)
 
 
-
-@blueprint.route('/peer_report')
-@login_required
-def peer_report():
-    objects_counters = generat_unique_info()
-    objects_counters = sorted(objects_counters , key = lambda i: i['index'])
-    #print(objects_counters)
-    return render_template('peer_report.html',objects_counters=objects_counters)
-
-
 @blueprint.route('/get_graph_data_interface',methods=['GET', 'POST'])
 @login_required
 def get_graph_data_interface():

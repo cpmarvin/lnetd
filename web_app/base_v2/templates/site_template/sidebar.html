@@ -41,46 +41,13 @@
         </a>
         <ul class="collapse list-unstyled" id="peerSubmenu">
           <li class="nav-item"><a class="nav-link" href="/map/static_map">&nbsp&middotExternal Topology</a></li>
-	  <!-- <li class="nav-item"><a class="nav-link" href="/map/static_time">&nbsp&middotExternal Time Topology</a></li> -->
-          <li class="nav-item"><a class="nav-link" href="/map/peer_report">&nbsp&middotP&T report</a></li>
-          <li class="nav-item"><a class="nav-link" href="/map/cost_report">&nbsp&middotP&T Cost Report</a></li>
-          <li class="nav-item"><a class="nav-link" href="/map/external_flow">&nbsp&middotExternal Traffic flows</a></li>
-          <li class="nav-item"><a class="nav-link" href="/bgp/bgp_map">&nbsp&middotBGP Topology</a></li>
           {% if "admin" in current_user.role %} {% endif %}
-          <li class="nav-item"><a class="nav-link" href="/admin/app_external_netflow">&nbsp&middotEdit Traffic flows</a>
-          </li>
           <li class="nav-item"><a class="nav-link" href="/map/edit_static_map">&nbsp&middotEdit External Topology</a>
-          </li>
-          <li class="nav-item"><a class="nav-link" href="/bgp/edit_peering_points">&nbsp&middotEdit Peering Points</a>
           </li>
 
         </ul>
       </li>
-      <!-- Inventory -->
-      <li class="active">
-        <a href="#invSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
-          <i class="mdi mdi-server menu-icon"></i>
-          <span class="menu-title">Inventory</span>
-        </a>
-        <ul class="collapse list-unstyled" id="invSubmenu">
-          <li class="nav-item"><a class="nav-link" href="/inventory/inventory_device">&nbsp&middotDevice Inventory</a>
-          </li>
-          <li class="nav-item"><a class="nav-link" href="/inventory/inventory_network">&nbsp&middotNetwork Inventory</a>
-          </li>
-        </ul>
-      </li>
-      <!-- NOC -->
-      <li class="active">
-        <a href="#nocSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
-          <i class="mdi mdi-grid menu-icon"></i>
-          <span class="menu-title">NOC</span>
-        </a>
-        <ul class="collapse list-unstyled" id="nocSubmenu">
-          <li class="nav-item"><a class="nav-link" href="/noc/noc_topology">&nbsp&middotNOC TOPOLOGY</a></li>
-          {% if "admin" in current_user.role %} {% endif %}
-          <li class="nav-item"><a class="nav-link" href="/noc/edit_topology">&nbsp&middotEDIT NOC TOPOLOGY</a></li>
-        </ul>
-      </li>
+     
       <!-- Network Model -->
       <li class="active">
         <a href="#modelSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
@@ -105,11 +72,6 @@
           <li class="nav-item"><a class="nav-link" href="/data/topology_nested_aggregated">&nbsp&middotIGP AGGREGATED
               TOPOLOGY</a></li>
           <li class="nav-item"><a class="nav-link" href="/data/filter_topology">&nbsp&middotIGP TOPOLOGY FILTER</a></li>
-          <li class="nav-item"><a class="nav-link" href="/data/topology_errors">&nbsp&middotIGP TOPOLOGY ERRORS</a></li>
-          <li class="nav-item"><a class="nav-link" href="/data/topology_latency">&nbsp&middotIGP TOPOLOGY LATENCY</a>
-          </li>
-          <li class="nav-item"><a class="nav-link" href="/data/topology_netbox">&nbsp&middotNETBOX TOPOLOGY</a></li>
-          <li class="nav-item"><a class="nav-link" href="/dc/dc_topology">&nbsp&middotDC EVPN</a></li>
 
         </ul>
       </li>

@@ -300,8 +300,6 @@
 <script>
 
   function app_config_save() {
-    if ($('app-config-form')) {
-      event.preventDefault();
       $.ajax({
         type: 'POST',
         url: '/admin/app_config_save',
@@ -311,7 +309,6 @@
         success: function (result) { alertify.notify('Config Saved', 'success', 5); location.reload() }
       });
     }
-  }
   //add user
   function app_add_user() {
     if ($('app-config-form-users')) {
@@ -330,25 +327,7 @@
       });
     }
   }
-  //add tacacs
-  function app_add_tacacs() {
-    event.preventDefault();
-    if ($('app-config-form-tacacs')) {
-      $('#modal-top1').modal('toggle');
-      $.ajax({
-        type: 'POST',
-        url: '/admin/app_add_tacacs',
-        dataType: 'json',
-        data: $('#app-config-form-tacacs').serialize(),
-        error: function (result) { alertify.notify('error', 'error', 5); $('#modal-top1').modal('toggle') },
-        success: function (result) {
-          alertify.notify('Tacacs added', 'success', 5);
-          $('#modal-top1').modal('toggle');
-          setTimeout(location.reload.bind(location), 500);
-        }
-      });
-    }
-  }
+    
   $(document).ready(function () {
     //delete tacacs
     $('.delete-tacacs-btn').on('click', function (e) {
