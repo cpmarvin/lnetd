@@ -72,7 +72,7 @@ def topology_region1():
 def topology_nested():
     current_user = session["_user_id"]
     query_links = text("""SELECT * from Links """)
-    query_pos = text("""SELECT * FROM Node_position where Node_position.user == %s""" %current_user)
+    query_pos = text("""SELECT * FROM Node_position_global where Node_position_global.map_type == 'nested' """)
     df = pd.read_sql(query_links, db.session.connection())
     node_position = pd.read_sql(query_pos, db.session.connection())
     node_position = node_position.to_dict(orient="records")
@@ -96,7 +96,7 @@ def topology_nested():
 def topology_nested_aggregated():
     current_user = session["_user_id"]
     query_links = text("""SELECT * from Links """)
-    query_pos = text("""SELECT * FROM Node_position where Node_position.user == %s""" %current_user)
+    query_pos = text("""SELECT * FROM Node_position_global where Node_position_global.map_type == 'nested' """)
     df = pd.read_sql(query_links, db.session.connection())
     node_position = pd.read_sql(query_pos, db.session.connection())
     node_position = node_position.to_dict(orient="records")

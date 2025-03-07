@@ -110,22 +110,24 @@ function link_click(web_ip,d,type) {
 }
 
 //save node position
-function node_position_save(){
-	node_postion_save =[]
-	d3.selectAll(".link").data().forEach( function (d) { var entry = {'id':d.source.name,'x':d.source.x,'y':d.source.y} ; node_postion_save.push(entry) })
-	var demandArrStr = encodeURIComponent(JSON.stringify(node_postion_save));
-        url = {{ url_for('api_blueprint.save_node_position')|tojson }}+'?arr='+demandArrStr
+function node_position_save() {
+    map_name = "nested"
+    node_postion_save = []
+    d3.selectAll(".link").data().forEach(function (d) { var entry = { 'id': d.source.name, 'x': d.source.x, 'y': d.source.y }; node_postion_save.push(entry) })
+    var demandArrStr = encodeURIComponent(JSON.stringify(node_postion_save));
+    url_json = {{ url_for('api_blueprint.save_node_position_global')|tojson }}+'?arr='+demandArrStr+'&map_type='+map_name
+    data_json =  JSON.stringify({"arr": node_postion_save})
 
-
-	var saveData = $.ajax({
-	      type: 'POST',
-	      url: url,
-	      dataType: "text",
-	      success: function(resultData) { alertify.notify("Node Position Saved ", 'success', 5) }
-	});
-	saveData.error(function() { alertify.notify("Something went wrong",'error',5); });
+var saveData_json = $.ajax({
+  type: 'POST',
+  url: url_json,
+  data: data_json,
+  async: false,
+  contentType: 'application/json;charset=UTF-8',
+  success: function (resultData) { alertify.notify("Node Position Saved ", 'success', 5) }
+      })
+  saveData.error(function () { alertify.notify("Something went wrong", 'error', 5); });
 }
-
 
 $(window).resize(function(){
     var div_width = document.getElementById("topology-menu").clientWidth
