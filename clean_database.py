@@ -11,3 +11,8 @@ for table in delete_tables:
     qry = f'delete from {table};'
     cursor.execute(qry)
     con.commit()
+
+#default map
+qry = f'insert into Map_name (name,regexp,regexptar) values ("IGP",".*",".*");'
+cursor.execute(qry)
+con.commit()

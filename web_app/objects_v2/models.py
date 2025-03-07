@@ -5,7 +5,6 @@ from sqlalchemy.orm import relationship, backref
 
 from database import Base
 
-from simplecrypt import encrypt, decrypt
 from base64 import b64encode, b64decode
 
 
