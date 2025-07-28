@@ -17,12 +17,16 @@ logger = get_module_logger(__name__,'DEBUG')
 
 input = config.get('input', 'prefixes')
 
+grouping_start = int(config.get('input','grouping_start'))
+grouping_end = int(config.get('input','grouping_end'))
+
 def main():
         #connect to sqllite lnetd
         conn = sqlite3.connect("/opt/lnetd/web_app/database.db")
         #create pandas frame
         sql = 'SELECT * from %s' %input
         df=pd.read_sql(sql, conn)
+        df.loc[:, 'country'] = df['name'].str.slice(start=grouping_start, stop=grouping_end)
         #drop index from old table
         if len(df.index) >0:
             df=df.drop(['index'], axis=1)

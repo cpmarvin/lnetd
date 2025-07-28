@@ -24,7 +24,8 @@ logger = get_module_logger(__name__, 'DEBUG')
 
 input = config.get('input', 'routers')
 statistics = config.get('input', 'statistics')
-
+grouping_start = int(config.get('input','grouping_start'))
+grouping_end = int(config.get('input','grouping_end'))
 
 def main():
     # connect to sqllite lnetd
@@ -32,7 +33,8 @@ def main():
     # create pandas frame
     sql = 'SELECT * from %s' % input
     df = pd.read_sql(sql, conn)
-    print (df)
+    #populate country from grouping
+    df.loc[:, 'country'] = df['name'].str.slice(start=grouping_start, stop=grouping_end)
     # drop index from old table
     df = df.drop(['index'], axis=1)
     logger.info('Fill vendor , model and version')

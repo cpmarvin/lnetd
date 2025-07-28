@@ -51,7 +51,7 @@ def main():
     df = pd.DataFrame.from_records(isis_db, columns=labels)
 
     # create country entry from first 2 letters of hostname
-    df.loc[:, 'country'] = df['name'].str[0:2]
+    # df.loc[:, 'country'] = df['name'].str[0:2]
     df2 = df.fillna(0)
 
     try:

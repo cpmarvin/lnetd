@@ -44,6 +44,7 @@ def main():
         df['util'] = 200
         df['capacity'] = 1000
         df['errors'] = random.randint(0, 2000)
+        df['latency'] = random.randint(0, 100)
     disk_engine = create_engine('sqlite:////opt/lnetd/web_app/database.db')
     df.to_sql('Links', disk_engine, if_exists='replace')
     logger.info('all done')

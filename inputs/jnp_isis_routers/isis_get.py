@@ -49,7 +49,7 @@ def main():
     #drop ip if is 0.0.0.0
     df=df[df['ip'].str.contains("0.0.0.0") == False]
     #create country from hostname
-    df.loc[:, 'country'] = df['name'].str[0:2]
+    #df.loc[:, 'country'] = df['name'].str[0:2]
     df2 = df.fillna(0)
     try:
       logger.info('Write to database')

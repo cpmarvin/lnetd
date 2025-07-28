@@ -87,6 +87,7 @@ class Links(Base, UserMixin):
     util = Column(String(120), unique=False)
     capacity = Column(String(120), unique=False)
     errors = Column(String(120), unique=False)
+    latency = Column(String(120), unique=False)
 
     def __init__(self, **kwargs):
         for property, value in kwargs.items():
@@ -159,7 +160,6 @@ class rpc_routers(Base, UserMixin):
     index = Column(Integer, primary_key=True)
     name = Column(String(300), unique=True)
     ip = Column(String(120), unique=True)
-    country = Column(String(30))
 
     def __init__(self, **kwargs):
         for property, value in kwargs.items():
@@ -181,7 +181,6 @@ class rpc_prefixes(Base, UserMixin):
     index = Column(Integer, primary_key=True)
     name = Column(String(120), unique=False)
     ip = Column(String(120), unique=True)
-    country = Column(String(30))
 
     def __init__(self, **kwargs):
         for property, value in kwargs.items():
